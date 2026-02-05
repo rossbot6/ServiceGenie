@@ -117,7 +117,6 @@ export default function StylistDashboard() {
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: '#0f172a' }}
-      contentContainerStyle={{ flexGrow: 1 }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#6366f1']} tintColor="#6366f1" />
       }
@@ -132,178 +131,175 @@ export default function StylistDashboard() {
         </TouchableOpacity>
       </View>
 
-      <View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabBar}>
-            <TouchableOpacity 
-              style={[styles.tab, activeView === 'schedule' && styles.activeTab]} 
-              onPress={() => setActiveView('schedule')}
-            >
-              <Clock size={16} color={activeView === 'schedule' ? '#fff' : '#94a3b8'} />
-              <Text style={[styles.tabText, activeView === 'schedule' && styles.activeTabText]}>Daily</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.tab, activeView === 'calendar' && styles.activeTab]} 
-              onPress={() => setActiveView('calendar')}
-            >
-              <LayoutGrid size={16} color={activeView === 'calendar' ? '#fff' : '#94a3b8'} />
-              <Text style={[styles.tabText, activeView === 'calendar' && styles.activeTabText]}>Calendar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.tab, activeView === 'contacts' && styles.activeTab]} 
-              onPress={() => setActiveView('contacts')}
-            >
-              <Users size={16} color={activeView === 'contacts' ? '#fff' : '#94a3b8'} />
-              <Text style={[styles.tabText, activeView === 'contacts' && styles.activeTabText]}>Contacts</Text>
-            </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.tab, activeView === 'blocked' && styles.activeTab]} 
-              onPress={() => setActiveView('blocked')}
-            >
-              <Ban size={16} color={activeView === 'blocked' ? '#fff' : '#94a3b8'} />
-              <Text style={[styles.tabText, activeView === 'blocked' && styles.activeTabText]}>Blocked</Text>
-            </TouchableOpacity>
-            {pendingApprovals.length > 0 && (
-              <TouchableOpacity 
-                style={[styles.tab, activeView === 'approvals' && styles.activeTab]} 
-                onPress={() => setActiveView('approvals')}
-              >
-                <Clock size={16} color={activeView === 'approvals' ? '#fff' : '#94a3b8'} />
-                <Text style={[styles.tabText, activeView === 'approvals' && styles.activeTabText]}>Approvals</Text>
-                <View style={styles.badgeCount}>
-                  <Text style={styles.badgeCountText}>{pendingApprovals.length}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-          </ScrollView>
-        </View>
-
-        {activeView === 'approvals' && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Pending Approvals</Text>
-            {pendingApprovals.length === 0 ? (
-              <Text style={{ color: '#64748b', fontSize: 14, textAlign: 'center', marginTop: 20 }}>
-                No pending approval requests
-              </Text>
-            ) : (
-              pendingApprovals.map((approval) => (
-                <View key={approval.id} style={styles.card}>
-                  <View style={styles.timeInfo}>
-                    <Text style={styles.appTime}>{approval.day}</Text>
-                    <Text style={styles.appDuration}>{approval.start}</Text>
-                  </View>
-                  <View style={styles.cardMain}>
-                    <Text style={styles.clientName}>{approval.name}</Text>
-                    <Text style={styles.serviceType}>
-                      {approval.duration} mins • Overrides: {approval.blockedSlot?.reason || 'Unknown'}
-                    </Text>
-                  </View>
-                  <View style={styles.actionButtons}>
-                    <TouchableOpacity 
-                      style={[styles.actionBtn, styles.approveBtn]}
-                      onPress={() => approveBooking(approval)}
-                    >
-                      <Text style={styles.actionBtnText}>Approve</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                      style={[styles.actionBtn, styles.denyBtn]}
-                      onPress={() => setPendingApprovals(prev => prev.filter(a => a.id !== approval.id))}
-                    >
-                      <Text style={[styles.actionBtnText, styles.denyBtnText]}>Deny</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              ))
-            )}
-          </View>
-        )}
-
-        {activeView === 'calendar' ? (
-          <WeeklyCalendar 
-            onSchedule={handleSchedule} 
-            customers={myCustomers} 
-            appointments={calendarAppointments}
-            blockedSlots={blockedSlots}
-            onRequestApproval={handleRequestApproval}
-          />
-        ) : (
-          <ScrollView style={{ flex: 1 }}>
-            {activeView === 'schedule' && (
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>Today's Appointments</Text>
-                  <TouchableOpacity style={styles.addBtn}>
-                    <Plus size={16} color="#fff" />
-                    <Text style={styles.addBtnText}>Book Client</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {appointmentsForStylist.map((app) => {
-                  const customer = mockData.customers.find(c => c.id === app.customerId);
-                  return (
-                    <View key={app.id} style={styles.card}>
-                      <View style={styles.timeInfo}>
-                        <Text style={styles.appTime}>{app.time}</Text>
-                        <Text style={styles.appDuration}>{app.duration}m</Text>
-                      </View>
-                      <View style={styles.cardMain}>
-                        <Text style={styles.clientName}>{customer?.name || app.clientName || "Unknown"}</Text>
-                        <Text style={styles.serviceType}>Hair Cut & Blowout</Text>
-                      </View>
-                      <View style={[styles.badge, app.status === 'confirmed' ? styles.badgeConfirmed : styles.badgePending]}>
-                        <Text style={styles.badgeText}>{app.status}</Text>
-                      </View>
-                    </View>
-                  );
-                })}
-              </View>
-            )}
-
-            {activeView === 'contacts' && (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>My Client List</Text>
-                {myCustomers.map((cust) => (
-                  <View key={cust.id} style={styles.card}>
-                    <View style={styles.avatarSmall}>
-                      <Text style={styles.avatarText}>{cust.name[0]}</Text>
-                    </View>
-                    <View style={styles.cardMain}>
-                      <Text style={styles.clientName}>{cust.name}</Text>
-                      <Text style={styles.serviceType}>{cust.phone}</Text>
-                    </View>
-                    <TouchableOpacity style={styles.bookSmallBtn}>
-                      <Text style={styles.bookSmallText}>Book</Text>
-                    </TouchableOpacity>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {activeView === 'blocked' && (
-              <View style={styles.section}>
-                <View style={styles.sectionHeader}>
-                  <Text style={styles.sectionTitle}>Unavailable Times</Text>
-                  <TouchableOpacity style={[styles.addBtn, { backgroundColor: '#ef4444' }]}>
-                    <Plus size={16} color="#fff" />
-                    <Text style={styles.addBtnText}>Block Time</Text>
-                  </TouchableOpacity>
-                </View>
-                {blockedSlots.map((block) => (
-                  <View key={block.id} style={styles.card}>
-                    <View style={[styles.timeInfo, { borderRightColor: '#ef444433' }]}>
-                      <Ban size={16} color="#ef4444" />
-                    </View>
-                    <View style={styles.cardMain}>
-                      <Text style={styles.clientName}>{block.reason}</Text>
-                      <Text style={styles.serviceType}>{block.date} • {block.startTime} - {block.endTime}</Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-          </ScrollView>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabBar}>
+        <TouchableOpacity 
+          style={[styles.tab, activeView === 'schedule' && styles.activeTab]} 
+          onPress={() => setActiveView('schedule')}
+        >
+          <Clock size={16} color={activeView === 'schedule' ? '#fff' : '#94a3b8'} />
+          <Text style={[styles.tabText, activeView === 'schedule' && styles.activeTabText]}>Daily</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tab, activeView === 'calendar' && styles.activeTab]} 
+          onPress={() => setActiveView('calendar')}
+        >
+          <LayoutGrid size={16} color={activeView === 'calendar' ? '#fff' : '#94a3b8'} />
+          <Text style={[styles.tabText, activeView === 'calendar' && styles.activeTabText]}>Calendar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tab, activeView === 'contacts' && styles.activeTab]} 
+          onPress={() => setActiveView('contacts')}
+        >
+          <Users size={16} color={activeView === 'contacts' ? '#fff' : '#94a3b8'} />
+          <Text style={[styles.tabText, activeView === 'contacts' && styles.activeTabText]}>Contacts</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tab, activeView === 'blocked' && styles.activeTab]} 
+          onPress={() => setActiveView('blocked')}
+        >
+          <Ban size={16} color={activeView === 'blocked' ? '#fff' : '#94a3b8'} />
+          <Text style={[styles.tabText, activeView === 'blocked' && styles.activeTabText]}>Blocked</Text>
+        </TouchableOpacity>
+        {pendingApprovals.length > 0 && (
+          <TouchableOpacity 
+            style={[styles.tab, activeView === 'approvals' && styles.activeTab]} 
+            onPress={() => setActiveView('approvals')}
+          >
+            <Clock size={16} color={activeView === 'approvals' ? '#fff' : '#94a3b8'} />
+            <Text style={[styles.tabText, activeView === 'approvals' && styles.activeTabText]}>Approvals</Text>
+            <View style={styles.badgeCount}>
+              <Text style={styles.badgeCountText}>{pendingApprovals.length}</Text>
+            </View>
+          </TouchableOpacity>
         )}
       </ScrollView>
-    </View>
+
+      {activeView === 'approvals' && (
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Pending Approvals</Text>
+          {pendingApprovals.length === 0 ? (
+            <Text style={{ color: '#64748b', fontSize: 14, textAlign: 'center', marginTop: 20 }}>
+              No pending approval requests
+            </Text>
+          ) : (
+            pendingApprovals.map((approval) => (
+              <View key={approval.id} style={styles.card}>
+                <View style={styles.timeInfo}>
+                  <Text style={styles.appTime}>{approval.day}</Text>
+                  <Text style={styles.appDuration}>{approval.start}</Text>
+                </View>
+                <View style={styles.cardMain}>
+                  <Text style={styles.clientName}>{approval.name}</Text>
+                  <Text style={styles.serviceType}>
+                    {approval.duration} mins • Overrides: {approval.blockedSlot?.reason || 'Unknown'}
+                  </Text>
+                </View>
+                <View style={styles.actionButtons}>
+                  <TouchableOpacity 
+                    style={[styles.actionBtn, styles.approveBtn]}
+                    onPress={() => approveBooking(approval)}
+                  >
+                    <Text style={styles.actionBtnText}>Approve</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[styles.actionBtn, styles.denyBtn]}
+                    onPress={() => setPendingApprovals(prev => prev.filter(a => a.id !== approval.id))}
+                  >
+                    <Text style={[styles.actionBtnText, styles.denyBtnText]}>Deny</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))
+          )}
+        </View>
+      )}
+
+      {activeView === 'calendar' ? (
+        <WeeklyCalendar 
+          onSchedule={handleSchedule} 
+          customers={myCustomers} 
+          appointments={calendarAppointments}
+          blockedSlots={blockedSlots}
+          onRequestApproval={handleRequestApproval}
+        />
+      ) : (
+        <ScrollView style={{ flex: 1 }}>
+          {activeView === 'schedule' && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Today's Appointments</Text>
+                <TouchableOpacity style={styles.addBtn}>
+                  <Plus size={16} color="#fff" />
+                  <Text style={styles.addBtnText}>Book Client</Text>
+                </TouchableOpacity>
+              </View>
+
+              {appointmentsForStylist.map((app) => {
+                const customer = mockData.customers.find(c => c.id === app.customerId);
+                return (
+                  <View key={app.id} style={styles.card}>
+                    <View style={styles.timeInfo}>
+                      <Text style={styles.appTime}>{app.time}</Text>
+                      <Text style={styles.appDuration}>{app.duration}m</Text>
+                    </View>
+                    <View style={styles.cardMain}>
+                      <Text style={styles.clientName}>{customer?.name || app.clientName || "Unknown"}</Text>
+                      <Text style={styles.serviceType}>Hair Cut & Blowout</Text>
+                    </View>
+                    <View style={[styles.badge, app.status === 'confirmed' ? styles.badgeConfirmed : styles.badgePending]}>
+                      <Text style={styles.badgeText}>{app.status}</Text>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+
+          {activeView === 'contacts' && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>My Client List</Text>
+              {myCustomers.map((cust) => (
+                <View key={cust.id} style={styles.card}>
+                  <View style={styles.avatarSmall}>
+                    <Text style={styles.avatarText}>{cust.name[0]}</Text>
+                  </View>
+                  <View style={styles.cardMain}>
+                    <Text style={styles.clientName}>{cust.name}</Text>
+                    <Text style={styles.serviceType}>{cust.phone}</Text>
+                  </View>
+                  <TouchableOpacity style={styles.bookSmallBtn}>
+                    <Text style={styles.bookSmallText}>Book</Text>
+                  </TouchableOpacity>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {activeView === 'blocked' && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Unavailable Times</Text>
+                <TouchableOpacity style={[styles.addBtn, { backgroundColor: '#ef4444' }]}>
+                  <Plus size={16} color="#fff" />
+                  <Text style={styles.addBtnText}>Block Time</Text>
+                </TouchableOpacity>
+              </View>
+              {blockedSlots.map((block) => (
+                <View key={block.id} style={styles.card}>
+                  <View style={[styles.timeInfo, { borderRightColor: '#ef444433' }]}>
+                    <Ban size={16} color="#ef4444" />
+                  </View>
+                  <View style={styles.cardMain}>
+                    <Text style={styles.clientName}>{block.reason}</Text>
+                    <Text style={styles.serviceType}>{block.date} • {block.startTime} - {block.endTime}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      )}
+    </ScrollView>
   );
 }
 
