@@ -26,11 +26,12 @@ function runReminders() {
 
   tomorrowApps.forEach(app => {
     const stylist = data.stylists.find(s => s.id === app.stylistId);
+    const customer = data.customers.find(c => c.id === app.customerId);
     
-    // In a real app, this would use Twilio or similar
-    const message = `Hi ${app.clientName}, this is ServiceGenie! Just a reminder for your appointment with ${stylist.name} tomorrow at ${app.time}. Please reply YES to confirm or NO to reschedule.`;
-    
-    console.log(`[SMS] Sending to ${app.clientPhone}: "${message}"`);
+    if (stylist && customer) {
+      const message = `Hi ${customer.name}, this is ServiceGenie! Just a reminder for your appointment with ${stylist.name} tomorrow at ${app.time}. Please reply YES to confirm or NO to reschedule.`;
+      console.log(`[SMS] Sending to ${customer.phone}: "${message}"`);
+    }
   });
 
   console.log(`Processed ${tomorrowApps.length} reminders.`);
