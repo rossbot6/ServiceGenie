@@ -1,15 +1,22 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { 
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, 
-  Modal, TextInput, PanResponder, Platform, KeyboardAvoidingView
+import { addDays, addWeeks, format, isBefore, setHours, setMinutes, startOfWeek, subWeeks } from 'date-fns';
+import { AlertTriangle, Check, ChevronLeft, ChevronRight, Clock, User, X } from 'lucide-react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Modal,
+  PanResponder, Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from 'react-native';
-import { format, startOfWeek, addDays, isBefore, setHours, setMinutes, subWeeks, addWeeks } from 'date-fns';
-import { X, Clock, User, AlertTriangle, Check, ChevronLeft, ChevronRight } from 'lucide-react-native';
 
 const TIME_COLUMN_WIDTH = 50;
 const CELL_HEIGHT = 40; 
 const SLOT_HEIGHT = CELL_HEIGHT / 2; 
-const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const HOURS = Array.from({ length: 11 }, (_, i) => i + 8); 
 const DAY_COLUMN_WIDTH = 70;
 
@@ -440,7 +447,9 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f172a' },
+  container: {
+    backgroundColor: '#0f172a',
+  },
   weekNav: {
     flexDirection: 'row',
     justifyContent: 'space-between',
