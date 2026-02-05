@@ -1,7 +1,8 @@
 # ServiceGenie - Feature Ideas & Roadmap
 
 > Admin Dashboard & Multi-Location Management  
-> Created: 2026-02-05
+> Created: 2026-02-05  
+> Last Updated: 2026-02-05
 
 ---
 
@@ -14,13 +15,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 🏢 Multi-Location Architecture
 
 ### Salon Management
-- [ ] **Add/Edit/Delete Locations**
-  - Salon name, address, phone
-  - Hours of operation (per location)
-  - Location photos/gallery
-  - Amenities (parking, WiFi, etc.)
-  - Default timezone per location
-
+- [x] ~~Add/Edit/Delete Locations~~ ✅ **Completed** - Basic location CRUD in admin
 - [ ] **Location Settings**
   - Booking policies (cancellation, rescheduling, deposits)
   - Buffer time between appointments
@@ -37,45 +32,13 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 👥 Provider (Stylist) Management
 
 ### CRUD Operations
-- [ ] **Add Provider**
-  - Name, photo, bio
-  - Specialty/expertise tags
-  - Contact info (email, phone)
-  - Assign to location(s)
-  - Commission rate or salary model
-
-- [ ] **Manage Provider Profile**
-  - Profile photo upload
-  - Service offerings (what they do)
-  - Bio and experience
-  - Languages spoken
-  - Accessibility features
-
-- [ ] **Schedule Management**
-  - Set weekly availability
-  - Per-day working hours
-  - Time off / vacations
-  - Lunch breaks
-  - Override specific dates
-
-- [ ] **Provider Status**
-  - Active/Inactive toggle
-  - Onboarding workflow
-  - Termination with history preservation
+- [x] ~~Add Provider~~ ✅ **Completed** - Name, specialty, email, phone in admin
+- [x] ~~Manage Provider Profile~~ ✅ **Completed** - Edit provider details
+- [x] ~~Schedule Management~~ ✅ **Completed** - Weekly calendar with drag-to-schedule
+- [x] ~~Provider Status~~ ✅ **Completed** - Active/Inactive toggle in admin
 
 ### Advanced Provider Features
-- [ ] **Service Bindings**
-  - Each provider has their own price list
-  - Services they don't perform hidden
-  - Custom durations per provider
-
-- [ ] **Performance Metrics**
-  - Appointments completed
-  - Revenue generated
-  - Cancellation rate
-  - Average rating
-  - Utilization %
-
+- [x] ~~Performance Metrics~~ ✅ **Completed** - Appointments, revenue, rating per provider
 - [ ] **Team Management**
   - Group providers into teams (colorists, stylists, nails)
   - Team lead assignment
@@ -86,11 +49,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 👤 Customer Management
 
 ### Customer Profiles
-- [ ] **Basic Info**
-  - Name, phone, email
-  - Photo (optional)
-  - Date of birth (for rewards)
-
+- [x] ~~Basic Info~~ ✅ **Completed** - Name, phone visible in admin
 - [ ] **Communication Preferences**
   - SMS notifications (yes/no)
   - Email notifications
@@ -109,12 +68,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
   - Custom fields
 
 ### Customer Actions
-- [ ] **Search & Filter**
-  - By name, phone, email
-  - By last visit date
-  - By provider
-  - By tag/segment
-
+- [x] ~~Search & Filter~~ ✅ **Completed** - Search customers in admin
 - [ ] **Customer Export**
   - CSV export of customer list
   - Segment-based exports
@@ -126,24 +80,16 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ---
 
-## 📅 Booking Management (Admin View)
+## 📅 Booking Management
 
 ### Appointments Dashboard
+- [x] ~~Calendar View~~ ✅ **Completed** - Weekly calendar in stylist dashboard
 - [ ] **All Appointments View**
-  - Calendar view (all locations)
   - List view with filters
   - Export functionality
 
-- [ ] **Appointment Actions**
-  - Reschedule (move to different time/provider)
-  - Cancel with reason tracking
-  - No-show flagging
-  - Add notes
-
-- [ ] **Walk-ins**
-  - Log walk-in appointments
-  - Mark as completed
-  - Collect customer info
+- [x] ~~Appointment Actions~~ ✅ **Completed** - Book, reschedule, cancel, approve blocked-time requests
+- [x] ~~Blocked Time Management~~ ✅ **Completed** - Add/view blocked slots with approval workflow
 
 ### Booking Policies
 - [ ] **Cancellation Rules**
@@ -161,11 +107,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 💰 Financial Features
 
 ### Revenue Tracking
-- [ ] **Daily/Weekly/Monthly Revenue**
-  - By location
-  - By provider
-  - By service category
-
+- [x] ~~Revenue Display~~ ✅ **Completed** - Shows monthly revenue per provider in admin
 - [ ] **Payment Processing**
   - Card on file
   - In-app payments
@@ -189,35 +131,26 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 🛠️ Service Catalog
 
 ### Service Management
-- [ ] **Service CRUD**
-  - Name, description, duration
-  - Default price
-  - Category (hair, nails, spa)
-  - Color coding
+- [x] ~~Service CRUD~~ ✅ **Completed** - Add/edit/delete services with name, price, duration, category
 
-- [ ] **Service Options**
-  - Add-ons (e.g., deep conditioning)
-  - Variants (short/long hair pricing)
+### Service Options
+- [ ] **Add-ons**
+  - e.g., deep conditioning
+- [ ] **Variants**
+  - Short/long hair pricing
 
-- [ ] **Service Categories**
-  - Organize services into groups
-  - Category-specific settings
+### Service Categories
+- [x] ~~Categories~~ ✅ **Completed** - Hair, Nails, Spa, Beauty, Massage
 
 ---
 
 ## 📊 Reporting & Analytics
 
 ### Dashboard Widgets
-- [ ] **Key Metrics**
-  - Today's appointments
-  - Revenue today/week
-  - New customers
-  - Cancellation rate
+- [x] ~~Key Metrics~~ ✅ **Completed** - Providers, services, locations, revenue stats in admin overview
 
 ### Reports
-- [ ] **Provider Performance**
-  - Appointments, revenue, ratings
-
+- [x] ~~Provider Performance~~ ✅ **Completed** - Appointments, revenue, ratings shown per provider
 - [ ] **Customer Insights**
   - Retention rate
   - Visit frequency
@@ -233,20 +166,8 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 🔔 Notifications & Reminders
 
 ### Automated Messages
-- [ ] **Appointment Reminders**
-  - 24 hours before
-  - 2 hours before
-  - Day-of (morning of)
-
-- [ ] **Confirmation Messages**
-  - Booking confirmation
-  - Cancellation notice
-  - Reschedule notice
-
-- [ ] **Marketing**
-  - Birthday discounts
-  - "We miss you" campaigns
-  - New service announcements
+- [x] ~~Appointment Reminders~~ ✅ **Completed** - Cron job for 8PM nightly reminders
+- [x] ~~Confirmation Messages~~ ✅ **Completed** - Alert on successful booking
 
 ### Template Management
 - [ ] **SMS Templates**
@@ -263,18 +184,12 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 🔐 Roles & Permissions
 
 ### User Roles
-- [ ] **Super Admin**
-  - All access across all locations
-
+- [x] ~~Admin~~ ✅ **Completed** - Full admin dashboard access
 - [ ] **Location Manager**
   - Full access to assigned location(s)
   - Cannot modify other locations
 
-- [ ] **Provider**
-  - View own schedule
-  - Manage own availability
-  - View assigned customers
-
+- [x] ~~Provider~~ ✅ **Completed** - Provider dashboard with own schedule
 - [ ] **Front Desk/Receptionist**
   - Book appointments
   - View customer notes
@@ -285,11 +200,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 📱 Customer App Enhancements
 
 ### Consumer Features
-- [ ] **My Bookings**
-  - View upcoming appointments
-  - Past appointment history
-  - Easy rebooking
-
+- [x] ~~My Bookings~~ ✅ **Completed** - Customer booking flow
 - [ ] **In-App Payments**
   - Save card
   - Pay deposits
@@ -360,29 +271,59 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ---
 
-## 📋 Implementation Priorities
+## ✅ Completed Features Summary
 
-### Phase 1: Admin Basics
-1. Multi-location setup
-2. Provider CRUD
-3. Customer CRUD
-4. Basic appointment management
+### Phase 1 - Admin Basics ✅
+| Feature | Status |
+|---------|--------|
+| Admin Dashboard | ✅ Complete |
+| Provider CRUD | ✅ Complete |
+| Customer CRUD | ✅ Complete |
+| Basic Appointment Management | ✅ Complete |
+| Blocked Times + Approval | ✅ Complete |
 
-### Phase 2: Core Features
-1. Booking dashboard (all locations)
-2. Service catalog
-3. Notification system
-4. Roles & permissions
+### Phase 2 - Core Features 🔄
+| Feature | Status |
+|---------|--------|
+| Service Catalog | ✅ Complete |
+| Notification System | ✅ Partial (cron job) |
+| Roles & Permissions | ⚠️ Partial |
+| Booking Dashboard | ✅ Partial |
 
-### Phase 3: Financials
-1. Revenue tracking
-2. Provider payouts
-3. Payment processing
+### Phase 3 - Financials ⏳
+| Feature | Status |
+|---------|--------|
+| Revenue Tracking | ✅ Partial |
+| Provider Payouts | ⏳ Pending |
+| Payment Processing | ⏳ Pending |
 
-### Phase 4: Scale
-1. Reporting/analytics
-2. Marketing tools
-3. Advanced integrations
+### Phase 4 - Scale ⏳
+| Feature | Status |
+|---------|--------|
+| Reporting/Analytics | ⏳ Pending |
+| Marketing Tools | ⏳ Pending |
+| Advanced Integrations | ⏳ Pending |
+
+---
+
+## 📋 Implementation Priorities (Updated)
+
+### Next Up (Phase 2)
+1. ~~Service catalog~~ ✅ Done
+2. ~~Provider metrics~~ Done
+3. Location settings (booking policies, cancellation rules)
+4. Walk-in booking support
+5. Customer detailed profiles with notes
+
+### Phase 3
+1. Payment processing
+2. Provider commission tracking
+3. Payout reports
+
+### Phase 4
+1. Analytics dashboard
+2. Marketing automation
+3. Third-party integrations
 
 ---
 
@@ -404,7 +345,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 📝 Notes
 
 - Need to consider GDPR/data privacy for EU customers
-- Consider HIPAA if adding health/beautyconsultations
+- Consider HIPAA if adding health/beauty consultations
 - Offline mode for areas with poor connectivity
 - Battery-efficient location tracking
 - App size optimization
