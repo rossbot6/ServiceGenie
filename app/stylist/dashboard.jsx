@@ -300,14 +300,12 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 24,
-    paddingTop: 40,
-    paddingBottom: 12,
+    paddingTop: 20,
+    paddingBottom: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#1e293b',
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
   },
   welcome: {
     color: '#94a3b8',
