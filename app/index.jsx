@@ -37,9 +37,14 @@ export default function Home() {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Top Professionals</Text>
-          <Link href="/stylist/dashboard" style={styles.adminLink}>
-            <Text style={styles.adminLinkText}>Provider Login</Text>
-          </Link>
+          <View style={{ flexDirection: 'row', gap: 16 }}>
+            <Link href="/admin">
+              <Text style={styles.adminLinkText}>Admin</Text>
+            </Link>
+            <Link href="/stylist/dashboard">
+              <Text style={styles.adminLinkText}>Provider</Text>
+            </Link>
+          </View>
         </View>
         
         {mockData.stylists.map((stylist) => (

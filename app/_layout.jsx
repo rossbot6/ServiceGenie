@@ -39,6 +39,13 @@ export default function Layout() {
             title: 'Stylist Dashboard',
           }} 
         />
+        <Stack.Screen 
+          name="admin" 
+          options={{ 
+            title: 'Admin Dashboard',
+            headerShown: false,
+          }} 
+        />
       </Stack>
       <StatusBar style="light" />
     </View>
