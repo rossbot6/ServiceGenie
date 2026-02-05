@@ -13,7 +13,7 @@ import {
   KeyboardAvoidingView
 } from 'react-native';
 import { format, startOfWeek, addDays, isBefore, setHours, setMinutes } from 'date-fns';
-import { X, Clock, User } from 'lucide-react-native';
+import { X, Clock, User, AlertTriangle, Check } from 'lucide-react-native';
 
 const TIME_COLUMN_WIDTH = 50;
 const CELL_HEIGHT = 40; 
@@ -21,10 +21,12 @@ const SLOT_HEIGHT = CELL_HEIGHT / 2;
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 const HOURS = Array.from({ length: 11 }, (_, i) => i + 8); 
 
-export default function WeeklyCalendar({ onSchedule, customers = [], appointments = [] }) {
+export default function WeeklyCalendar({ onSchedule, customers = [], appointments = [], blockedSlots = [], onRequestApproval }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [clientName, setClientName] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isOverBlockedTime, setIsOverBlockedTime] = useState(false);
+  const [approvalRequested, setApprovalRequested] = useState(false);
   
   const [dragSelection, setDragSelection] = useState(null); 
   const [isDragging, setIsDragging] = useState(false);
@@ -67,7 +69,10 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
       const slotIdx = Math.floor(touchY / SLOT_HEIGHT);
 
       if (dayIdx >= 0 && dayIdx < DAYS.length && slotIdx >= 0 && slotIdx < HOURS.length * 2) {
-        if (!isPast(dayIdx, slotIdx) && !isTimeOccupied(dayIdx, slotIdx)) {
+        const isBlocked = isTimeBlocked(dayIdx, slotIdx);
+        if (!isPast(dayIdx, slotIdx) && !isTimeOccupied(dayIdx, slotIdx) && !isBlocked) {
+          setIsOverBlockedTime(false);
+          setApprovalRequested(false);
           setIsDragging(true);
           setDragSelection({ dayIdx, startSlot: slotIdx, endSlot: slotIdx });
         }
@@ -97,6 +102,14 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
     onPanResponderRelease: () => {
       setIsDragging(false);
       if (dragSelection) {
+        // Check if selection overlaps with blocked time
+        const blockedOverlap = checkBlockedOverlap();
+        if (blockedOverlap) {
+          setIsOverBlockedTime(true);
+        } else {
+          setIsOverBlockedTime(false);
+          setApprovalRequested(false);
+        }
         setModalVisible(true);
       }
     },
@@ -104,7 +117,7 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
       setIsDragging(false);
       setDragSelection(null);
     },
-  }), [dragSelection, isDragging, containerLayout, appointments]);
+  }), [dragSelection, isDragging, containerLayout, appointments, blockedSlots]);
 
   const isPast = (dayIdx, slotIdx) => {
     const now = new Date();
@@ -130,6 +143,47 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
     });
   };
 
+  const isTimeBlocked = (dayIdx, slotIdx) => {
+    const dayName = DAYS[dayIdx];
+    const slotStartMins = (8 * 60) + (slotIdx * 30);
+    
+    return blockedSlots.some(block => {
+      if (block.day !== dayName) return false;
+      const blockStartMins = timeToMins(block.startTime);
+      const blockEndMins = timeToMins(block.endTime);
+      return slotStartMins >= blockStartMins && slotStartMins < blockEndMins;
+    });
+  };
+
+  const checkBlockedOverlap = () => {
+    if (!dragSelection) return false;
+    const dayName = DAYS[dragSelection.dayIdx];
+    
+    for (let slot = dragSelection.startSlot; slot <= dragSelection.endSlot; slot++) {
+      if (isTimeBlocked(dragSelection.dayIdx, slot)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const getBlockedInfo = () => {
+    if (!dragSelection) return null;
+    const dayName = DAYS[dragSelection.dayIdx];
+    
+    for (let slot = dragSelection.startSlot; slot <= dragSelection.endSlot; slot++) {
+      const block = blockedSlots.find(b => {
+        if (b.day !== dayName) return false;
+        const blockStartMins = timeToMins(b.startTime);
+        const blockEndMins = timeToMins(b.endTime);
+        const slotStartMins = (8 * 60) + (slot * 30);
+        return slotStartMins >= blockStartMins && slotStartMins < blockEndMins;
+      });
+      if (block) return block;
+    }
+    return null;
+  };
+
   const timeToMins = (timeStr) => {
     const [h, m] = timeStr.split(':').map(Number);
     return h * 60 + m;
@@ -143,6 +197,20 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
   };
 
   const getDurationMins = (start, end) => (end - start + 1) * 30;
+
+  const requestApproval = () => {
+    if (onRequestApproval && dragSelection) {
+      const block = getBlockedInfo();
+      onRequestApproval({
+        day: DAYS[dragSelection.dayIdx],
+        start: formatSlotTime(dragSelection.startSlot),
+        end: formatSlotTime(dragSelection.endSlot),
+        blockedSlot: block
+      });
+    }
+    setApprovalRequested(true);
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -186,7 +254,8 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                     style={[
                       styles.cell, 
                       slotIdx % 2 !== 0 && styles.halfCell,
-                      isPast(dayIdx, slotIdx) && styles.pastCell
+                      isPast(dayIdx, slotIdx) && styles.pastCell,
+                      isTimeBlocked(dayIdx, slotIdx) && styles.blockedCell
                     ]} 
                   />
                 ))}
@@ -204,6 +273,25 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                       style={[styles.appointmentBlock, { top, height }]}
                     >
                       <Text style={styles.appointmentText} numberOfLines={1}>{app.name}</Text>
+                    </View>
+                  );
+                })}
+                
+                {/* Render Blocked Slots */}
+                {blockedSlots.filter(block => block.day === dayName).map((block, idx) => {
+                  const startMins = timeToMins(block.startTime);
+                  const endMins = timeToMins(block.endTime);
+                  const offsetMins = startMins - (8 * 60);
+                  const height = ((endMins - startMins) / 30) * SLOT_HEIGHT;
+                  const top = offsetMins;
+
+                  return (
+                    <View 
+                      key={`blocked-${idx}`} 
+                      style={[styles.blockedBlock, { top, height }]}
+                    >
+                      <AlertTriangle size={12} color="#ef4444" />
+                      <Text style={styles.blockedText} numberOfLines={1}>{block.reason}</Text>
                     </View>
                   );
                 })}
@@ -305,27 +393,55 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                 </View>
               </View>
 
-              <TouchableOpacity 
-                style={[styles.confirmBtn, !clientName && styles.disabledBtn]}
-                disabled={!clientName}
-                onPress={() => {
-                  if (dragSelection) {
-                    onSchedule({ 
-                      name: clientName, 
-                      customerId: selectedCustomer?.id,
-                      day: DAYS[dragSelection.dayIdx],
-                      start: formatSlotTime(dragSelection.startSlot),
-                      duration: getDurationMins(dragSelection.startSlot, dragSelection.endSlot)
-                    });
-                    setModalVisible(false);
-                    setDragSelection(null);
-                    setClientName('');
-                    setSelectedCustomer(null);
-                  }
-                }}
-              >
-                <Text style={styles.confirmBtnText}>Confirm Booking</Text>
-              </TouchableOpacity>
+              {/* Blocked Time Warning */}
+              {isOverBlockedTime && (
+                <View style={styles.blockedWarning}>
+                  <AlertTriangle size={20} color="#ef4444" />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.blockedWarningTitle}>Blocked Time Period</Text>
+                    <Text style={styles.blockedWarningText}>
+                      This time overlaps with a blocked slot ({getBlockedInfo()?.reason || 'No reason specified'})
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+              {approvalRequested ? (
+                <View style={styles.approvalPending}>
+                  <Check size={20} color="#10b981" />
+                  <Text style={styles.approvalPendingText}>Approval request sent to provider</Text>
+                </View>
+              ) : (
+                <TouchableOpacity 
+                  style={[styles.confirmBtn, !clientName && styles.disabledBtn]}
+                  disabled={!clientName}
+                  onPress={() => {
+                    if (dragSelection) {
+                      if (isOverBlockedTime) {
+                        // Request approval for blocked time
+                        requestApproval();
+                      } else {
+                        // Normal booking
+                        onSchedule({ 
+                          name: clientName, 
+                          customerId: selectedCustomer?.id,
+                          day: DAYS[dragSelection.dayIdx],
+                          start: formatSlotTime(dragSelection.startSlot),
+                          duration: getDurationMins(dragSelection.startSlot, dragSelection.endSlot)
+                        });
+                        setModalVisible(false);
+                        setDragSelection(null);
+                        setClientName('');
+                        setSelectedCustomer(null);
+                      }
+                    }
+                  }}
+                >
+                  <Text style={styles.confirmBtnText}>
+                    {isOverBlockedTime ? 'Request Approval' : 'Confirm Booking'}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
@@ -405,6 +521,67 @@ const styles = StyleSheet.create({
   pastCell: {
     backgroundColor: 'rgba(255,255,255,0.02)',
     opacity: 0.3,
+  },
+  blockedCell: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderBottomColor: 'rgba(239, 68, 68, 0.2)',
+  },
+  blockedBlock: {
+    position: 'absolute',
+    left: 2,
+    right: 2,
+    backgroundColor: 'rgba(239, 68, 68, 0.15)',
+    borderRadius: 6,
+    padding: 4,
+    zIndex: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  blockedText: {
+    color: '#fca5a5',
+    fontSize: 9,
+    fontWeight: '700',
+  },
+  blockedWarning: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+  },
+  blockedWarningTitle: {
+    color: '#ef4444',
+    fontSize: 14,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+  blockedWarningText: {
+    color: '#fca5a5',
+    fontSize: 12,
+    lineHeight: 16,
+  },
+  approvalPending: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(16, 185, 129, 0.3)',
+    borderRadius: 12,
+    padding: 14,
+  },
+  approvalPendingText: {
+    color: '#10b981',
+    fontSize: 14,
+    fontWeight: '600',
   },
   selectionOverlay: {
     position: 'absolute',

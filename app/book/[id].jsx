@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Calendar as CalendarIcon, Clock, ChevronLeft, CheckCircle2 } from 'lucide-react-native';
+import { Calendar as CalendarIcon, Clock, ChevronLeft, CheckCircle2, AlertTriangle } from 'lucide-react-native';
 import { useState } from 'react';
 import { format, addDays } from 'date-fns';
 import mockData from '../../data/mockData.json';
@@ -14,6 +14,15 @@ export default function BookAppointment() {
   const [selectedTime, setSelectedTime] = useState(null);
 
   const dates = [new Date(), addDays(new Date(), 1), addDays(new Date(), 2), addDays(new Date(), 3), addDays(new Date(), 4)];
+  
+  // Get blocked slots for selected date
+  const getBlockedSlotsForDate = () => {
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    return mockData.blockedSlots.filter(block => 
+      block.stylistId === stylist.id && 
+      block.date === dateStr
+    );
+  };
   
   // Dynamic time slots based on working hours and blocked slots
   const getTimeSlots = () => {
@@ -41,7 +50,19 @@ export default function BookAppointment() {
     });
   };
 
+  // Check if a specific time is blocked
+  const isTimeBlocked = (time) => {
+    const dateStr = format(selectedDate, 'yyyy-MM-dd');
+    return mockData.blockedSlots.some(block => 
+      block.stylistId === stylist.id && 
+      block.date === dateStr && 
+      time >= block.startTime && 
+      time < block.endTime
+    );
+  };
+
   const timeSlots = getTimeSlots();
+  const blockedSlots = getBlockedSlotsForDate();
 
   const handleBook = () => {
     if (!selectedTime) {
@@ -74,7 +95,10 @@ export default function BookAppointment() {
               <TouchableOpacity 
                 key={idx} 
                 style={[styles.dateCard, isSelected && styles.selectedDateCard]}
-                onPress={() => setSelectedDate(date)}
+                onPress={() => {
+                  setSelectedDate(date);
+                  setSelectedTime(null);
+                }}
               >
                 <Text style={[styles.dateDay, isSelected && styles.selectedText]}>{format(date, 'EEE')}</Text>
                 <Text style={[styles.dateNumber, isSelected && styles.selectedText]}>{format(date, 'd')}</Text>
@@ -86,21 +110,63 @@ export default function BookAppointment() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Available Times</Text>
+        
+        {/* Show blocked times info */}
+        {blockedSlots.length > 0 && (
+          <View style={styles.blockedInfo}>
+            <AlertTriangle size={14} color="#ef4444" />
+            <Text style={styles.blockedInfoText}>
+              Unavailable: {blockedSlots.map(b => `${b.startTime}-${b.endTime}`).join(', ')} ({blockedSlots[0]?.reason})
+            </Text>
+          </View>
+        )}
+        
         <View style={styles.timeGrid}>
-          {timeSlots.map((time) => {
+          {['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'].map((time) => {
+            const isAvailable = timeSlots.includes(time);
             const isSelected = selectedTime === time;
+            const isBlocked = !isAvailable && !isTimeWithinWorkingHours(time);
+            
             return (
               <TouchableOpacity 
                 key={time} 
-                style={[styles.timeSlot, isSelected && styles.selectedTimeSlot]}
-                onPress={() => setSelectedTime(time)}
+                style={[
+                  styles.timeSlot,
+                  isSelected && styles.selectedTimeSlot,
+                  !isAvailable && !isBlocked && styles.unavailableSlot,
+                  isBlocked && styles.blockedSlot
+                ]}
+                onPress={() => {
+                  if (isAvailable) {
+                    setSelectedTime(time);
+                  } else if (isBlocked) {
+                    const block = blockedSlots.find(b => time >= b.startTime && time < b.endTime);
+                    Alert.alert(
+                      'Time Unavailable',
+                      `This time is blocked (${block?.reason || 'Provider unavailable'}). Please choose another time.`
+                    );
+                  }
+                }}
+                disabled={!isAvailable}
               >
-                <Text style={[styles.timeText, isSelected && styles.selectedText]}>{time}</Text>
+                <Text style={[
+                  styles.timeText, 
+                  isSelected && styles.selectedText,
+                  !isAvailable && styles.unavailableText,
+                  isBlocked && styles.blockedText
+                ]}>
+                  {time}
+                </Text>
+                {!isAvailable && (
+                  <Text style={styles.slotStatus}>
+                    {isBlocked ? 'Blocked' : 'Unavailable'}
+                  </Text>
+                )}
               </TouchableOpacity>
             );
           })}
         </View>
-        {timeSlots.length === 0 && (
+        {timeSlots.length === 0 && !blockedSlots.length && (
           <Text style={{ color: '#64748b', fontSize: 14 }}>No availability on this date.</Text>
         )}
       </View>
@@ -117,6 +183,11 @@ export default function BookAppointment() {
     </ScrollView>
   );
 }
+
+const isTimeWithinWorkingHours = (time, stylist) => {
+  // Helper to check if time is within working hours
+  return true; // Simplified for now
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -175,6 +246,22 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     marginTop: 4,
   },
+  blockedInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.2)',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+  },
+  blockedInfoText: {
+    color: '#fca5a5',
+    fontSize: 12,
+    flex: 1,
+  },
   timeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -194,12 +281,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#6366f1',
     borderColor: '#818cf8',
   },
+  unavailableSlot: {
+    backgroundColor: '#0f172a',
+    borderColor: 'rgba(255,255,255,0.05)',
+    opacity: 0.6,
+  },
+  blockedSlot: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+  },
   timeText: {
     color: '#fff',
     fontWeight: '600',
   },
   selectedText: {
     color: '#fff',
+  },
+  unavailableText: {
+    color: '#64748b',
+  },
+  blockedText: {
+    color: '#fca5a5',
+  },
+  slotStatus: {
+    fontSize: 9,
+    color: '#64748b',
+    marginTop: 2,
   },
   footer: {
     padding: 24,

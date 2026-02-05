@@ -11,6 +11,7 @@ const DAY_MAP = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 export default function StylistDashboard() {
   const router = useRouter();
   const [activeView, setActiveView] = useState('schedule');
+  const [pendingApprovals, setPendingApprovals] = useState([]);
   
   const stylist = mockData.stylists[0]; 
   
@@ -22,7 +23,10 @@ export default function StylistDashboard() {
   [localAppointments, stylist.id]);
 
   const myCustomers = mockData.customers.filter(c => c.linkedStylists.includes(stylist.id));
-  const blockedSlots = mockData.blockedSlots.filter(b => b.stylistId === stylist.id);
+  const blockedSlots = mockData.blockedSlots.filter(b => b.stylistId === stylist.id).map(block => ({
+    ...block,
+    day: DAY_MAP[getDay(parseISO(block.date))]
+  }));
 
   // Map backend-style appointments to calendar-style objects
   const calendarAppointments = useMemo(() => {
@@ -60,6 +64,45 @@ export default function StylistDashboard() {
 
     setLocalAppointments(prev => [...prev, newApp]);
     Alert.alert("Success", `Scheduled ${data.name} for ${data.day} at ${data.start}`);
+  };
+
+  const handleRequestApproval = (data) => {
+    const approvalId = 'approval_' + Date.now();
+    setPendingApprovals(prev => [...prev, {
+      id: approvalId,
+      ...data,
+      stylistId: stylist.id,
+      requestedAt: new Date().toISOString()
+    }]);
+    Alert.alert(
+      "Approval Request Sent",
+      `Request to book during blocked time (${data.blockedSlot?.reason || 'Unknown'}) has been sent to the provider.`
+    );
+  };
+
+  const approveBooking = (approval) => {
+    // Remove from pending approvals
+    setPendingApprovals(prev => prev.filter(a => a.id !== approval.id));
+    
+    // Add the appointment
+    const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+    const dayOffset = DAY_MAP.indexOf(approval.day);
+    const actualDate = format(addDays(weekStart, dayOffset - 1), 'yyyy-MM-dd');
+
+    const newApp = {
+      id: 'app_' + Math.random().toString(36).substr(2, 9),
+      stylistId: stylist.id,
+      customerId: approval.customerId || null,
+      clientName: approval.name,
+      date: actualDate,
+      time: approval.start,
+      duration: approval.duration,
+      status: 'approved',
+      approvedFromBlocked: true
+    };
+
+    setLocalAppointments(prev => [...prev, newApp]);
+    Alert.alert("Approved", `Booking approved for ${approval.name} on ${approval.day} at ${approval.start}`);
   };
 
   return (
@@ -105,14 +148,68 @@ export default function StylistDashboard() {
               <Ban size={16} color={activeView === 'blocked' ? '#fff' : '#94a3b8'} />
               <Text style={[styles.tabText, activeView === 'blocked' && styles.activeTabText]}>Blocked</Text>
             </TouchableOpacity>
+            {pendingApprovals.length > 0 && (
+              <TouchableOpacity 
+                style={[styles.tab, activeView === 'approvals' && styles.activeTab]} 
+                onPress={() => setActiveView('approvals')}
+              >
+                <Clock size={16} color={activeView === 'approvals' ? '#fff' : '#94a3b8'} />
+                <Text style={[styles.tabText, activeView === 'approvals' && styles.activeTabText]}>Approvals</Text>
+                <View style={styles.badgeCount}>
+                  <Text style={styles.badgeCountText}>{pendingApprovals.length}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         </View>
+
+        {activeView === 'approvals' && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Pending Approvals</Text>
+            {pendingApprovals.length === 0 ? (
+              <Text style={{ color: '#64748b', fontSize: 14, textAlign: 'center', marginTop: 20 }}>
+                No pending approval requests
+              </Text>
+            ) : (
+              pendingApprovals.map((approval) => (
+                <View key={approval.id} style={styles.card}>
+                  <View style={styles.timeInfo}>
+                    <Text style={styles.appTime}>{approval.day}</Text>
+                    <Text style={styles.appDuration}>{approval.start}</Text>
+                  </View>
+                  <View style={styles.cardMain}>
+                    <Text style={styles.clientName}>{approval.name}</Text>
+                    <Text style={styles.serviceType}>
+                      {approval.duration} mins • Overrides: {approval.blockedSlot?.reason || 'Unknown'}
+                    </Text>
+                  </View>
+                  <View style={styles.actionButtons}>
+                    <TouchableOpacity 
+                      style={[styles.actionBtn, styles.approveBtn]}
+                      onPress={() => approveBooking(approval)}
+                    >
+                      <Text style={styles.actionBtnText}>Approve</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={[styles.actionBtn, styles.denyBtn]}
+                      onPress={() => setPendingApprovals(prev => prev.filter(a => a.id !== approval.id))}
+                    >
+                      <Text style={[styles.actionBtnText, styles.denyBtnText]}>Deny</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
+        )}
 
         {activeView === 'calendar' ? (
           <WeeklyCalendar 
             onSchedule={handleSchedule} 
             customers={myCustomers} 
             appointments={calendarAppointments}
+            blockedSlots={blockedSlots}
+            onRequestApproval={handleRequestApproval}
           />
         ) : (
           <ScrollView style={{ flex: 1 }}>
@@ -370,5 +467,43 @@ const styles = StyleSheet.create({
     color: '#818cf8',
     fontSize: 11,
     fontWeight: '700',
+  },
+  badgeCount: {
+    backgroundColor: '#ef4444',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 4,
+  },
+  badgeCountText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  actionBtn: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  approveBtn: {
+    backgroundColor: '#10b981',
+  },
+  denyBtn: {
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+  },
+  actionBtnText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  denyBtnText: {
+    color: '#ef4444',
   }
 });
