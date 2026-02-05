@@ -251,10 +251,10 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.gridContainer}
         >
-          {/* Time Column */}
+          {/* Time Column - 2 rows per hour to match grid */}
           <View style={styles.timeColumn}>
             {HOURS.map(hour => (
-              <View key={hour} style={[styles.timeCell, { height: CELL_HEIGHT }]}>
+              <View key={hour} style={styles.timeCell}>
                 <Text style={styles.timeLabel}>{hour}:00</Text>
               </View>
             ))}
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   gridScroll: { flex: 1 },
   gridContainer: { flexDirection: 'row' },
   timeColumn: { width: TIME_COLUMN_WIDTH, borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.05)' },
-  timeCell: { alignItems: 'center', justifyContent: 'flex-start', paddingTop: 4 },
+  timeCell: { height: CELL_HEIGHT * 2, justifyContent: 'flex-start', paddingTop: 4, paddingRight: 8 },
   timeLabel: { color: '#64748b', fontSize: 9, fontWeight: '700' },
   daysContainer: { flexDirection: 'row' },
   dayColumn: { width: DAY_COLUMN_WIDTH, borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.05)', position: 'relative' },
