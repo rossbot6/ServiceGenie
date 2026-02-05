@@ -239,11 +239,8 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
         horizontal 
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.headerRow}
-        scrollEnabled={false}
       >
-        <View style={styles.timeColumnHeader}>
-          <Text style={styles.timeColumnHeaderText}>Time</Text>
-        </View>
+
         {DAYS.map((day, i) => {
           const today = isToday(i);
           return (

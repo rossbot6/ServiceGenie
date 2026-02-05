@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, FlatList, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, FlatList, Image, Alert, RefreshControl } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Clock, User, Settings, MoreHorizontal, Plus, Users, Ban, LayoutGrid } from 'lucide-react-native';
 import { useState, useMemo } from 'react';
@@ -12,6 +12,7 @@ export default function StylistDashboard() {
   const router = useRouter();
   const [activeView, setActiveView] = useState('schedule');
   const [pendingApprovals, setPendingApprovals] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   
   const stylist = mockData.stylists[0]; 
   
@@ -105,20 +106,33 @@ export default function StylistDashboard() {
     Alert.alert("Approved", `Booking approved for ${approval.name} on ${approval.day} at ${approval.start}`);
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.welcome}>Elena Rodriguez</Text>
-            <Text style={styles.name}>Management</Text>
-          </View>
-          <TouchableOpacity style={styles.settingsBtn}>
-            <Settings size={20} color="#fff" />
-          </TouchableOpacity>
-        </View>
+  // Pull to refresh
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    // Simulate data refresh - in real app, fetch from API here
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    setRefreshing(false);
+  };
 
+  return (
+    <ScrollView
+      style={{ flex: 1, backgroundColor: '#0f172a' }}
+      contentContainerStyle={{ flexGrow: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#6366f1']} tintColor="#6366f1" />
+      }
+    >
+      <View style={styles.header}>
         <View>
+          <Text style={styles.welcome}>Elena Rodriguez</Text>
+          <Text style={styles.name}>Management</Text>
+        </View>
+        <TouchableOpacity style={styles.settingsBtn}>
+          <Settings size={20} color="#fff" />
+        </TouchableOpacity>
+      </View>
+
+      <View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabBar}>
             <TouchableOpacity 
               style={[styles.tab, activeView === 'schedule' && styles.activeTab]} 
@@ -288,7 +302,7 @@ export default function StylistDashboard() {
             )}
           </ScrollView>
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 }
