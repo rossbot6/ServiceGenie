@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Modal,
   PanResponder, Platform,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,13 +21,14 @@ const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const HOURS = Array.from({ length: 11 }, (_, i) => i + 8); 
 const DAY_COLUMN_WIDTH = 70;
 
-export default function WeeklyCalendar({ onSchedule, customers = [], appointments = [], blockedSlots = [], onRequestApproval }) {
+export default function WeeklyCalendar({ onSchedule, customers = [], appointments = [], blockedSlots = [], onRequestApproval, onRefresh }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [clientName, setClientName] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [isOverBlockedTime, setIsOverBlockedTime] = useState(false);
   const [approvalRequested, setApprovalRequested] = useState(false);
   const [currentWeekStart, setCurrentWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [refreshing, setRefreshing] = useState(false);
   
   const [dragSelection, setDragSelection] = useState(null); 
   const [isDragging, setIsDragging] = useState(false);
@@ -39,6 +41,15 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
   const goToPreviousWeek = () => setCurrentWeekStart(prev => subWeeks(prev, 1));
   const goToNextWeek = () => setCurrentWeekStart(prev => addWeeks(prev, 1));
   const goToToday = () => setCurrentWeekStart(startOfWeek(new Date(), { weekStartsOn: 1 }));
+
+  // Pull to refresh
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    if (onRefresh) {
+      await onRefresh();
+    }
+    setRefreshing(false);
+  };
 
   const getDateForDay = (dayIndex) => addDays(currentWeekStart, dayIndex);
   const isToday = (dayIndex) => format(getDateForDay(dayIndex), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
@@ -252,6 +263,9 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
         scrollEnabled={!isDragging}
         onScroll={updateLayout}
         scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#6366f1']} tintColor="#6366f1" />
+        }
       >
         <ScrollView 
           horizontal 
