@@ -35,6 +35,10 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
   const containerRef = useRef(null);
   const scrollRef = useRef(null);
 
+  // Get current week's month for display
+  const currentWeekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const currentMonth = format(currentWeekStart, 'MMMM yyyy');
+
   // Sync layout info periodically or on change
   const updateLayout = () => {
     containerRef.current?.measure((x, y, width, height, pageX, pageY) => {
@@ -214,6 +218,12 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
 
   return (
     <View style={styles.container}>
+      {/* Month Display - Left Side */}
+      <View style={styles.monthContainer}>
+        <Text style={styles.monthText}>{currentMonth}</Text>
+      </View>
+      
+      {/* Day Headers */}
       <View style={styles.header}>
         <View style={{ width: TIME_COLUMN_WIDTH }} />
         {DAYS.map((day, i) => (
@@ -222,6 +232,13 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
             <Text style={styles.dateText}>{format(addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), i), 'd')}</Text>
           </View>
         ))}
+      </View>
+      
+      {/* Month Label Above Time Column */}
+      <View style={styles.monthLabelRow}>
+        <View style={styles.monthLabelContainer}>
+          <Text style={styles.monthLabelText}>{currentMonth}</Text>
+        </View>
       </View>
       
       <ScrollView 
@@ -455,11 +472,42 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0f172a',
   },
+  monthContainer: {
+    position: 'absolute',
+    left: 8,
+    top: 4,
+    zIndex: 100,
+  },
+  monthText: {
+    color: '#6366f1',
+    fontSize: 12,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  monthLabelRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.05)',
+  },
+  monthLabelContainer: {
+    width: TIME_COLUMN_WIDTH,
+    paddingVertical: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  monthLabelText: {
+    color: '#6366f1',
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
   header: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255,255,255,0.05)',
     paddingBottom: 4,
+    paddingLeft: TIME_COLUMN_WIDTH,
   },
   dayHeader: {
     flex: 1,
