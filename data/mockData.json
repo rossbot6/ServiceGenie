@@ -1,0 +1,52 @@
+{
+  "stylists": [
+    {
+      "id": "s1",
+      "name": "Elena Rodriguez",
+      "specialty": "Master Hair Stylist",
+      "image": "https://images.unsplash.com/photo-1595152772835-219674b2a8a6?auto=format&fit=crop&q=80&w=150",
+      "availability": {
+        "1": ["09:00", "17:00"],
+        "2": ["09:00", "17:00"],
+        "3": ["09:00", "17:00"],
+        "4": ["09:00", "17:00"],
+        "5": ["09:00", "15:00"]
+      }
+    },
+    {
+      "id": "s2",
+      "name": "Marcus Chen",
+      "specialty": "Nail Technician",
+      "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=150",
+      "availability": {
+        "1": ["10:00", "19:00"],
+        "2": ["10:00", "19:00"],
+        "4": ["10:00", "19:00"],
+        "5": ["10:00", "21:00"],
+        "6": ["09:00", "14:00"]
+      }
+    }
+  ],
+  "appointments": [
+    {
+      "id": "a1",
+      "stylistId": "s1",
+      "clientName": "Sarah Parker",
+      "clientPhone": "+15550123",
+      "date": "2026-02-05",
+      "time": "10:30",
+      "duration": 60,
+      "status": "pending"
+    },
+    {
+      "id": "a2",
+      "stylistId": "s2",
+      "clientName": "John Doe",
+      "clientPhone": "+15550199",
+      "date": "2026-02-05",
+      "time": "14:00",
+      "duration": 45,
+      "status": "confirmed"
+    }
+  ]
+}
