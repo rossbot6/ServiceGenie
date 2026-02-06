@@ -15,10 +15,10 @@ import {
 } from 'react-native';
 
 const TIME_COLUMN_WIDTH = 50;
-const CELL_HEIGHT = 40; 
-const SLOT_HEIGHT = CELL_HEIGHT / 2; 
+const CELL_HEIGHT = 40;
+const SLOT_HEIGHT = CELL_HEIGHT / 2;
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const HOURS = Array.from({ length: 11 }, (_, i) => i + 8); 
+const HOURS = Array.from({ length: 11 }, (_, i) => i + 8);
 const DAY_COLUMN_WIDTH = 70;
 
 export default function WeeklyCalendar({ onSchedule, customers = [], appointments = [], blockedSlots = [], onRequestApproval, onRefresh }) {
@@ -29,8 +29,8 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
   const [approvalRequested, setApprovalRequested] = useState(false);
   const [currentWeekStart, setCurrentWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
   const [refreshing, setRefreshing] = useState(false);
-  
-  const [dragSelection, setDragSelection] = useState(null); 
+
+  const [dragSelection, setDragSelection] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
   const [containerLayout, setContainerLayout] = useState({ width: 0, height: 0, pageX: 0, pageY: 0 });
 
@@ -70,7 +70,7 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
 
   const suggestedCustomers = useMemo(() => {
     if (!clientName || selectedCustomer) return [];
-    return customers.filter(c => 
+    return customers.filter(c =>
       c.name.toLowerCase().includes(clientName.toLowerCase())
     );
   }, [clientName, customers, selectedCustomer]);
@@ -78,11 +78,11 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
   const panResponder = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
-    
+
     onPanResponderGrant: (evt) => {
       const touchX = evt.nativeEvent.pageX - containerLayout.pageX;
       const touchY = evt.nativeEvent.pageY - containerLayout.pageY;
-      
+
       const dayWidth = containerLayout.width / DAYS.length;
       const dayIdx = Math.floor(touchX / dayWidth);
       const slotIdx = Math.floor(touchY / SLOT_HEIGHT);
@@ -102,7 +102,7 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
       if (!isDragging || !dragSelection) return;
       const relativeY = evt.nativeEvent.pageY - containerLayout.pageY;
       const currentSlotIdx = Math.floor(relativeY / SLOT_HEIGHT);
-      
+
       if (currentSlotIdx >= 0 && currentSlotIdx < HOURS.length * 2) {
         setDragSelection(prev => {
           if (!prev) return null;
@@ -234,27 +234,8 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
         </TouchableOpacity>
       </View>
 
-      {/* Day Headers */}
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.headerRow}
-      >
-
-        {DAYS.map((day, i) => {
-          const today = isToday(i);
-          return (
-            <View key={day} style={[styles.dayHeader, today && styles.todayHeader]}>
-              <Text style={[styles.dayText, today && styles.todayText]}>{day}</Text>
-              <Text style={[styles.dateText, today && styles.todayDateText]}>{format(getDateForDay(i), 'd')}</Text>
-              <Text style={styles.monthAbbrev}>{format(getDateForDay(i), 'MMM')}</Text>
-            </View>
-          );
-        })}
-      </ScrollView>
-      
       {/* Grid with ScrollView for horizontal scrolling */}
-      <ScrollView 
+      <ScrollView
         ref={scrollRef}
         style={styles.gridScroll}
         scrollEnabled={!isDragging}
@@ -264,13 +245,17 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#6366f1']} tintColor="#6366f1" />
         }
       >
-        <ScrollView 
-          horizontal 
+        <ScrollView
+          horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.gridContainer}
         >
+
           {/* Time Column - 2 rows per hour to match grid */}
           <View style={styles.timeColumn}>
+            <View style={styles.timeCell}>
+                <Text style={styles.monthAbbrev}>TIME</Text>
+            </View>
             {HOURS.map(hour => (
               <View key={hour} style={styles.timeCell}>
                 <Text style={styles.timeLabel}>{hour}:00</Text>
@@ -279,23 +264,38 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
           </View>
 
           {/* Day Columns */}
-          <View 
+          <View
             ref={containerRef}
-            style={styles.daysContainer} 
+            style={styles.daysContainer}
             onLayout={updateLayout}
             {...panResponder.panHandlers}
           >
-            {DAYS.map((dayName, dayIdx) => (
+            {/* {DAYS.map((day, i) => {
+              const today = isToday(i);
+              return (
+                <View key={day} style={[styles.dayHeader, today && styles.todayHeader]}>
+                  <Text style={[styles.dayText, today && styles.todayText]}>{day}</Text>
+                  <Text style={[styles.dateText, today && styles.todayDateText]}>{format(getDateForDay(i), 'd')}</Text>
+                  <Text style={styles.monthAbbrev}>{format(getDateForDay(i), 'MMM')}</Text>
+                </View>
+              );
+            })} */}
+            {DAYS.map((dayName, dayIdx) => {
+              const today = isToday(dayIdx);
+              return (
               <View key={dayIdx} style={styles.dayColumn}>
+                <Text style={[styles.dayText, today && styles.todayText]}>{dayName}</Text>
+                 <Text style={[styles.dateText, today && styles.todayDateText]}>{format(getDateForDay(dayIdx), 'd')}</Text>
+                 <Text style={styles.monthAbbrev}>{format(getDateForDay(dayIdx), 'MMM')}</Text>
                 {Array.from({ length: HOURS.length * 2 }).map((_, slotIdx) => (
-                  <View 
-                    key={slotIdx} 
+                  <View
+                    key={slotIdx}
                     style={[
-                      styles.cell, 
+                      styles.cell,
                       slotIdx % 2 !== 0 && styles.halfCell,
                       isPast(dayIdx, slotIdx) && styles.pastCell,
                       isTimeBlocked(dayIdx, slotIdx) && styles.blockedCell
-                    ]} 
+                    ]}
                   />
                 ))}
 
@@ -312,7 +312,7 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                     </View>
                   );
                 })}
-                
+
                 {/* Render Blocked Slots */}
                 {blockedSlots.filter(block => block.day === dayName).map((block, idx) => {
                   const startMins = timeToMins(block.startTime);
@@ -328,10 +328,10 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                     </View>
                   );
                 })}
-                
+
                 {/* Selection Overlay */}
                 {dragSelection && dragSelection.dayIdx === dayIdx && (
-                  <View 
+                  <View
                     style={[
                       styles.selectionOverlay,
                       {
@@ -344,7 +344,8 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                   </View>
                 )}
               </View>
-            ))}
+              );
+            })}
           </View>
         </ScrollView>
       </ScrollView>
@@ -361,7 +362,7 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
             <ScrollView style={styles.form} bounces={false}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Client Name</Text>
-                <TextInput 
+                <TextInput
                   style={styles.input}
                   placeholder="Search or enter name"
                   placeholderTextColor="#64748b"
@@ -375,8 +376,8 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                 {suggestedCustomers.length > 0 && (
                   <View style={styles.lookupList}>
                     {suggestedCustomers.map(cust => (
-                      <TouchableOpacity 
-                        key={cust.id} 
+                      <TouchableOpacity
+                        key={cust.id}
                         style={styles.lookupItem}
                         onPress={() => {
                           setClientName(cust.name);
@@ -424,7 +425,7 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                   <Text style={styles.approvalPendingText}>Approval request sent to provider</Text>
                 </View>
               ) : (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.confirmBtn, !clientName && styles.disabledBtn]}
                   disabled={!clientName}
                   onPress={() => {
@@ -432,8 +433,8 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                       if (isOverBlockedTime) {
                         requestApproval();
                       } else {
-                        onSchedule({ 
-                          name: clientName, 
+                        onSchedule({
+                          name: clientName,
                           customerId: selectedCustomer?.id,
                           day: DAYS[dragSelection.dayIdx],
                           start: formatSlotTime(dragSelection.startSlot),

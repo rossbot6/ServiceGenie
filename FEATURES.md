@@ -362,3 +362,52 @@ npm run web
 - Dashboard is hardcoded to stylist_001 for demo
 - Calendar only shows current week (add week navigation)
 - All state is local (add persistence/realtime sync)
+
+---
+
+## 🗄️ Supabase Setup
+
+### Quick Start
+1. Create project at https://supabase.com/dashboard
+2. Go to SQL Editor and run `supabase-schema.sql`
+3. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+4. Add your credentials from Settings > API
+5. Restart the app: `npm run web`
+
+### Environment Variables
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+### Database Tables
+| Table | Purpose |
+|-------|---------|
+| `customers` | Client profiles |
+| `providers` | Stylist accounts |
+| `services` | Service catalog |
+| `locations` | Salon locations |
+| `appointments` | Bookings |
+| `blocked_times` | Provider unavailability |
+| `daily_revenue` | Analytics |
+
+### Client Helpers (`lib/supabase.js`)
+```javascript
+import { supabaseHelpers } from './lib/supabase'
+
+// Fetch data
+const { data, error } = await supabaseHelpers.getCustomers()
+const { data, error } = await supabaseHelpers.getAppointments({ providerId, date })
+
+// Mutations
+await supabaseHelpers.createAppointment({ customer_id, provider_id, date, start_time, duration })
+await supabaseHelpers.cancelAppointment(id)
+
+// Real-time updates
+supabaseHelpers.subscribeToAppointments((payload) => {
+  console.log('New appointment:', payload.new)
+})
+```
