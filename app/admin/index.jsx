@@ -68,6 +68,7 @@ export default function AdminDashboard() {
   const [locationModal, setLocationModal] = useState({ visible: false, mode: 'add', data: null });
   const [aptFilter, setAptFilter] = useState('all');
   const [aptProviderFilter, setAptProviderFilter] = useState('all');
+  const [userRole, setUserRole] = useState('admin'); // 'admin', 'manager', 'receptionist'
 
   const stats = {
     totalProviders: providers.length,
@@ -1452,34 +1453,54 @@ export default function AdminDashboard() {
     );
   };
 
+  const NAV_ITEMS = [
+    { id: 'overview', icon: BarChart3, label: 'Overview', roles: ['admin', 'manager'] },
+    { id: 'appointments', icon: Calendar, label: 'Appointments', roles: ['admin', 'manager', 'receptionist'] },
+    { id: 'payments', icon: DollarSign, label: 'Payments', roles: ['admin', 'manager'] },
+    { id: 'giftcards', icon: Gift, label: 'Gift Cards', roles: ['admin', 'manager', 'receptionist'] },
+    { id: 'loyalty', icon: Award, label: 'Loyalty', roles: ['admin', 'manager'] },
+    { id: 'qrcheckin', icon: QrCode, label: 'Check-In', roles: ['admin', 'manager', 'receptionist'] },
+    { id: 'subscriptions', icon: Package, label: 'Subscriptions', roles: ['admin', 'manager'] },
+    { id: 'waitlist', icon: List, label: 'Waitlist', roles: ['admin', 'manager', 'receptionist'] },
+    { id: 'teams', icon: Users, label: 'Teams', roles: ['admin', 'manager'] },
+    { id: 'roles', icon: Shield, label: 'Roles', roles: ['admin'] },
+    { id: 'providers', icon: UserCircle, label: 'Staff', roles: ['admin', 'manager'] },
+    { id: 'customers', icon: User, label: 'Customers', roles: ['admin', 'manager', 'receptionist'] },
+    { id: 'services', icon: CreditCard, label: 'Services', roles: ['admin', 'manager'] },
+    { id: 'locations', icon: Building2, label: 'Locations', roles: ['admin'] },
+    { id: 'analytics', icon: BarChart3, label: 'Analytics', roles: ['admin'] },
+    { id: 'settings', icon: Settings, label: 'Settings', roles: ['admin'] },
+  ].filter(item => item.roles.includes(userRole));
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.sidebar}>
         <View style={styles.logo}><Building2 size={28} color="#6366f1" /><Text style={styles.logoText}>Admin</Text></View>
         <View style={styles.nav}>
-          {[
-            { id: 'overview', icon: BarChart3, label: 'Overview' },
-            { id: 'appointments', icon: Calendar, label: 'Appointments' },
-            { id: 'payments', icon: DollarSign, label: 'Payments' },
-            { id: 'giftcards', icon: Gift, label: 'Gift Cards' },
-            { id: 'loyalty', icon: Award, label: 'Loyalty' },
-            { id: 'qrcheckin', icon: QrCode, label: 'Check-In' },
-            { id: 'subscriptions', icon: Package, label: 'Subscriptions' },
-            { id: 'waitlist', icon: List, label: 'Waitlist' },
-            { id: 'teams', icon: Users, label: 'Teams' },
-            { id: 'roles', icon: Shield, label: 'Roles' },
-            { id: 'providers', icon: UserCircle, label: 'Staff' },
-            { id: 'customers', icon: User, label: 'Customers' },
-            { id: 'services', icon: CreditCard, label: 'Services' },
-            { id: 'locations', icon: Building2, label: 'Locations' },
-            { id: 'analytics', icon: BarChart3, label: 'Analytics' },
-            { id: 'settings', icon: Settings, label: 'Settings' },
-          ].map((item) => (
+          {NAV_ITEMS.map((item) => (
             <TouchableOpacity key={item.id} style={[styles.navItem, activeTab === item.id && styles.activeNavItem]} onPress={() => setActiveTab(item.id)}>
               <item.icon size={20} color={activeTab === item.id ? '#fff' : '#94a3b8'} />
               <Text style={[styles.navText, activeTab === item.id && styles.activeNavText]}>{item.label}</Text>
             </TouchableOpacity>
           ))}
+        </View>
+
+        <View style={styles.roleSwitcher}>
+          <Text style={styles.roleLabel}>Active Role:</Text>
+          <View style={styles.roleButtons}>
+            {['admin', 'manager', 'receptionist'].map(role => (
+              <TouchableOpacity 
+                key={role} 
+                onPress={() => {
+                  setUserRole(role);
+                  if (!NAV_ITEMS.find(i => i.id === activeTab)) setActiveTab('appointments');
+                }}
+                style={[styles.roleBtn, userRole === role && styles.roleBtnActive]}
+              >
+                <Text style={[styles.roleBtnText, userRole === role && styles.roleBtnTextActive]}>{role[0].toUpperCase()}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </View>
 
@@ -1935,6 +1956,13 @@ const styles = StyleSheet.create({
   subStatusText: { fontSize: 10, fontWeight: '800' },
   subNextDate: { color: '#64748b', fontSize: 11, marginTop: 4 },
   subAction: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  roleSwitcher: { padding: 20, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)', marginTop: 'auto' },
+  roleLabel: { color: '#64748b', fontSize: 11, fontWeight: '700', marginBottom: 12, textTransform: 'uppercase' },
+  roleButtons: { flexDirection: 'row', gap: 8 },
+  roleBtn: { flex: 1, height: 36, borderRadius: 10, backgroundColor: '#0f172a', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  roleBtnActive: { backgroundColor: '#6366f1', borderColor: '#6366f1' },
+  roleBtnText: { color: '#64748b', fontSize: 12, fontWeight: '700' },
+  roleBtnTextActive: { color: '#fff' },
   campaignList: { gap: 12, marginBottom: 32 },
   createCampaignBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#6366f1', padding: 16, borderRadius: 16, marginBottom: 8, justifyContent: 'center' },
   createCampaignText: { color: '#fff', fontWeight: '800', fontSize: 15 },

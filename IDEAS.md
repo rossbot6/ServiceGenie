@@ -282,8 +282,9 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **Appointment Photos** - Before and after photo tracking in customer profiles
+- **Business Integrations** - Connection UI for accounting and calendar tools
 - **Stylist Reviews** - Recent reviews and star ratings displayed on stylist profiles
-- **Marketing Campaigns** - Campaign management UI for email and SMS blasts
 - **In-App Payments & Cash Tracking** - Transaction logs for cards, cash, deposits, and tips
 - **Cancellation & Deposit Rules** - Configurable per-location booking policies with fee and deposit tracking
 - **Team Lead Assignment** - Visibility of team leads in the Teams view
@@ -302,7 +303,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - **Virtual Consultations** - Video call before appointment
 - **AR Preview** - Show how haircut might look
 - **Social Sharing** - Share new look on Instagram
-- **Appointment Photos** - Before/after photos in profile
+- [x] ~~Appointment Photos~~ ✅ **NEW** - Before/after photos in customer profiles
 - **Recipe Sharing** - Hair care product recommendations
 - [x] ~~Group Bookings~~ ✅ **NEW** - Bridal parties, birthdays, corporate events with coordinator
 - [x] ~~E-Gift Cards~~ ✅ **NEW** - Gift card management with code, value, balance tracking
