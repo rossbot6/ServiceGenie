@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { Link, useRouter } from 'expo-router';
-import { Scissors, Sparkles, ChevronRight, Star } from 'lucide-react-native';
+import { Scissors, Sparkles, ChevronRight, Star, Users, Calendar, ArrowRight } from 'lucide-react-native';
 import mockData from '../data/mockData.json';
 
 export default function Home() {
@@ -33,6 +33,19 @@ export default function Home() {
         <Text style={styles.heroTitle}>Book Your Perfect Service</Text>
         <Text style={styles.heroSubtitle}>Professional hair and nail care at your fingertips.</Text>
       </View>
+
+      <Link href="/group-booking" asChild>
+        <TouchableOpacity style={styles.groupBookingBanner}>
+          <View style={styles.groupBookingIcon}>
+            <Users size={28} color="#fff" />
+          </View>
+          <View style={styles.groupBookingContent}>
+            <Text style={styles.groupBookingTitle}>Group & Bridal Bookings</Text>
+            <Text style={styles.groupBookingSubtitle}>Book for parties, weddings & events together</Text>
+          </View>
+          <ArrowRight size={20} color="#fff" />
+        </TouchableOpacity>
+      </Link>
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
@@ -103,8 +116,40 @@ const styles = StyleSheet.create({
     marginTop: 8,
     lineHeight: 24,
   },
+  groupBookingBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 24,
+    marginTop: -20,
+    padding: 20,
+    backgroundColor: '#6366f1',
+    borderRadius: 20,
+    gap: 16,
+  },
+  groupBookingIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  groupBookingContent: {
+    flex: 1,
+  },
+  groupBookingTitle: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '800',
+  },
+  groupBookingSubtitle: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 14,
+    marginTop: 4,
+  },
   section: {
     padding: 24,
+    paddingTop: 8,
   },
   sectionHeader: {
     flexDirection: 'row',
