@@ -61,7 +61,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Communications
 - [x] ~~Send SMS from dashboard~~ ✅ **Partial** - UI button in Customer list
-- [ ] Send email campaigns
+- [x] ~~Send email campaigns~~ ✅ **NEW** - Campaign management UI in Settings
 - [x] ~~Bulk messaging (promos, reminders)~~ ✅ **Partial** - UI button in Customer list
 
 ### Reviews
@@ -285,6 +285,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **Marketing Campaigns** - Campaign management UI for email and SMS blasts
 - **Refund Management** - Ability to process and track refunded transactions
 - **In-App Payments & Cash Tracking** - Transaction logs for cards, cash, deposits, and tips
 - **Cancellation & Deposit Rules** - Configurable per-location booking policies with fee and deposit tracking

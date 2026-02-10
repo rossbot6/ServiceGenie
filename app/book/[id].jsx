@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Calendar as CalendarIcon, Clock, ChevronLeft, CheckCircle2, AlertTriangle } from 'lucide-react-native';
+import { Calendar as CalendarIcon, Clock, ChevronLeft, CheckCircle2, AlertTriangle, Star, User } from 'lucide-react-native';
 import { useState } from 'react';
 import { format, addDays } from 'date-fns';
 import mockData from '../../data/mockData.json';
@@ -171,6 +171,39 @@ export default function BookAppointment() {
         )}
       </View>
 
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Reviews</Text>
+          <View style={styles.headerRating}>
+            <Star size={16} color="#fbbf24" fill="#fbbf24" />
+            <Text style={styles.headerRatingText}>{stylist.rating || '4.9'}</Text>
+          </View>
+        </View>
+
+        {[
+          { id: 1, user: 'Sarah P.', rating: 5, comment: 'Best haircut I have ever had! Elena really listens.', date: '2 days ago' },
+          { id: 2, user: 'Michael B.', rating: 4, comment: 'Great service, but appointment started 10 mins late.', date: '1 week ago' },
+        ].map((review) => (
+          <View key={review.id} style={styles.reviewCard}>
+            <View style={styles.reviewHeader}>
+              <View style={styles.reviewUser}>
+                <View style={styles.userAvatar}>
+                  <User size={16} color="#94a3b8" />
+                </View>
+                <Text style={styles.reviewUserName}>{review.user}</Text>
+              </View>
+              <View style={styles.reviewStars}>
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} size={12} color={s <= review.rating ? '#fbbf24' : '#334155'} fill={s <= review.rating ? '#fbbf24' : 'transparent'} />
+                ))}
+              </View>
+            </View>
+            <Text style={styles.reviewComment}>{review.comment}</Text>
+            <Text style={styles.reviewDate}>{review.date}</Text>
+          </View>
+        ))}
+      </View>
+
       <View style={styles.footer}>
         <TouchableOpacity 
           style={[styles.bookButton, !selectedTime && { opacity: 0.5 }]} 
@@ -326,5 +359,71 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '800',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  headerRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(251, 191, 36, 0.1)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  headerRatingText: {
+    color: '#fbbf24',
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  reviewCard: {
+    backgroundColor: '#1e293b',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  reviewUser: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  userAvatar: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: '#0f172a',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reviewUserName: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  reviewStars: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  reviewComment: {
+    color: '#94a3b8',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  reviewDate: {
+    color: '#64748b',
+    fontSize: 11,
+    marginTop: 8,
   }
 });
