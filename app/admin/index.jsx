@@ -469,11 +469,24 @@ export default function AdminDashboard() {
   const renderPayments = () => {
     const totalRevenue = mockData.customers.reduce((sum, c) => sum + (c.totalSpend || 0), 0);
     const avgPerVisit = mockData.customers.reduce((sum, c) => sum + (c.totalSpend || 0), 0) / Math.max(1, mockData.customers.reduce((sum, c) => sum + (c.visitCount || 0), 0));
+    const cashCollected = 1250;
+    const pendingDeposits = 450;
     
+    const recentTransactions = [
+      { id: 't1', customer: 'Sarah P.', amount: 75, type: 'payment', method: 'Card', status: 'completed', date: '2026-02-10' },
+      { id: 't2', customer: 'John D.', amount: 25, type: 'tip', method: 'Cash', status: 'completed', date: '2026-02-10' },
+      { id: 't3', customer: 'Emily W.', amount: 50, type: 'deposit', method: 'Card', status: 'pending', date: '2026-02-09' },
+      { id: 't4', customer: 'Michael B.', amount: 75, type: 'payment', method: 'Cash', status: 'completed', date: '2026-02-09' },
+      { id: 't5', customer: 'Jessica D.', amount: 150, type: 'payment', method: 'Apple Pay', status: 'completed', date: '2026-02-08' },
+    ];
+
     return (
       <ScrollView style={styles.tabContent}>
         <View style={styles.tabHeader}>
           <Text style={styles.sectionTitle}>Revenue & Payments</Text>
+          <TouchableOpacity style={styles.addButton}>
+            <DollarSign size={18} color="#fff" /><Text style={styles.addButtonText}>Add Record</Text>
+          </TouchableOpacity>
         </View>
         
         <View style={styles.statsGrid}>
@@ -486,18 +499,39 @@ export default function AdminDashboard() {
           </View>
           <View style={styles.statCard}>
             <View style={[styles.statIcon, { backgroundColor: 'rgba(99, 102, 241, 0.1)' }]}>
-              <CreditCard size={24} color="#6366f1" />
+              <DollarSign size={24} color="#6366f1" />
             </View>
-            <Text style={styles.statValue}>${avgPerVisit.toFixed(2)}</Text>
-            <Text style={styles.statLabel}>Avg Per Visit</Text>
+            <Text style={styles.statValue}>${cashCollected.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>Cash Collected</Text>
           </View>
           <View style={styles.statCard}>
             <View style={[styles.statIcon, { backgroundColor: 'rgba(249, 115, 22, 0.1)' }]}>
-              <Users size={24} color="#f97316" />
+              <Lock size={24} color="#f97316" />
             </View>
-            <Text style={styles.statValue}>{mockData.customers.filter(c => c.visitCount > 0).length}</Text>
-            <Text style={styles.statLabel}>Active Clients</Text>
+            <Text style={styles.statValue}>${pendingDeposits}</Text>
+            <Text style={styles.statLabel}>Pending Deposits</Text>
           </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Recent Transactions</Text>
+        <View style={styles.transactionList}>
+          {recentTransactions.map((tx) => (
+            <View key={tx.id} style={styles.transactionItem}>
+              <View style={styles.transactionIcon}>
+                <Text style={styles.transactionTypeEmoji}>{tx.type === 'tip' ? '💰' : tx.type === 'deposit' ? '🔐' : '💇'}</Text>
+              </View>
+              <View style={styles.transactionInfo}>
+                <Text style={styles.transactionCustomer}>{tx.customer}</Text>
+                <Text style={styles.transactionDate}>{tx.date} • {tx.method}</Text>
+              </View>
+              <View style={styles.transactionRight}>
+                <Text style={styles.transactionAmount}>${tx.amount}</Text>
+                <View style={[styles.statusBadge, tx.status === 'completed' ? styles.activeBadge : styles.pendingBadge]}>
+                  <Text style={[styles.statusText, tx.status === 'completed' ? styles.activeStatusText : styles.pendingText]}>{tx.status}</Text>
+                </View>
+              </View>
+            </View>
+          ))}
         </View>
 
         <Text style={styles.sectionTitle}>Provider Compensation</Text>
@@ -1497,6 +1531,15 @@ const styles = StyleSheet.create({
   addButtonText: { color: '#fff', fontWeight: '700' },
   exportButton: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#1e293b', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   exportButtonText: { color: '#94a3b8', fontWeight: '600' },
+  transactionList: { gap: 12, marginBottom: 24 },
+  transactionItem: { backgroundColor: '#1e293b', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  transactionIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(99, 102, 241, 0.1)', alignItems: 'center', justifyContent: 'center', marginRight: 16 },
+  transactionTypeEmoji: { fontSize: 20 },
+  transactionInfo: { flex: 1 },
+  transactionCustomer: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  transactionDate: { color: '#64748b', fontSize: 12, marginTop: 2 },
+  transactionRight: { alignItems: 'flex-end' },
+  transactionAmount: { color: '#fff', fontSize: 16, fontWeight: '800', marginBottom: 4 },
   filterBar: { flexDirection: 'row', marginBottom: 16 },
   filterChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#1e293b', marginRight: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   filterChipActive: { backgroundColor: '#6366f1', borderColor: '#6366f1' },

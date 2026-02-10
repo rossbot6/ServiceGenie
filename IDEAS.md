@@ -81,7 +81,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ### Booking Policies
 - [x] ~~Cancellation Rules~~ ✅ **Completed** - Minimum notice period, cancellation fee thresholds configurable per location
 - [x] ~~Deposit System~~ ✅ **Completed** - Require deposits for services, deposit amount configurable per location
-- [ ] **No-show consequences**
+- [x] ~~No-show consequences~~ ✅ **Completed** - Configurable no-show fees and ban thresholds
 
 ---
 
