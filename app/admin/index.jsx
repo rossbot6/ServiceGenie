@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Mail as MailIcon } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Mail as MailIcon, Gift } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -791,6 +791,76 @@ export default function AdminDashboard() {
     </ScrollView>
   );
 
+  const renderGiftCards = () => {
+    const giftCards = [
+      { id: 'gc_001', code: 'GIFT50', value: 50, balance: 50, purchasedBy: 'Sarah P.', date: '2026-01-15', status: 'active' },
+      { id: 'gc_002', code: 'HOLIDAY100', value: 100, balance: 75, purchasedBy: 'John D.', date: '2025-12-20', status: 'partial' },
+      { id: 'gc_003', code: 'BIRTHDAY25', value: 25, balance: 0, purchasedBy: 'Emily W.', date: '2025-11-10', status: 'redeemed' },
+    ];
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <View style={styles.searchContainer}>
+            <Search size={18} color="#64748b" />
+            <TextInput style={styles.searchInput} placeholder="Search gift cards..." placeholderTextColor="#64748b" />
+          </View>
+          <TouchableOpacity style={styles.addButton}>
+            <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Create Gift Card</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>{giftCards.length}</Text>
+            <Text style={styles.miniStatLabel}>Total Cards</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>${giftCards.reduce((s, g) => s + g.value, 0)}</Text>
+            <Text style={styles.miniStatLabel}>Total Value</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>${giftCards.reduce((s, g) => s + g.balance, 0)}</Text>
+            <Text style={styles.miniStatLabel}>Remaining</Text>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Active Gift Cards</Text>
+        {giftCards.map((card) => (
+          <View key={card.id} style={styles.giftCard}>
+            <View style={styles.giftCardHeader}>
+              <View style={styles.giftCardInfo}>
+                <Text style={styles.giftCardCode}>{card.code}</Text>
+                <Text style={styles.giftCardPurchasedBy}>Purchased by {card.purchasedBy} on {card.date}</Text>
+              </View>
+              <View style={[styles.statusBadge, card.status === 'active' ? styles.activeBadge : card.status === 'partial' ? styles.pendingBadge : styles.inactiveBadge]}>
+                <Text style={[styles.statusText, card.status === 'active' ? styles.activeStatusText : card.status === 'partial' ? styles.pendingText : styles.inactiveStatusText]}>{card.status}</Text>
+              </View>
+            </View>
+            <View style={styles.giftCardBalance}>
+              <View style={styles.balanceItem}>
+                <Text style={styles.balanceLabel}>Value</Text>
+                <Text style={styles.balanceValue}>${card.value}</Text>
+              </View>
+              <View style={styles.balanceItem}>
+                <Text style={styles.balanceLabel}>Remaining</Text>
+                <Text style={[styles.balanceValue, card.balance === 0 && styles.balanceZero]}>${card.balance}</Text>
+              </View>
+            </View>
+            <View style={styles.giftCardActions}>
+              <TouchableOpacity style={styles.giftCardButton}>
+                <Edit size={14} color="#6366f1" /><Text style={styles.giftCardButtonText}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.giftCardButton}>
+                <DollarSign size={14} color="#10b981" /><Text style={styles.giftCardButtonText}>Redeem</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.sidebar}>
@@ -800,6 +870,7 @@ export default function AdminDashboard() {
             { id: 'overview', icon: BarChart3, label: 'Overview' },
             { id: 'appointments', icon: Calendar, label: 'Appointments' },
             { id: 'payments', icon: DollarSign, label: 'Payments' },
+            { id: 'giftcards', icon: Gift, label: 'Gift Cards' },
             { id: 'teams', icon: Users, label: 'Teams' },
             { id: 'roles', icon: Shield, label: 'Roles' },
             { id: 'providers', icon: UserCircle, label: 'Staff' },
@@ -831,6 +902,7 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'appointments' && renderAppointments()}
         {activeTab === 'payments' && renderPayments()}
+        {activeTab === 'giftcards' && renderGiftCards()}
         {activeTab === 'teams' && renderTeams()}
         {activeTab === 'roles' && renderRoles()}
         {activeTab === 'providers' && renderProviders()}
@@ -934,6 +1006,19 @@ const styles = StyleSheet.create({
   addButtonText: { color: '#fff', fontWeight: '700' },
   exportButton: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#1e293b', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   exportButtonText: { color: '#94a3b8', fontWeight: '600' },
+  giftCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  giftCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
+  giftCardInfo: { flex: 1 },
+  giftCardCode: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  giftCardPurchasedBy: { color: '#64748b', fontSize: 13, marginTop: 4 },
+  giftCardBalance: { flexDirection: 'row', gap: 24, marginBottom: 16, padding: 16, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 12 },
+  balanceItem: { flex: 1 },
+  balanceLabel: { color: '#64748b', fontSize: 12, marginBottom: 4 },
+  balanceValue: { color: '#fff', fontSize: 20, fontWeight: '800' },
+  balanceZero: { color: '#ef4444' },
+  giftCardActions: { flexDirection: 'row', gap: 12 },
+  giftCardButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 16, backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: 10 },
+  giftCardButtonText: { color: '#6366f1', fontWeight: '600', fontSize: 13 },
   statsGrid: { flexDirection: 'row', gap: 16, marginBottom: 32, flexWrap: 'wrap' },
   statCard: { flex: 1, minWidth: 180, backgroundColor: '#1e293b', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   statIcon: { width: 48, height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
