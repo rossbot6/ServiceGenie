@@ -332,7 +332,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~E-Gift Cards~~ ✅ **NEW** - Gift card management with code, value, balance tracking
 - [x] ~~Loyalty/Rewards Program~~ ✅ **NEW** - Points per dollar, tiers (Bronze/Silver/Gold/Platinum), birthday bonuses
 - **Subscription Boxes** - Monthly product boxes
-- **QR Code Check-in** - Contactless arrival
+- [x] ~~QR Code Check-in~~ ✅ **NEW** - Contactless arrival with scan tracking and check-in logs
 
 ---
 
