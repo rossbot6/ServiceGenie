@@ -952,7 +952,7 @@ export default function AdminDashboard() {
         <View style={styles.tabHeader}>
           <Text style={styles.sectionTitle}>Subscription Boxes</Text>
           <TouchableOpacity style={styles.addButton}>
-            <Plus size={18} color=\"#fff\" /><Text style={styles.addButtonText}>Add Plan</Text>
+            <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Plan</Text>
           </TouchableOpacity>
         </View>
 
@@ -976,7 +976,7 @@ export default function AdminDashboard() {
           {membershipTiers.map((tier, idx) => (
             <View key={idx} style={[styles.planCard, { borderColor: '#ffd700' }]}>
               <View style={[styles.planIcon, { backgroundColor: 'rgba(255, 215, 0, 0.1)' }]}>
-                <Award size={24} color=\"#ffd700\" />
+                <Award size={24} color="#ffd700" />
               </View>
               <Text style={styles.planName}>{tier.name}</Text>
               <Text style={styles.planPrice}>${tier.price} / mo</Text>

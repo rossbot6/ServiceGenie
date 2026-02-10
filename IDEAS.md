@@ -198,7 +198,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
   - Purchase gift cards
   - Redeem for services
 
-- [ ] **Membership Subscriptions**
+- [x] ~~Membership Subscriptions~~ ✅ **Completed** - Monthly tiers (Gold/Silver) with unlimited benefits
   - Monthly packages
   - Unlimited services tiers
 
@@ -277,6 +277,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **Membership Subscriptions** - Unlimited service tiers (Gold/Silver) added to Subscriptions tab
 - **POS & SMS Integrations** - Connection UI for Square, Clover, and Twilio added to Settings
 - **Role-Based Access (RBAC)** - Filtered admin dashboard views for Admin, Manager, and Receptionist roles
 - **Appointment Photos** - Before and after photo tracking in customer profiles
