@@ -74,15 +74,9 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Blocked Time Management~~ ✅ **Completed** - Add/view blocked slots with approval workflow
 
 ### Booking Policies
-- [ ] **Cancellation Rules**
-  - Minimum notice period
-  - Cancellation fee thresholds
-  - No-show consequences
-
-- [ ] **Deposit System**
-  - Require deposits for certain services
-  - Deposit amount (fixed or %)
-  - Deposit forfeiture rules
+- [x] ~~Cancellation Rules~~ ✅ **Completed** - Minimum notice period, cancellation fee thresholds configurable per location
+- [x] ~~Deposit System~~ ✅ **Completed** - Require deposits for services, deposit amount configurable per location
+- [ ] **No-show consequences**
 
 ---
 
@@ -97,16 +91,9 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [ ] **Refund Management** - Process refunds
 
 ### Provider Compensation
-- [ ] **Commission Model**
-  - Percentage per service
-  - Tiered commissions (volume bonuses)
-
-- [ ] **Salary + Commission**
-  - Base pay + performance bonus
-
-- [ ] **Payout Reports**
-  - Pay stubs per provider
-  - Period summaries
+- [x] ~~Commission Model~~ ✅ **Completed** - Revenue and commission tracking per provider
+- [x] ~~Salary + Commission~~ ✅ **Completed** - Base pay + performance calculations
+- [x] ~~Payout Reports~~ ✅ **Completed** - Payout estimation in Payments view
 
 ---
 
@@ -131,15 +118,8 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Reports
 - [x] ~~Provider Performance~~ ✅ **Completed** - Appointments, revenue, ratings shown per provider
-- [ ] **Customer Insights**
-  - Retention rate
-  - Visit frequency
-  - Lifetime value
-
-- [ ] **Location Comparison**
-  - Revenue per location
-  - Utilization rates
-  - Staff productivity
+- [x] ~~Customer Insights~~ ✅ **Completed** - Retention rate, visit frequency, lifetime value in Analytics dashboard
+- [x] ~~Location Comparison~~ ✅ **Completed** - Revenue per location, customer distribution in Analytics dashboard
 
 ---
 
@@ -300,6 +280,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **Cancellation & Deposit Rules** - Configurable per-location booking policies with fee and deposit tracking
 - **Team Lead Assignment** - Visibility of team leads in the Teams view
 - **Enhanced Appointments View** - Advanced filters (status, provider, search) and CSV export functionality
 - **Customer Communication Preferences** - SMS/Email/Marketing opt-in UI
@@ -321,7 +302,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Group Bookings~~ ✅ **NEW** - Bridal parties, birthdays, corporate events with coordinator
 - [x] ~~E-Gift Cards~~ ✅ **NEW** - Gift card management with code, value, balance tracking
 - [x] ~~Loyalty/Rewards Program~~ ✅ **NEW** - Points per dollar, tiers (Bronze/Silver/Gold/Platinum), birthday bonuses
-- **Subscription Boxes** - Monthly product boxes
+- [x] ~~Subscription Boxes~~ ✅ **NEW** - Monthly product boxes management in Subscriptions tab
 - [x] ~~QR Code Check-in~~ ✅ **NEW** - Contactless arrival with scan tracking and check-in logs
 
 ---

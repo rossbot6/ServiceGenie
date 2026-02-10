@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode, Users as UsersIcon, List, Clock3, CardIcon, Lock } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode, Users as UsersIcon, List, Clock3, CardIcon, Lock, Package } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -846,6 +846,79 @@ export default function AdminDashboard() {
     );
   };
 
+  const renderSubscriptions = () => {
+    const activeSubs = [
+      { id: 'sub1', customer: 'Sarah P.', plan: 'Luxe Hair Care', price: 49.99, status: 'active', nextShipment: '2026-03-01' },
+      { id: 'sub2', customer: 'John D.', plan: 'Grooming Kit', price: 29.99, status: 'active', nextShipment: '2026-02-25' },
+      { id: 'sub3', customer: 'Emily W.', plan: 'Luxe Hair Care', price: 49.99, status: 'cancelled', nextShipment: '-' },
+    ];
+
+    const plans = [
+      { name: 'Luxe Hair Care', price: 49.99, frequency: 'Monthly', subscribers: 12 },
+      { name: 'Grooming Kit', price: 29.99, frequency: 'Monthly', subscribers: 8 },
+      { name: 'Essential Mani-Pedi', price: 39.99, frequency: 'Bi-monthly', subscribers: 5 },
+    ];
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <Text style={styles.sectionTitle}>Subscription Boxes</Text>
+          <TouchableOpacity style={styles.addButton}>
+            <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Plan</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>{activeSubs.filter(s => s.status === 'active').length}</Text>
+            <Text style={styles.miniStatLabel}>Active Subs</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>$840</Text>
+            <Text style={styles.miniStatLabel}>MRR</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>25</Text>
+            <Text style={styles.miniStatLabel}>Total Shipments</Text>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Subscription Plans</Text>
+        <View style={styles.plansGrid}>
+          {plans.map((plan, idx) => (
+            <View key={idx} style={styles.planCard}>
+              <View style={styles.planIcon}>
+                <Package size={24} color="#6366f1" />
+              </View>
+              <Text style={styles.planName}>{plan.name}</Text>
+              <Text style={styles.planPrice}>${plan.price} / {plan.frequency}</Text>
+              <Text style={styles.planSubscribers}>{plan.subscribers} subscribers</Text>
+            </View>
+          ))}
+        </View>
+
+        <Text style={styles.sectionTitle}>Active Subscribers</Text>
+        {activeSubs.map((sub) => (
+          <View key={sub.id} style={styles.subCard}>
+            <View style={styles.subInfo}>
+              <Text style={styles.subCustomer}>{sub.customer}</Text>
+              <Text style={styles.subPlan}>{sub.plan}</Text>
+            </View>
+            <View style={styles.subStatus}>
+              <Text style={[styles.subStatusText, sub.status === 'active' ? styles.activeStatusText : styles.inactiveStatusText]}>
+                {sub.status.toUpperCase()}
+              </Text>
+              <Text style={styles.subNextDate}>Next: {sub.nextShipment}</Text>
+            </View>
+            <TouchableOpacity style={styles.subAction}>
+              <ChevronRight size={20} color="#64748b" />
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
+
   const renderWaitlist = () => {
     const waitlist = [
       { id: 'w1', name: 'Michael Brown', phone: '+15550300', requestedDate: '2026-02-15', preferredTime: '2:00 PM', service: 'Haircut & Style', status: 'waiting', position: 1 },
@@ -1229,6 +1302,7 @@ export default function AdminDashboard() {
             { id: 'giftcards', icon: Gift, label: 'Gift Cards' },
             { id: 'loyalty', icon: Award, label: 'Loyalty' },
             { id: 'qrcheckin', icon: QrCode, label: 'Check-In' },
+            { id: 'subscriptions', icon: Package, label: 'Subscriptions' },
             { id: 'waitlist', icon: List, label: 'Waitlist' },
             { id: 'teams', icon: Users, label: 'Teams' },
             { id: 'roles', icon: Shield, label: 'Roles' },
@@ -1264,6 +1338,7 @@ export default function AdminDashboard() {
         {activeTab === 'giftcards' && renderGiftCards()}
         {activeTab === 'loyalty' && renderLoyalty()}
         {activeTab === 'qrcheckin' && renderQRCheckIn()}
+        {activeTab === 'subscriptions' && renderSubscriptions()}
         {activeTab === 'waitlist' && renderWaitlist()}
         {activeTab === 'teams' && renderTeams()}
         {activeTab === 'roles' && renderRoles()}
@@ -1657,6 +1732,20 @@ const styles = StyleSheet.create({
   prefText: { fontSize: 11, color: '#64748b' },
   prefActive: { color: '#10b981' },
   comingSoon: { color: '#64748b', fontSize: 16, textAlign: 'center', marginTop: 100 },
+  plansGrid: { flexDirection: 'row', gap: 12, marginBottom: 24 },
+  planCard: { flex: 1, backgroundColor: '#1e293b', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', alignItems: 'center' },
+  planIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(99, 102, 241, 0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  planName: { color: '#fff', fontSize: 14, fontWeight: '700', textAlign: 'center' },
+  planPrice: { color: '#10b981', fontSize: 12, fontWeight: '600', marginTop: 4 },
+  planSubscribers: { color: '#64748b', fontSize: 10, marginTop: 4 },
+  subCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 16, marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  subInfo: { flex: 1 },
+  subCustomer: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  subPlan: { color: '#64748b', fontSize: 13, marginTop: 2 },
+  subStatus: { alignItems: 'flex-end', marginRight: 16 },
+  subStatusText: { fontSize: 10, fontWeight: '800' },
+  subNextDate: { color: '#64748b', fontSize: 11, marginTop: 4 },
+  subAction: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 20 },
   modalContent: { width: '100%', maxWidth: 450, backgroundColor: '#1e293b', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
