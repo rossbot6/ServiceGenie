@@ -187,9 +187,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
   - Pay deposits
   - Tip within app
 
-- [ ] **Waitlist**
-  - Join waitlist for sold-out times
-  - Auto-notify of openings
+- [x] ~~Waitlist~~ ✅ **Completed** - Queue management, position tracking, notify/book/remove actions
 
 - [ ] **Reviews**
   - Rate appointment
