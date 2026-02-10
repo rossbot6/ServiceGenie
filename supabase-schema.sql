@@ -126,6 +126,110 @@ CREATE INDEX idx_blocked_provider ON blocked_times(provider_id);
 CREATE INDEX idx_blocked_dates ON blocked_times(start_date, end_date);
 
 -- ============================================
+-- TEAMS TABLE
+-- ============================================
+CREATE TABLE teams (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  color TEXT DEFAULT '#8b5cf6',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Update providers to link to teams
+ALTER TABLE providers ADD COLUMN team_id UUID REFERENCES teams(id) ON DELETE SET NULL;
+ALTER TABLE providers ADD COLUMN is_team_lead BOOLEAN DEFAULT false;
+
+-- ============================================
+-- WAITLIST TABLE
+-- ============================================
+CREATE TABLE waitlist (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
+  service_id UUID REFERENCES services(id) ON DELETE SET NULL,
+  requested_date DATE NOT NULL,
+  preferred_time_range TEXT, -- e.g., 'Morning', 'After 5 PM'
+  status TEXT DEFAULT 'waiting' CHECK (status IN ('waiting', 'notified', 'booked', 'expired', 'removed')),
+  position INT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_waitlist_date ON waitlist(requested_date);
+CREATE INDEX idx_waitlist_status ON waitlist(status);
+
+-- ============================================
+-- GIFT CARDS TABLE
+-- ============================================
+CREATE TABLE gift_cards (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  code TEXT UNIQUE NOT NULL,
+  initial_value DECIMAL(10,2) NOT NULL,
+  balance DECIMAL(10,2) NOT NULL,
+  purchased_by_id UUID REFERENCES customers(id) ON DELETE SET NULL,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'partial', 'redeemed', 'expired')),
+  expires_at DATE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_gift_cards_code ON gift_cards(code);
+
+-- ============================================
+-- LOYALTY PROGRAM TABLES
+-- ============================================
+CREATE TABLE loyalty_tiers (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL, -- Bronze, Silver, etc.
+  min_points INT NOT NULL DEFAULT 0,
+  discount_percent INT DEFAULT 0,
+  color TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE loyalty_points (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  points_balance INT DEFAULT 0,
+  lifetime_points INT DEFAULT 0,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- SUBSCRIPTIONS TABLE
+-- ============================================
+CREATE TABLE subscription_plans (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  frequency TEXT NOT NULL, -- 'Monthly', 'Bi-monthly'
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE active_subscriptions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  plan_id UUID REFERENCES subscription_plans(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'paused', 'cancelled')),
+  next_shipment_date DATE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- CHECK-INS TABLE
+-- ============================================
+CREATE TABLE check_ins (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  appointment_id UUID REFERENCES appointments(id) ON DELETE SET NULL,
+  customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
+  location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
+  method TEXT DEFAULT 'QR' CHECK (method IN ('QR', 'manual')),
+  check_in_time TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_check_ins_time ON check_ins(check_in_time);
+
+-- ============================================
 -- REVENUE/ANALYTICS TABLE
 -- ============================================
 CREATE TABLE daily_revenue (
@@ -146,6 +250,14 @@ ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE providers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE blocked_times ENABLE ROW LEVEL SECURITY;
+ALTER TABLE teams ENABLE ROW LEVEL SECURITY;
+ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
+ALTER TABLE gift_cards ENABLE ROW LEVEL SECURITY;
+ALTER TABLE loyalty_tiers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE loyalty_points ENABLE ROW LEVEL SECURITY;
+ALTER TABLE subscription_plans ENABLE ROW LEVEL SECURITY;
+ALTER TABLE active_subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE check_ins ENABLE ROW LEVEL SECURITY;
 
 -- Simple RLS: Allow authenticated users to read/write
 -- In production, you'd want more granular policies
@@ -153,6 +265,14 @@ CREATE POLICY "Allow authenticated access" ON customers FOR ALL TO authenticated
 CREATE POLICY "Allow authenticated access" ON providers FOR ALL TO authenticated USING (true);
 CREATE POLICY "Allow authenticated access" ON appointments FOR ALL TO authenticated USING (true);
 CREATE POLICY "Allow authenticated access" ON blocked_times FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow authenticated access" ON teams FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow authenticated access" ON waitlist FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow authenticated access" ON gift_cards FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow authenticated access" ON loyalty_tiers FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow authenticated access" ON loyalty_points FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow authenticated access" ON subscription_plans FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow authenticated access" ON active_subscriptions FOR ALL TO authenticated USING (true);
+CREATE POLICY "Allow authenticated access" ON check_ins FOR ALL TO authenticated USING (true);
 
 -- ============================================
 -- SAMPLE DATA (Optional)
