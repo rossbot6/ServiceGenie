@@ -307,7 +307,8 @@ export default function WeeklyCalendar({ onSchedule, customers = [], appointment
                   const height = (app.duration / 30) * SLOT_HEIGHT;
 
                   return (
-                    <View key={idx} style={[styles.appointmentBlock, { top, height }]}>
+                    <View key={idx} style={[styles.appointmentBlock, app.isWalkIn && styles.walkInBlock, { top, height }]}>
+                      {app.isWalkIn && <View style={styles.walkInBadge}><Text style={styles.walkInBadgeText}>WALK-IN</Text></View>}
                       <Text style={styles.appointmentText} numberOfLines={1}>{app.name}</Text>
                     </View>
                   );
@@ -497,6 +498,9 @@ const styles = StyleSheet.create({
   selectionOverlay: { position: 'absolute', left: 2, right: 2, backgroundColor: 'rgba(99, 102, 241, 0.4)', borderRadius: 6, borderWidth: 2, borderColor: '#818cf8', zIndex: 10 },
   dragHandle: { position: 'absolute', bottom: -4, left: '50%', marginLeft: -10, width: 20, height: 4, backgroundColor: '#fff', borderRadius: 2 },
   appointmentBlock: { position: 'absolute', left: 2, right: 2, backgroundColor: '#6366f1', borderRadius: 6, padding: 4, zIndex: 5, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
+  walkInBlock: { backgroundColor: '#f59e0b', borderColor: 'rgba(251, 191, 36, 0.5)' },
+  walkInBadge: { backgroundColor: 'rgba(0,0,0,0.3)', paddingHorizontal: 4, paddingVertical: 1, borderRadius: 3, marginBottom: 2 },
+  walkInBadgeText: { color: '#fff', fontSize: 7, fontWeight: '900' },
   appointmentText: { color: '#fff', fontSize: 10, fontWeight: '800' },
   blockedBlock: { position: 'absolute', left: 2, right: 2, backgroundColor: 'rgba(239, 68, 68, 0.15)', borderRadius: 6, padding: 4, zIndex: 4, borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.3)', flexDirection: 'row', alignItems: 'center', gap: 4 },
   blockedText: { color: '#fca5a5', fontSize: 9, fontWeight: '700' },

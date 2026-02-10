@@ -144,6 +144,18 @@
       "time": "10:30",
       "duration": 60,
       "status": "pending"
+    },
+    {
+      "id": "app_walkin_001",
+      "stylistId": "stylist_002",
+      "customerId": "cust_009",
+      "customerName": "Walk-in Customer",
+      "date": "2026-02-05",
+      "time": "14:00",
+      "duration": 45,
+      "status": "confirmed",
+      "isWalkIn": true,
+      "serviceName": "Quick Manicure"
     }
   ],
   "blockedSlots": [
