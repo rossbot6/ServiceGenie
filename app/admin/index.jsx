@@ -144,7 +144,7 @@ export default function AdminDashboard() {
         </TouchableOpacity>
       </View>
       <View style={styles.statsRow}>
-        <View style={styles miniStat}>
+        <View style={styles.miniStat}>
           <Text style={styles.miniStatValue}>{mockData.appointments.length}</Text>
           <Text style={styles.miniStatLabel}>Total</Text>
         </View>
