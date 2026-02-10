@@ -1218,6 +1218,40 @@ export default function AdminDashboard() {
         <TouchableOpacity style={styles.saveButton}>
           <Text style={styles.saveButtonText}>Save Templates</Text>
         </TouchableOpacity>
+
+        <View style={styles.sectionDivider} />
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Marketing Campaigns</Text>
+          <Text style={styles.sectionSubtitle}>Send one-time email or SMS blasts</Text>
+        </View>
+
+        <View style={styles.campaignList}>
+          <TouchableOpacity style={styles.createCampaignBtn}>
+            <Plus size={20} color="#fff" />
+            <Text style={styles.createCampaignText}>Create New Campaign</Text>
+          </TouchableOpacity>
+
+          <View style={styles.campaignItem}>
+            <View style={styles.campaignInfo}>
+              <Text style={styles.campaignName}>Spring Sale Blast</Text>
+              <Text style={styles.campaignMeta}>Sent to 120 customers • 2 days ago</Text>
+            </View>
+            <View style={[styles.statusBadge, styles.activeBadge]}>
+              <Text style={[styles.statusText, styles.activeStatusText]}>SENT</Text>
+            </View>
+          </View>
+
+          <View style={styles.campaignItem}>
+            <View style={styles.campaignInfo}>
+              <Text style={styles.campaignName}>New Service: Scalp Massage</Text>
+              <Text style={styles.campaignMeta}>Draft • Last edited 1 hour ago</Text>
+            </View>
+            <View style={[styles.statusBadge, styles.pendingBadge]}>
+              <Text style={[styles.statusText, styles.pendingText]}>DRAFT</Text>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     );
   };
@@ -1825,6 +1859,13 @@ const styles = StyleSheet.create({
   subStatusText: { fontSize: 10, fontWeight: '800' },
   subNextDate: { color: '#64748b', fontSize: 11, marginTop: 4 },
   subAction: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  campaignList: { gap: 12, marginBottom: 32 },
+  createCampaignBtn: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#6366f1', padding: 16, borderRadius: 16, marginBottom: 8, justifyContent: 'center' },
+  createCampaignText: { color: '#fff', fontWeight: '800', fontSize: 15 },
+  campaignItem: { backgroundColor: '#1e293b', borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  campaignInfo: { flex: 1 },
+  campaignName: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  campaignMeta: { color: '#64748b', fontSize: 12, marginTop: 4 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 20 },
   modalContent: { width: '100%', maxWidth: 450, backgroundColor: '#1e293b', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
