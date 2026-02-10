@@ -65,8 +65,9 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Bulk messaging (promos, reminders)~~ ✅ **Partial** - UI button in Customer list
 
 ### Reviews
-- [x] ~~Provider Ratings~~ ✅ **Completed** - Rating display (4.0-5.0) on provider cards
-- [x] ~~Recent Reviews~~ ✅ **Completed** - Sample review display on provider cards
+- [x] ~~Provider Ratings~~ ✅ **Completed** - Rating display on provider cards
+- [x] ~~Recent Reviews~~ ✅ **Completed** - Review list on stylist profile page
+- [ ] Public reviews on profile
 
 ---
 
@@ -285,8 +286,8 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **Stylist Reviews** - Recent reviews and star ratings displayed on stylist profiles
 - **Marketing Campaigns** - Campaign management UI for email and SMS blasts
-- **Refund Management** - Ability to process and track refunded transactions
 - **In-App Payments & Cash Tracking** - Transaction logs for cards, cash, deposits, and tips
 - **Cancellation & Deposit Rules** - Configurable per-location booking policies with fee and deposit tracking
 - **Team Lead Assignment** - Visibility of team leads in the Teams view

@@ -1252,6 +1252,60 @@ export default function AdminDashboard() {
             </View>
           </View>
         </View>
+
+        <View style={styles.sectionDivider} />
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Third-Party Integrations</Text>
+          <Text style={styles.sectionSubtitle}>Connect with your favorite business tools</Text>
+        </View>
+
+        <View style={styles.integrationList}>
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#2ca01c' }]}>
+                <Building2 size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>QuickBooks Online</Text>
+                <Text style={styles.integrationDesc}>Sync revenue and expenses automatically</Text>
+              </View>
+              <TouchableOpacity style={styles.connectButton}>
+                <Text style={styles.connectButtonText}>Connect</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#13b5ea' }]}>
+                <CreditCard size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Xero</Text>
+                <Text style={styles.integrationDesc}>Cloud accounting and financial reporting</Text>
+              </View>
+              <TouchableOpacity style={styles.connectButton}>
+                <Text style={styles.connectButtonText}>Connect</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#4285F4' }]}>
+                <Calendar size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Google Calendar</Text>
+                <Text style={styles.integrationDesc}>Two-way sync for provider schedules</Text>
+              </View>
+              <View style={[styles.statusBadge, styles.activeBadge]}>
+                <Text style={[styles.statusText, styles.activeStatusText]}>Linked</Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     );
   };
@@ -1866,6 +1920,15 @@ const styles = StyleSheet.create({
   campaignInfo: { flex: 1 },
   campaignName: { color: '#fff', fontSize: 15, fontWeight: '700' },
   campaignMeta: { color: '#64748b', fontSize: 12, marginTop: 4 },
+  integrationList: { gap: 16, marginBottom: 32 },
+  integrationItem: { backgroundColor: '#1e293b', borderRadius: 20, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  integrationHeader: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  integrationIcon: { width: 48, height: 48, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  integrationInfo: { flex: 1 },
+  integrationName: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  integrationDesc: { color: '#64748b', fontSize: 13, marginTop: 4 },
+  connectButton: { backgroundColor: 'rgba(99, 102, 241, 0.1)', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10 },
+  connectButtonText: { color: '#6366f1', fontSize: 13, fontWeight: '700' },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 20 },
   modalContent: { width: '100%', maxWidth: 450, backgroundColor: '#1e293b', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
