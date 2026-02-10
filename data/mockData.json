@@ -45,7 +45,11 @@
         "wednesday": { "start": "09:00", "end": "17:00" },
         "thursday": { "start": "09:00", "end": "17:00" },
         "friday": { "start": "09:00", "end": "15:00" }
-      }
+      },
+      "commission": { "type": "percentage", "rate": 40 },
+      "baseSalary": 2000,
+      "paymentMethod": "salary_plus_commission",
+      "payoutSchedule": "biweekly"
     },
     {
       "id": "stylist_002",
@@ -58,7 +62,11 @@
         "thursday": { "start": "10:00", "end": "19:00" },
         "friday": { "start": "10:00", "end": "21:00" },
         "saturday": { "start": "09:00", "end": "14:00" }
-      }
+      },
+      "commission": { "type": "percentage", "rate": 50 },
+      "baseSalary": 0,
+      "paymentMethod": "commission_only",
+      "payoutSchedule": "weekly"
     }
   ],
   "customers": [

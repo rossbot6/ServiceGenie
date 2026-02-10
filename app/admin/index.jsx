@@ -307,6 +307,94 @@ export default function AdminDashboard() {
     URL.revokeObjectURL(url);
   };
 
+  const renderPayments = () => {
+    const totalRevenue = mockData.customers.reduce((sum, c) => sum + (c.totalSpend || 0), 0);
+    const avgPerVisit = mockData.customers.reduce((sum, c) => sum + (c.totalSpend || 0), 0) / Math.max(1, mockData.customers.reduce((sum, c) => sum + (c.visitCount || 0), 0));
+    
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <Text style={styles.sectionTitle}>Revenue & Payments</Text>
+        </View>
+        
+        <View style={styles.statsGrid}>
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
+              <DollarSign size={24} color="#10b981" />
+            </View>
+            <Text style={styles.statValue}>${totalRevenue.toLocaleString()}</Text>
+            <Text style={styles.statLabel}>Total Revenue</Text>
+          </View>
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(99, 102, 241, 0.1)' }]}>
+              <CreditCard size={24} color="#6366f1" />
+            </View>
+            <Text style={styles.statValue}>${avgPerVisit.toFixed(2)}</Text>
+            <Text style={styles.statLabel}>Avg Per Visit</Text>
+          </View>
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(249, 115, 22, 0.1)' }]}>
+              <Users size={24} color="#f97316" />
+            </View>
+            <Text style={styles.statValue}>{mockData.customers.filter(c => c.visitCount > 0).length}</Text>
+            <Text style={styles.statLabel}>Active Clients</Text>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Provider Compensation</Text>
+        {mockData.stylists.map((provider) => {
+          const providerRevenue = mockData.customers
+            .flatMap(c => (c.visitHistory || []).filter(v => v.provider === provider.name))
+            .reduce((sum, v) => sum + (v.amount || 0), 0);
+          const commission = provider.commission?.rate || 0;
+          const payout = (providerRevenue * commission / 100) + (provider.baseSalary || 0);
+          
+          return (
+            <View key={provider.id} style={styles.commissionCard}>
+              <View style={styles.commissionHeader}>
+                <Image source={{ uri: provider.image }} style={styles.commissionAvatar} />
+                <View style={styles.commissionInfo}>
+                  <Text style={styles.commissionName}>{provider.name}</Text>
+                  <Text style={styles.commissionSpecialty}>{provider.specialty}</Text>
+                </View>
+                <View style={styles.commissionBadge}>
+                  <Text style={styles.commissionBadgeText}>
+                    {provider.paymentMethod === 'commission_only' ? 'Commission Only' : 
+                     provider.paymentMethod === 'salary_plus_commission' ? 'Salary + Commission' : 'Percentage'}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.commissionDetails}>
+                <View style={styles.commissionRow}>
+                  <Text style={styles.commissionLabel}>Revenue Generated</Text>
+                  <Text style={styles.commissionValue}>${providerRevenue.toFixed(2)}</Text>
+                </View>
+                <View style={styles.commissionRow}>
+                  <Text style={styles.commissionLabel}>Commission Rate</Text>
+                  <Text style={styles.commissionValue}>{commission}%</Text>
+                </View>
+                {provider.baseSalary > 0 && (
+                  <View style={styles.commissionRow}>
+                    <Text style={styles.commissionLabel}>Base Salary</Text>
+                    <Text style={styles.commissionValue}>${provider.baseSalary}</Text>
+                  </View>
+                )}
+                <View style={[styles.commissionRow, styles.totalRow]}>
+                  <Text style={styles.commissionTotalLabel}>Est. Payout</Text>
+                  <Text style={styles.commissionTotalValue}>${payout.toFixed(2)}</Text>
+                </View>
+              </View>
+            </View>
+          );
+        })}
+
+        <TouchableOpacity style={styles.exportButton} onClick={() => alert('Payout report exported!')}>
+          <Download size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Export Payout Report</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    );
+  };
+
   const renderSettings = () => {
     const [templates, setTemplates] = useState({
       confirmation: 'Hi {name}! Your appointment at {location} is confirmed for {date} at {time}. Reply HELP for assistance.',
@@ -434,6 +522,7 @@ export default function AdminDashboard() {
           {[
             { id: 'overview', icon: BarChart3, label: 'Overview' },
             { id: 'appointments', icon: Calendar, label: 'Appointments' },
+            { id: 'payments', icon: DollarSign, label: 'Payments' },
             { id: 'providers', icon: Users, label: 'Providers' },
             { id: 'customers', icon: UserCircle, label: 'Customers' },
             { id: 'services', icon: CreditCard, label: 'Services' },
@@ -462,6 +551,7 @@ export default function AdminDashboard() {
         </View>
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'appointments' && renderAppointments()}
+        {activeTab === 'payments' && renderPayments()}
         {activeTab === 'providers' && renderProviders()}
         {activeTab === 'customers' && renderCustomers()}
         {activeTab === 'services' && renderServices()}
@@ -597,6 +687,21 @@ const styles = StyleSheet.create({
   pendingBadge: { backgroundColor: 'rgba(251, 191, 36, 0.1)' },
   confirmedText: { color: '#10b981' },
   pendingText: { color: '#fbbf24' },
+  commissionCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  commissionHeader: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 },
+  commissionAvatar: { width: 50, height: 50, borderRadius: 12 },
+  commissionInfo: { flex: 1 },
+  commissionName: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  commissionSpecialty: { color: '#94a3b8', fontSize: 13, marginTop: 2 },
+  commissionBadge: { backgroundColor: 'rgba(99, 102, 241, 0.1)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+  commissionBadgeText: { color: '#6366f1', fontSize: 11, fontWeight: '700' },
+  commissionDetails: { backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: 16 },
+  commissionRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
+  commissionLabel: { color: '#94a3b8', fontSize: 14 },
+  commissionValue: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  totalRow: { borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)', paddingTop: 12, marginBottom: 0 },
+  commissionTotalLabel: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  commissionTotalValue: { color: '#10b981', fontSize: 18, fontWeight: '800' },
   quickActions: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
   actionCard: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#1e293b', borderRadius: 12, padding: 16, minWidth: 140, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   actionText: { color: '#fff', fontWeight: '600', fontSize: 14 },
