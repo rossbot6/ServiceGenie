@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -228,6 +228,25 @@ export default function AdminDashboard() {
     </ScrollView>
   );
 
+  const exportCustomers = () => {
+    const headers = ['Name', 'Phone', 'Email', 'Notes', 'Tags'];
+    const rows = mockData.customers.map(c => [
+      c.name,
+      c.phone || '',
+      c.email || '',
+      c.notes || '',
+      (c.tags || []).join('; ')
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.map(cell => `"${cell}"`).join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `customers_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const renderCustomers = () => (
     <ScrollView style={styles.tabContent}>
       <View style={styles.tabHeader}>
@@ -235,7 +254,12 @@ export default function AdminDashboard() {
           <Search size={18} color="#64748b" />
           <TextInput style={styles.searchInput} placeholder="Search customers..." placeholderTextColor="#64748b" />
         </View>
-        <TouchableOpacity style={styles.addButton}><Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Customer</Text></TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <TouchableOpacity style={styles.exportButton} onPress={() => exportCustomers()}>
+            <Download size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Export</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.addButton}><Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add</Text></TouchableOpacity>
+        </View>
       </View>
       {mockData.customers.map((customer) => (
         <View key={customer.id} style={styles.customerCard}>
@@ -395,6 +419,8 @@ const styles = StyleSheet.create({
   searchInput: { flex: 1, color: '#fff', fontSize: 14, paddingVertical: 12 },
   addButton: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#6366f1', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12 },
   addButtonText: { color: '#fff', fontWeight: '700' },
+  exportButton: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#1e293b', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
+  exportButtonText: { color: '#94a3b8', fontWeight: '600' },
   statsGrid: { flexDirection: 'row', gap: 16, marginBottom: 32, flexWrap: 'wrap' },
   statCard: { flex: 1, minWidth: 180, backgroundColor: '#1e293b', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   statIcon: { width: 48, height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
