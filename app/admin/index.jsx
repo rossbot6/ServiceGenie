@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -395,6 +395,90 @@ export default function AdminDashboard() {
     );
   };
 
+  const renderAnalytics = () => {
+    const totalCustomers = mockData.customers.length;
+    const activeCustomers = mockData.customers.filter(c => c.visitCount > 0).length;
+    const retentionRate = totalCustomers > 0 ? ((activeCustomers / totalCustomers) * 100).toFixed(1) : 0;
+    const avgVisits = totalCustomers > 0 ? (mockData.customers.reduce((sum, c) => sum + (c.visitCount || 0), 0) / totalCustomers).toFixed(1) : 0;
+    const avgLifetimeValue = totalCustomers > 0 ? (mockData.customers.reduce((sum, c) => sum + (c.totalSpend || 0), 0) / totalCustomers).toFixed(2) : 0;
+    
+    const locationStats = mockData.locations.map(loc => ({
+      ...loc,
+      customerCount: mockData.customers.filter(c => c.linkedStylists.length > 0).length,
+      revenue: mockData.customers.reduce((sum, c) => sum + (c.totalSpend || 0), 0) / mockData.locations.length
+    }));
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <Text style={styles.sectionTitle}>Analytics Dashboard</Text>
+        </View>
+
+        <Text style={styles.analyticsSectionTitle}>Customer Insights</Text>
+        <View style={styles.statsGrid}>
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(99, 102, 241, 0.1)' }]}>
+              <Users size={24} color="#6366f1" />
+            </View>
+            <Text style={styles.statValue}>{totalCustomers}</Text>
+            <Text style={styles.statLabel}>Total Customers</Text>
+          </View>
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(16, 185, 129, 0.1)' }]}>
+              <UserCircle size={24} color="#10b981" />
+            </View>
+            <Text style={styles.statValue}>{retentionRate}%</Text>
+            <Text style={styles.statLabel}>Retention Rate</Text>
+          </View>
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(249, 115, 22, 0.1)' }]}>
+              <BarChart3 size={24} color="#f97316" />
+            </View>
+            <Text style={styles.statValue}>{avgVisits}</Text>
+            <Text style={styles.statLabel}>Avg Visits</Text>
+          </View>
+          <View style={styles.statCard}>
+            <View style={[styles.statIcon, { backgroundColor: 'rgba(236, 72, 153, 0.1)' }]}>
+              <DollarSign size={24} color="#ec4899" />
+            </View>
+            <Text style={styles.statValue}>${avgLifetimeValue}</Text>
+            <Text style={styles.statLabel}>Avg Lifetime Value</Text>
+          </View>
+        </View>
+
+        <Text style={styles.analyticsSectionTitle}>Location Comparison</Text>
+        {locationStats.map((loc) => (
+          <View key={loc.id} style={styles.locationComparisonCard}>
+            <View style={styles.locationComparisonHeader}>
+              <Building2 size={20} color="#6366f1" />
+              <Text style={styles.locationComparisonName}>{loc.name}</Text>
+            </View>
+            <View style={styles.locationComparisonMetrics}>
+              <View style={styles.comparisonMetric}>
+                <Text style={styles.comparisonValue}>{loc.customerCount}</Text>
+                <Text style={styles.comparisonLabel}>Customers</Text>
+              </View>
+              <View style={styles.comparisonMetric}>
+                <Text style={styles.comparisonValue}>${loc.revenue.toFixed(0)}</Text>
+                <Text style={styles.comparisonLabel}>Revenue</Text>
+              </View>
+              <View style={styles.comparisonMetric}>
+                <Text style={styles.comparisonValue}>{(loc.revenue / Math.max(1, loc.customerCount)).toFixed(0)}</Text>
+                <Text style={styles.comparisonLabel}>Per Customer</Text>
+              </View>
+            </View>
+          </View>
+        ))}
+
+        <View style={styles.exportButtonsRow}>
+          <TouchableOpacity style={styles.exportButton}>
+            <Download size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Export Report</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    );
+  };
+
   const renderSettings = () => {
     const [templates, setTemplates] = useState({
       confirmation: 'Hi {name}! Your appointment at {location} is confirmed for {date} at {time}. Reply HELP for assistance.',
@@ -702,6 +786,15 @@ const styles = StyleSheet.create({
   totalRow: { borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)', paddingTop: 12, marginBottom: 0 },
   commissionTotalLabel: { color: '#fff', fontSize: 15, fontWeight: '700' },
   commissionTotalValue: { color: '#10b981', fontSize: 18, fontWeight: '800' },
+  analyticsSectionTitle: { color: '#94a3b8', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 16, marginTop: 24 },
+  locationComparisonCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  locationComparisonHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
+  locationComparisonName: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  locationComparisonMetrics: { flexDirection: 'row', justifyContent: 'space-around' },
+  comparisonMetric: { alignItems: 'center' },
+  comparisonValue: { color: '#fff', fontSize: 20, fontWeight: '800' },
+  comparisonLabel: { color: '#64748b', fontSize: 12, marginTop: 4 },
+  exportButtonsRow: { marginTop: 20 },
   quickActions: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
   actionCard: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#1e293b', borderRadius: 12, padding: 16, minWidth: 140, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   actionText: { color: '#fff', fontWeight: '600', fontSize: 14 },
