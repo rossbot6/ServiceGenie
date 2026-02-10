@@ -57,7 +57,12 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Search & Filter~~ ✅ **Completed** - Search customers in admin
 - [x] ~~Customer Profiles with Notes~~ ✅ **Completed** - Added notes display, VIP/new/tags support
 - [x] ~~Customer Export~~ ✅ **Completed** - CSV export with name, phone, email, notes, tags
-- [x] ~~Communications~~ ✅ **Completed** - Customer list with export
+- [x] ~~Communications~~ ✅ **Completed** - Customer list with export and Bulk Msg action
+
+### Communications
+- [x] ~~Send SMS from dashboard~~ ✅ **Partial** - UI button in Customer list
+- [ ] Send email campaigns
+- [x] ~~Bulk messaging (promos, reminders)~~ ✅ **Partial** - UI button in Customer list
 
 ### Reviews
 - [x] ~~Provider Ratings~~ ✅ **Completed** - Rating display (4.0-5.0) on provider cards
