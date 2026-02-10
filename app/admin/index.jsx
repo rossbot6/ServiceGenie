@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -573,6 +573,102 @@ export default function AdminDashboard() {
     </ScrollView>
   );
 
+  const renderLoyalty = () => {
+    const tiers = [
+      { name: 'Bronze', points: 0, discount: 0, color: '#cd7f32', members: 12 },
+      { name: 'Silver', points: 500, discount: 5, color: '#c0c0c0', members: 8 },
+      { name: 'Gold', points: 1000, discount: 10, color: '#ffd700', members: 4 },
+      { name: 'Platinum', points: 2500, discount: 15, color: '#e5e4e2', members: 2 },
+    ];
+    
+    const recentRedemptions = [
+      { customer: 'Sarah P.', tier: 'Gold', reward: '$20 Off', date: '2026-02-08', pointsUsed: 200 },
+      { customer: 'Michael B.', tier: 'Silver', reward: 'Free Blowout', date: '2026-02-05', pointsUsed: 150 },
+      { customer: 'Jessica D.', tier: 'Platinum', reward: 'VIP Treatment', date: '2026-02-03', pointsUsed: 500 },
+    ];
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <Text style={styles.sectionTitle}>Loyalty & Rewards</Text>
+          <TouchableOpacity style={styles.addButton}>
+            <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Tier</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>26</Text>
+            <Text style={styles.miniStatLabel}>Total Members</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>15,420</Text>
+            <Text style={styles.miniStatLabel}>Points Issued</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>8,150</Text>
+            <Text style={styles.miniStatLabel}>Points Redeemed</Text>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Reward Tiers</Text>
+        <View style={styles.tiersGrid}>
+          {tiers.map((tier) => (
+            <View key={tier.name} style={[styles.tierCard, { borderColor: tier.color }]}>
+              <View style={[styles.tierBadge, { backgroundColor: tier.color }]}>
+                <Text style={styles.tierName}>{tier.name}</Text>
+              </View>
+              <View style={styles.tierInfo}>
+                <Text style={styles.tierPoints}>{tier.points.toLocaleString()} pts</Text>
+                <Text style={styles.tierDiscount}>{tier.discount}% off</Text>
+                <Text style={styles.tierMembers}>{tier.members} members</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        <Text style={styles.sectionTitle}>Recent Redemptions</Text>
+        {recentRedemptions.map((redemption, idx) => (
+          <View key={idx} style={styles.redemptionCard}>
+            <View style={styles.redemptionInfo}>
+              <Text style={styles.redemptionCustomer}>{redemption.customer}</Text>
+              <Text style={styles.redemptionTier}>{redemption.tier} Member</Text>
+            </View>
+            <View style={styles.redemptionReward}>
+              <Text style={styles.redemptionItem}>{redemption.reward}</Text>
+              <Text style={styles.redemptionPoints}>-{redemption.pointsUsed} pts</Text>
+            </View>
+            <Text style={styles.redemptionDate}>{redemption.date}</Text>
+          </View>
+        ))}
+
+        <View style={styles.loyaltySettings}>
+          <Text style={styles.sectionTitle}>Settings</Text>
+          <View style={styles.settingRow}>
+            <Text style={styles.settingLabel}>Points per $1 spent</Text>
+            <View style={styles.pointsInput}>
+              <TextInput 
+                style={styles.pointsInputText} 
+                defaultValue="10" 
+                keyboardType="numeric"
+              />
+            </View>
+          </View>
+          <View style={styles.settingRow}>
+            <Text style={styles.settingLabel}>Birthday Bonus Points</Text>
+            <View style={styles.pointsInput}>
+              <TextInput 
+                style={styles.pointsInputText} 
+                defaultValue="100" 
+                keyboardType="numeric"
+              />
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    );
+  };
+
   const renderRoles = () => (
     <ScrollView style={styles.tabContent}>
       <View style={styles.tabHeader}>
@@ -873,6 +969,7 @@ export default function AdminDashboard() {
             { id: 'appointments', icon: Calendar, label: 'Appointments' },
             { id: 'payments', icon: DollarSign, label: 'Payments' },
             { id: 'giftcards', icon: Gift, label: 'Gift Cards' },
+            { id: 'loyalty', icon: Award, label: 'Loyalty' },
             { id: 'teams', icon: Users, label: 'Teams' },
             { id: 'roles', icon: Shield, label: 'Roles' },
             { id: 'providers', icon: UserCircle, label: 'Staff' },
@@ -905,6 +1002,7 @@ export default function AdminDashboard() {
         {activeTab === 'appointments' && renderAppointments()}
         {activeTab === 'payments' && renderPayments()}
         {activeTab === 'giftcards' && renderGiftCards()}
+        {activeTab === 'loyalty' && renderLoyalty()}
         {activeTab === 'teams' && renderTeams()}
         {activeTab === 'roles' && renderRoles()}
         {activeTab === 'providers' && renderProviders()}
@@ -1021,6 +1119,27 @@ const styles = StyleSheet.create({
   giftCardActions: { flexDirection: 'row', gap: 12 },
   giftCardButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 10, paddingHorizontal: 16, backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: 10 },
   giftCardButtonText: { color: '#6366f1', fontWeight: '600', fontSize: 13 },
+  tiersGrid: { flexDirection: 'row', gap: 12, flexWrap: 'wrap', marginBottom: 24 },
+  tierCard: { flex: 1, minWidth: 140, backgroundColor: '#1e293b', borderRadius: 16, padding: 16, borderWidth: 2, borderColor: 'transparent', alignItems: 'center' },
+  tierBadge: { paddingHorizontal: 16, paddingVertical: 6, borderRadius: 20, marginBottom: 12 },
+  tierName: { color: '#000', fontWeight: '800', fontSize: 14 },
+  tierInfo: { alignItems: 'center' },
+  tierPoints: { color: '#fff', fontSize: 18, fontWeight: '800' },
+  tierDiscount: { color: '#10b981', fontSize: 14, marginTop: 4 },
+  tierMembers: { color: '#64748b', fontSize: 12, marginTop: 8 },
+  redemptionCard: { backgroundColor: '#1e293b', borderRadius: 12, padding: 16, marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  redemptionInfo: { flex: 1 },
+  redemptionCustomer: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  redemptionTier: { color: '#64748b', fontSize: 12, marginTop: 2 },
+  redemptionReward: { alignItems: 'flex-end', marginRight: 16 },
+  redemptionItem: { color: '#6366f1', fontSize: 14, fontWeight: '600' },
+  redemptionPoints: { color: '#ef4444', fontSize: 12, marginTop: 2 },
+  redemptionDate: { color: '#64748b', fontSize: 12 },
+  loyaltySettings: { marginTop: 24, paddingTop: 24, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  settingRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  settingLabel: { color: '#94a3b8', fontSize: 14 },
+  pointsInput: { backgroundColor: '#0f172a', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, width: 80 },
+  pointsInputText: { color: '#fff', fontSize: 14, textAlign: 'center' },
   statsGrid: { flexDirection: 'row', gap: 16, marginBottom: 32, flexWrap: 'wrap' },
   statCard: { flex: 1, minWidth: 180, backgroundColor: '#1e293b', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   statIcon: { width: 48, height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
