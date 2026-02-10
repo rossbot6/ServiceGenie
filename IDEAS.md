@@ -173,10 +173,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Confirmation Messages~~ ✅ **Completed** - Alert on successful booking
 
 ### Template Management
-- [ ] **SMS Templates**
-  - Edit reminder texts
-  - Placeholders (name, time, location)
-  - Multi-language support
+- [x] ~~SMS Templates~~ ✅ **Completed** - Edit confirmation, reminder, cancellation messages with placeholders
 
 - [ ] **Email Templates**
   - Rich HTML emails
@@ -318,7 +315,8 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 4. ~~Location settings (booking policies)~~ Done
 5. ~~Walk-in booking support~~ Done
 6. ~~Customer export functionality~~ Done
-7. SMS template management
+7. ~~SMS template management~~ Done
+8. Email templates
 
 ### Phase 3
 1. Payment processing
