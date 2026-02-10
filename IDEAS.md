@@ -69,6 +69,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Customer Actions
 - [x] ~~Search & Filter~~ ✅ **Completed** - Search customers in admin
+- [x] **Customer Profiles with Notes** ✅ **Completed** - Added notes display, VIP/new/tags support
 - [ ] **Customer Export**
   - CSV export of customer list
   - Segment-based exports
@@ -311,9 +312,9 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ### Next Up (Phase 2)
 1. ~~Service catalog~~ ✅ Done
 2. ~~Provider metrics~~ Done
-3. Location settings (booking policies, cancellation rules)
-4. Walk-in booking support
-5. Customer detailed profiles with notes
+3. ~~Customer detailed profiles with notes~~ Done
+4. Location settings (booking policies, cancellation rules)
+5. Walk-in booking support
 
 ### Phase 3
 1. Payment processing
