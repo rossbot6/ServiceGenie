@@ -1175,6 +1175,9 @@ export default function AdminDashboard() {
           <TextInput style={styles.searchInput} placeholder="Search customers..." placeholderTextColor="#64748b" />
         </View>
         <View style={{ flexDirection: 'row', gap: 8 }}>
+          <TouchableOpacity style={styles.exportButton} onPress={() => alert('Opening Bulk Message composer...')}>
+            <Mail size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Bulk Msg</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.exportButton} onPress={() => exportCustomers()}>
             <Download size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Export</Text>
           </TouchableOpacity>
