@@ -70,10 +70,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Appointments Dashboard
 - [x] ~~Calendar View~~ ✅ **Completed** - Weekly calendar in stylist dashboard
-- [ ] **All Appointments View**
-  - List view with filters
-  - Export functionality
-
+- [x] ~~All Appointments View~~ ✅ **Completed** - List view with advanced filters (status, provider, search) and CSV export
 - [x] ~~Appointment Actions~~ ✅ **Completed** - Book, reschedule, cancel, approve blocked-time requests
 - [x] ~~Blocked Time Management~~ ✅ **Completed** - Add/view blocked slots with approval workflow
 
@@ -304,6 +301,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **Enhanced Appointments View** - Advanced filters (status, provider, search) and CSV export functionality
 - **Customer Communication Preferences** - SMS/Email/Marketing opt-in UI
 - **Service Add-ons & Variants** - Deep conditioning, scalp massage, short/long hair pricing
 - **Reviews System** - Provider ratings (4.0-5.0) and recent reviews display

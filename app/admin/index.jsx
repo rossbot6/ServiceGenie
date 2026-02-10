@@ -656,10 +656,18 @@ export default function AdminDashboard() {
             </TouchableOpacity>
           </View>
           <View style={styles.teamMembers}>
-            {mockData.stylists.slice(0, 2).map((member) => (
+            {mockData.staff.filter(s => s.teamId === team.id).map((member) => (
               <View key={member.id} style={styles.teamMember}>
-                <Image source={{ uri: member.image }} style={styles.teamMemberAvatar} />
-                <Text style={styles.teamMemberName}>{member.name}</Text>
+                <View style={styles.teamMemberHeader}>
+                  <Text style={styles.teamMemberName}>{member.name}</Text>
+                  {member.isTeamLead && (
+                    <View style={styles.teamLeadBadge}>
+                      <Star size={10} color="#fff" fill="#fff" />
+                      <Text style={styles.teamLeadText}>LEAD</Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.teamMemberRole}>{member.role}</Text>
               </View>
             ))}
           </View>
@@ -1506,6 +1514,10 @@ const styles = StyleSheet.create({
   teamMember: { alignItems: 'center', gap: 6 },
   teamMemberAvatar: { width: 40, height: 40, borderRadius: 10 },
   teamMemberName: { color: '#94a3b8', fontSize: 12 },
+  teamMemberHeader: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  teamLeadBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#f59e0b', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
+  teamLeadText: { color: '#fff', fontSize: 8, fontWeight: '900' },
+  teamMemberRole: { color: '#64748b', fontSize: 10, marginTop: 2 },
   rolesSection: { gap: 16 },
   roleCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   roleHeader: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 },

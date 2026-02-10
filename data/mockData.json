@@ -12,7 +12,8 @@
       "role": "provider",
       "teamId": "team_hair",
       "locationIds": ["loc_001", "loc_002"],
-      "isActive": true
+      "isActive": true,
+      "isTeamLead": true
     },
     {
       "id": "staff_002",
@@ -21,7 +22,8 @@
       "role": "provider",
       "teamId": "team_nails",
       "locationIds": ["loc_001"],
-      "isActive": true
+      "isActive": true,
+      "isTeamLead": false
     },
     {
       "id": "staff_003",
