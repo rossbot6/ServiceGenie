@@ -1333,6 +1333,51 @@ export default function AdminDashboard() {
               </View>
             </View>
           </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#000' }]}>
+                <CreditCard size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Square POS</Text>
+                <Text style={styles.integrationDesc}>Sync in-person payments and inventory</Text>
+              </View>
+              <TouchableOpacity style={styles.connectButton}>
+                <Text style={styles.connectButtonText}>Connect</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#009a22' }]}>
+                <Building2 size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Clover</Text>
+                <Text style={styles.integrationDesc}>Process payments with Clover hardware</Text>
+              </View>
+              <TouchableOpacity style={styles.connectButton}>
+                <Text style={styles.connectButtonText}>Connect</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#F22F46' }]}>
+                <Smartphone size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Twilio</Text>
+                <Text style={styles.integrationDesc}>Carrier-direct SMS and Voice alerts</Text>
+              </View>
+              <TouchableOpacity style={styles.connectButton}>
+                <Text style={styles.connectButtonText}>Connect</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
       </ScrollView>
     );

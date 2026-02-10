@@ -277,6 +277,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **POS & SMS Integrations** - Connection UI for Square, Clover, and Twilio added to Settings
 - **Role-Based Access (RBAC)** - Filtered admin dashboard views for Admin, Manager, and Receptionist roles
 - **Appointment Photos** - Before and after photo tracking in customer profiles
 - **Business Integrations** - Connection UI for accounting and calendar tools
