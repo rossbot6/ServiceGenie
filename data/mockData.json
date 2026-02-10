@@ -1,4 +1,56 @@
 {
+  "teams": [
+    { "id": "team_hair", "name": "Hair Stylists", "color": "#8b5cf6" },
+    { "id": "team_nails", "name": "Nail Technicians", "color": "#ec4899" },
+    { "id": "team_spa", "name": "Spa & Massage", "color": "#10b981" }
+  ],
+  "staff": [
+    {
+      "id": "staff_001",
+      "name": "Elena Rodriguez",
+      "email": "elena@servicegenie.com",
+      "role": "provider",
+      "teamId": "team_hair",
+      "locationIds": ["loc_001", "loc_002"],
+      "isActive": true
+    },
+    {
+      "id": "staff_002",
+      "name": "Marcus Chen",
+      "email": "marcus@servicegenie.com",
+      "role": "provider",
+      "teamId": "team_nails",
+      "locationIds": ["loc_001"],
+      "isActive": true
+    },
+    {
+      "id": "staff_003",
+      "name": "Lisa Thompson",
+      "email": "lisa@servicegenie.com",
+      "role": "location_manager",
+      "teamId": "team_hair",
+      "locationIds": ["loc_001"],
+      "isActive": true
+    },
+    {
+      "id": "staff_004",
+      "name": "John Admin",
+      "email": "john@servicegenie.com",
+      "role": "admin",
+      "teamId": null,
+      "locationIds": ["loc_001", "loc_002"],
+      "isActive": true
+    },
+    {
+      "id": "staff_005",
+      "name": "Front Desk",
+      "email": "frontdesk@servicegenie.com",
+      "role": "receptionist",
+      "teamId": null,
+      "locationIds": ["loc_001"],
+      "isActive": true
+    }
+  ],
   "locations": [
     {
       "id": "loc_001",

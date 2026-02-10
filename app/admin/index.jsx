@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -479,6 +479,127 @@ export default function AdminDashboard() {
     );
   };
 
+  const renderTeams = () => (
+    <ScrollView style={styles.tabContent}>
+      <View style={styles.tabHeader}>
+        <View style={styles.searchContainer}>
+          <Search size={18} color="#64748b" />
+          <TextInput style={styles.searchInput} placeholder="Search teams..." placeholderTextColor="#64748b" />
+        </View>
+        <TouchableOpacity style={styles.addButton}>
+          <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Team</Text>
+        </TouchableOpacity>
+      </View>
+      {mockData.teams.map((team) => (
+        <View key={team.id} style={styles.teamCard}>
+          <View style={styles.teamHeader}>
+            <View style={[styles.teamColor, { backgroundColor: team.color }]} />
+            <View style={styles.teamInfo}>
+              <Text style={styles.teamName}>{team.name}</Text>
+              <Text style={styles.teamCount}>{mockData.stylists.filter(s => s.id.includes('001') || s.id.includes('002')).length} members</Text>
+            </View>
+            <TouchableOpacity style={styles.editButton}>
+              <Edit size={16} color="#6366f1" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.teamMembers}>
+            {mockData.stylists.slice(0, 2).map((member) => (
+              <View key={member.id} style={styles.teamMember}>
+                <Image source={{ uri: member.image }} style={styles.teamMemberAvatar} />
+                <Text style={styles.teamMemberName}>{member.name}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+  );
+
+  const renderRoles = () => (
+    <ScrollView style={styles.tabContent}>
+      <View style={styles.tabHeader}>
+        <Text style={styles.sectionTitle}>Staff Roles & Permissions</Text>
+      </View>
+      <View style={styles.rolesSection}>
+        <View style={styles.roleCard}>
+          <View style={styles.roleHeader}>
+            <Shield size={24} color="#6366f1" />
+            <View style={styles.roleInfo}>
+              <Text style={styles.roleName}>Admin</Text>
+              <Text style={styles.roleDescription}>Full access to all features and settings</Text>
+            </View>
+            <View style={styles.roleBadgeAdmin}>
+              <Text style={styles.roleBadgeText}>1</Text>
+            </View>
+          </View>
+          <View style={styles.permissionsList}>
+            <Text style={styles.permissionsTitle}>Can access:</Text>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>All features</Text></View>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>All locations</Text></View>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>Financial settings</Text></View>
+          </View>
+        </View>
+
+        <View style={styles.roleCard}>
+          <View style={styles.roleHeader}>
+            <Building2 size={24} color="#f59e0b" />
+            <View style={styles.roleInfo}>
+              <Text style={styles.roleName}>Location Manager</Text>
+              <Text style={styles.roleDescription}>Full access to assigned locations only</Text>
+            </View>
+            <View style={styles.roleBadge}>
+              <Text style={styles.roleBadgeText}>1</Text>
+            </View>
+          </View>
+          <View style={styles.permissionsList}>
+            <Text style={styles.permissionsTitle}>Can access:</Text>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>Assigned location(s)</Text></View>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>Staff management</Text></View>
+            <View style={styles.permissionItem}><X size={14} color="#ef4444" /><Text style={styles.permissionText}>Other locations</Text></View>
+          </View>
+        </View>
+
+        <View style={styles.roleCard}>
+          <View style={styles.roleHeader}>
+            <UserCircle size={24} color="#10b981" />
+            <View style={styles.roleInfo}>
+              <Text style={styles.roleName}>Provider / Stylist</Text>
+              <Text style={styles.roleDescription}>Own schedule and appointments only</Text>
+            </View>
+            <View style={styles.roleBadge}>
+              <Text style={styles.roleBadgeText}>2</Text>
+            </View>
+          </View>
+          <View style={styles.permissionsList}>
+            <Text style={styles.permissionsTitle}>Can access:</Text>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>Own schedule</Text></View>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>Own appointments</Text></View>
+            <View style={styles.permissionItem}><X size={14} color="#ef4444" /><Text style={styles.permissionText}>Financial settings</Text></View>
+          </View>
+        </View>
+
+        <View style={styles.roleCard}>
+          <View style={styles.roleHeader}>
+            <Phone size={24} color="#ec4899" />
+            <View style={styles.roleInfo}>
+              <Text style={styles.roleName}>Front Desk / Receptionist</Text>
+              <Text style={styles.roleDescription}>Book appointments, view customer notes</Text>
+            </View>
+            <View style={styles.roleBadge}>
+              <Text style={styles.roleBadgeText}>1</Text>
+            </View>
+          </View>
+          <View style={styles.permissionsList}>
+            <Text style={styles.permissionsTitle}>Can access:</Text>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>Book appointments</Text></View>
+            <View style={styles.permissionItem}><Check size={14} color="#10b981" /><Text style={styles.permissionText}>Customer notes</Text></View>
+            <View style={styles.permissionItem}><X size={14} color="#ef4444" /><Text style={styles.permissionText}>Financial settings</Text></View>
+          </View>
+        </View>
+      </View>
+    </ScrollView>
+  );
+
   const renderSettings = () => {
     const [templates, setTemplates] = useState({
       confirmation: 'Hi {name}! Your appointment at {location} is confirmed for {date} at {time}. Reply HELP for assistance.',
@@ -607,8 +728,10 @@ export default function AdminDashboard() {
             { id: 'overview', icon: BarChart3, label: 'Overview' },
             { id: 'appointments', icon: Calendar, label: 'Appointments' },
             { id: 'payments', icon: DollarSign, label: 'Payments' },
-            { id: 'providers', icon: Users, label: 'Providers' },
-            { id: 'customers', icon: UserCircle, label: 'Customers' },
+            { id: 'teams', icon: Users, label: 'Teams' },
+            { id: 'roles', icon: Shield, label: 'Roles' },
+            { id: 'providers', icon: UserCircle, label: 'Staff' },
+            { id: 'customers', icon: User, label: 'Customers' },
             { id: 'services', icon: CreditCard, label: 'Services' },
             { id: 'locations', icon: Building2, label: 'Locations' },
             { id: 'analytics', icon: BarChart3, label: 'Analytics' },
@@ -636,6 +759,8 @@ export default function AdminDashboard() {
         {activeTab === 'overview' && renderOverview()}
         {activeTab === 'appointments' && renderAppointments()}
         {activeTab === 'payments' && renderPayments()}
+        {activeTab === 'teams' && renderTeams()}
+        {activeTab === 'roles' && renderRoles()}
         {activeTab === 'providers' && renderProviders()}
         {activeTab === 'customers' && renderCustomers()}
         {activeTab === 'services' && renderServices()}
@@ -794,6 +919,30 @@ const styles = StyleSheet.create({
   comparisonMetric: { alignItems: 'center' },
   comparisonValue: { color: '#fff', fontSize: 20, fontWeight: '800' },
   comparisonLabel: { color: '#64748b', fontSize: 12, marginTop: 4 },
+  exportButtonsRow: { marginTop: 20 },
+  teamCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  teamHeader: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 },
+  teamColor: { width: 12, height: 40, borderRadius: 6 },
+  teamInfo: { flex: 1 },
+  teamName: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  teamCount: { color: '#64748b', fontSize: 13, marginTop: 4 },
+  teamMembers: { flexDirection: 'row', gap: 12 },
+  teamMember: { alignItems: 'center', gap: 6 },
+  teamMemberAvatar: { width: 40, height: 40, borderRadius: 10 },
+  teamMemberName: { color: '#94a3b8', fontSize: 12 },
+  rolesSection: { gap: 16 },
+  roleCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  roleHeader: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 },
+  roleInfo: { flex: 1 },
+  roleName: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  roleDescription: { color: '#64748b', fontSize: 13, marginTop: 4 },
+  roleBadge: { backgroundColor: 'rgba(99, 102, 241, 0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
+  roleBadgeAdmin: { backgroundColor: 'rgba(239, 68, 68, 0.1)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
+  roleBadgeText: { color: '#6366f1', fontSize: 14, fontWeight: '700' },
+  permissionsList: { backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 12, padding: 16 },
+  permissionsTitle: { color: '#94a3b8', fontSize: 12, fontWeight: '700', marginBottom: 12 },
+  permissionItem: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 10 },
+  permissionText: { color: '#fff', fontSize: 14 },
   exportButtonsRow: { marginTop: 20 },
   quickActions: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
   actionCard: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#1e293b', borderRadius: 12, padding: 16, minWidth: 140, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
