@@ -477,7 +477,7 @@ export default function AdminDashboard() {
       { id: 't2', customer: 'John D.', amount: 25, type: 'tip', method: 'Cash', status: 'completed', date: '2026-02-10' },
       { id: 't3', customer: 'Emily W.', amount: 50, type: 'deposit', method: 'Card', status: 'pending', date: '2026-02-09' },
       { id: 't4', customer: 'Michael B.', amount: 75, type: 'payment', method: 'Cash', status: 'completed', date: '2026-02-09' },
-      { id: 't5', customer: 'Jessica D.', amount: 150, type: 'payment', method: 'Apple Pay', status: 'completed', date: '2026-02-08' },
+      { id: 't5', customer: 'Jessica D.', amount: 150, type: 'payment', method: 'Apple Pay', status: 'refunded', date: '2026-02-08' },
     ];
 
     return (
@@ -526,9 +526,24 @@ export default function AdminDashboard() {
               </View>
               <View style={styles.transactionRight}>
                 <Text style={styles.transactionAmount}>${tx.amount}</Text>
-                <View style={[styles.statusBadge, tx.status === 'completed' ? styles.activeBadge : styles.pendingBadge]}>
-                  <Text style={[styles.statusText, tx.status === 'completed' ? styles.activeStatusText : styles.pendingText]}>{tx.status}</Text>
+                <View style={[
+                  styles.statusBadge, 
+                  tx.status === 'completed' ? styles.activeBadge : 
+                  tx.status === 'refunded' ? styles.inactiveBadge :
+                  styles.pendingBadge
+                ]}>
+                  <Text style={[
+                    styles.statusText, 
+                    tx.status === 'completed' ? styles.activeStatusText : 
+                    tx.status === 'refunded' ? styles.inactiveStatusText :
+                    styles.pendingText
+                  ]}>{tx.status}</Text>
                 </View>
+                {tx.status === 'completed' && (
+                  <TouchableOpacity style={styles.refundButton} onPress={() => alert(`Initiating refund for ${tx.customer}...`)}>
+                    <Text style={styles.refundButtonText}>Refund</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           ))}
@@ -1540,6 +1555,8 @@ const styles = StyleSheet.create({
   transactionDate: { color: '#64748b', fontSize: 12, marginTop: 2 },
   transactionRight: { alignItems: 'flex-end' },
   transactionAmount: { color: '#fff', fontSize: 16, fontWeight: '800', marginBottom: 4 },
+  refundButton: { marginTop: 8, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6, backgroundColor: 'rgba(239, 68, 68, 0.1)', borderWidth: 1, borderColor: 'rgba(239, 68, 68, 0.2)' },
+  refundButtonText: { color: '#ef4444', fontSize: 10, fontWeight: '700', textTransform: 'uppercase' },
   filterBar: { flexDirection: 'row', marginBottom: 16 },
   filterChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#1e293b', marginRight: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   filterChipActive: { backgroundColor: '#6366f1', borderColor: '#6366f1' },
