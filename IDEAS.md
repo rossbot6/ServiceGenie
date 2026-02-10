@@ -314,7 +314,8 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 2. ~~Provider metrics~~ Done
 3. ~~Customer detailed profiles with notes~~ Done
 4. ~~Location settings (booking policies)~~ Done
-5. Walk-in booking support
+5. ~~Walk-in booking support~~ Done
+6. Customer export functionality
 
 ### Phase 3
 1. Payment processing
