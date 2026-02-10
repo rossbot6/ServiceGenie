@@ -329,7 +329,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - **Appointment Photos** - Before/after photos in profile
 - **Recipe Sharing** - Hair care product recommendations
 - **Group Bookings** - Bridal party packages
-- **E-Gift Cards**
+- [x] ~~E-Gift Cards~~ ✅ **NEW** - Gift card management with code, value, balance tracking
 - **Subscription Boxes** - Monthly product boxes
 - **QR Code Check-in** - Contactless arrival
 
