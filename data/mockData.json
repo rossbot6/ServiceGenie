@@ -32,48 +32,72 @@
       "id": "cust_001",
       "name": "Sarah Parker",
       "phone": "+15550123",
+      "email": "sarah@email.com",
+      "notes": "Prefers morning appointments. Always asks for Elena.",
+      "tags": ["VIP", "Regular"],
       "linkedStylists": ["stylist_001", "stylist_002"]
     },
     {
       "id": "cust_002",
       "name": "John Doe",
       "phone": "+15550199",
+      "email": "john@email.com",
+      "notes": "Allergic to certain hair products - avoid ammonia-based dyes",
+      "tags": ["Allergies"],
       "linkedStylists": ["stylist_002"]
     },
     {
       "id": "cust_003",
       "name": "Emily Watson",
       "phone": "+15550244",
+      "email": "emily@email.com",
+      "notes": "New customer referral from Sarah",
+      "tags": ["New", "Referral"],
       "linkedStylists": ["stylist_001"]
     },
     {
       "id": "cust_004",
       "name": "Michael Brown",
       "phone": "+15550300",
+      "email": "michael@email.com",
+      "notes": "Prefers short haircuts, no styling products",
+      "tags": ["Regular"],
       "linkedStylists": ["stylist_001"]
     },
     {
       "id": "cust_005",
       "name": "Jessica Davis",
       "phone": "+15550400",
+      "email": "jessica@email.com",
+      "notes": "Interested in wedding package for 2026",
+      "tags": ["Wedding", "VIP"],
       "linkedStylists": ["stylist_001"]
     },
     {
       "id": "cust_006",
       "name": "David Wilson",
       "phone": "+15550500",
+      "email": "david@email.com",
+      "notes": "",
+      "tags": [],
       "linkedStylists": ["stylist_002"]
     },
     {
       "id": "cust_007",
       "name": "Sophia Martinez",
       "phone": "+15550600",
+      "email": "sophia@email.com",
+      "notes": "Sensitive scalp, use gentle products",
+      "tags": ["Sensitive"],
       "linkedStylists": ["stylist_001", "stylist_002"]
     },
     {
       "id": "cust_008",
       "name": "James Taylor",
       "phone": "+15550700",
+      "email": "james@email.com",
+      "notes": "First-time customer, book with Marcus for nails",
+      "tags": ["New"],
       "linkedStylists": ["stylist_002"]
     }
   ],

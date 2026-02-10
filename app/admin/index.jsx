@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
 import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
@@ -216,8 +216,18 @@ export default function AdminDashboard() {
             <View style={styles.customerInfo}>
               <Text style={styles.customerName}>{customer.name}</Text>
               <Text style={styles.customerPhone}>{customer.phone}</Text>
+              {customer.notes ? <Text style={styles.customerNotes} numberOfLines={2}>{customer.notes}</Text> : null}
             </View>
-            <ChevronRight size={20} color="#64748b" />
+            <View style={styles.customerRight}>
+              <View style={styles.customerTags}>
+                {customer.tags.map((tag) => (
+                  <View key={tag} style={[styles.customerTag, tag === 'VIP' ? styles.tagVIP : tag === 'New' ? styles.tagNew : styles.tagDefault]}>
+                    <Text style={styles.customerTagText}>{tag}</Text>
+                  </View>
+                ))}
+              </View>
+              <ChevronRight size={20} color="#64748b" />
+            </View>
           </View>
         </View>
       ))}
@@ -225,7 +235,7 @@ export default function AdminDashboard() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.sidebar}>
         <View style={styles.logo}><Building2 size={28} color="#6366f1" /><Text style={styles.logoText}>Admin</Text></View>
         <View style={styles.nav}>
@@ -331,7 +341,7 @@ export default function AdminDashboard() {
           </View>
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -423,6 +433,14 @@ const styles = StyleSheet.create({
   customerInfo: { flex: 1 },
   customerName: { color: '#fff', fontSize: 16, fontWeight: '700' },
   customerPhone: { color: '#94a3b8', fontSize: 13, marginTop: 2 },
+  customerNotes: { color: '#64748b', fontSize: 12, marginTop: 6, fontStyle: 'italic' },
+  customerRight: { alignItems: 'flex-end', gap: 8 },
+  customerTags: { flexDirection: 'row', gap: 4, flexWrap: 'wrap', justifyContent: 'flex-end' },
+  customerTag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  tagVIP: { backgroundColor: 'rgba(251, 191, 36, 0.2)' },
+  tagNew: { backgroundColor: 'rgba(16, 185, 129, 0.2)' },
+  tagDefault: { backgroundColor: 'rgba(99, 102, 241, 0.2)' },
+  customerTagText: { fontSize: 10, fontWeight: '600' },
   comingSoon: { color: '#64748b', fontSize: 16, textAlign: 'center', marginTop: 100 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 20 },
   modalContent: { width: '100%', maxWidth: 450, backgroundColor: '#1e293b', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
