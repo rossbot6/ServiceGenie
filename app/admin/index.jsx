@@ -19,9 +19,7 @@ const INITIAL_SERVICES = [
   { id: 'svc_005', name: 'Blowout', price: 50, duration: 30, category: 'Hair' },
 ];
 
-const INITIAL_LOCATIONS = [
-  { id: 'loc_001', name: 'Downtown Salon', address: '123 Main St, New York, NY', phone: '(555) 123-4567' },
-];
+const INITIAL_LOCATIONS = mockData.locations || [];
 
 const CATEGORIES = ['Hair', 'Nails', 'Spa', 'Beauty', 'Massage'];
 
@@ -182,7 +180,7 @@ export default function AdminDashboard() {
           <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Location</Text>
         </TouchableOpacity>
       </View>
-      {locations.map((location) => (
+      {mockData.locations.map((location) => (
         <View key={location.id} style={styles.locationCard}>
           <View style={styles.locationHeader}>
             <View style={styles.locationIcon}><Building2 size={24} color="#6366f1" /></View>
@@ -194,6 +192,36 @@ export default function AdminDashboard() {
             <TouchableOpacity style={styles.editButton} onPress={() => setLocationModal({ visible: true, mode: 'edit', data: location })}>
               <Edit size={16} color="#6366f1" />
             </TouchableOpacity>
+          </View>
+          <View style={styles.policiesSection}>
+            <Text style={styles.policiesTitle}>Booking Policies</Text>
+            <View style={styles.policiesGrid}>
+              <View style={styles.policyItem}>
+                <Clock size={14} color="#f59e0b" />
+                <Text style={styles.policyLabel}>Min Lead Time</Text>
+                <Text style={styles.policyValue}>{location.bookingPolicies?.minLeadHours || 24}h</Text>
+              </View>
+              <View style={styles.policyItem}>
+                <Clock size={14} color="#10b981" />
+                <Text style={styles.policyLabel}>Buffer Time</Text>
+                <Text style={styles.policyValue}>{location.bookingPolicies?.bufferMinutes || 15}m</Text>
+              </View>
+              <View style={styles.policyItem}>
+                <Calendar size={14} color="#6366f1" />
+                <Text style={styles.policyLabel}>Cancel Window</Text>
+                <Text style={styles.policyValue}>{location.bookingPolicies?.cancellationWindowHours || 24}h</Text>
+              </View>
+              <View style={styles.policyItem}>
+                <DollarSign size={14} color="#10b981" />
+                <Text style={styles.policyLabel}>Cancel Fee</Text>
+                <Text style={styles.policyValue}>{location.bookingPolicies?.cancellationFeePercent || 50}%</Text>
+              </View>
+              <View style={styles.policyItem}>
+                <CreditCard size={14} color="#ec4899" />
+                <Text style={styles.policyLabel}>Deposit</Text>
+                <Text style={styles.policyValue}>{location.bookingPolicies?.requireDeposit ? `$${location.bookingPolicies?.depositAmount || 25}` : 'None'}</Text>
+              </View>
+            </View>
           </View>
         </View>
       ))}
@@ -425,6 +453,12 @@ const styles = StyleSheet.create({
   locationDetail: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   locationAddress: { color: '#94a3b8', fontSize: 13 },
   locationPhone: { color: '#94a3b8', fontSize: 13 },
+  policiesSection: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  policiesTitle: { color: '#94a3b8', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 12 },
+  policiesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  policyItem: { flexDirection: 'row', alignItems: 'center', gap: 6, minWidth: 100 },
+  policyLabel: { color: '#64748b', fontSize: 12 },
+  policyValue: { color: '#fff', fontSize: 14, fontWeight: '600' },
   customerList: { gap: 12 },
   customerCard: { backgroundColor: '#1e293b', borderRadius: 14, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   customerHeader: { flexDirection: 'row', alignItems: 'center', gap: 14 },

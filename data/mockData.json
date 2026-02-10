@@ -1,4 +1,38 @@
 {
+  "locations": [
+    {
+      "id": "loc_001",
+      "name": "Downtown Salon",
+      "address": "123 Main St, New York, NY 10001",
+      "phone": "(555) 123-4567",
+      "timezone": "America/New_York",
+      "bookingPolicies": {
+        "minLeadHours": 24,
+        "bufferMinutes": 15,
+        "defaultDuration": 60,
+        "cancellationWindowHours": 24,
+        "cancellationFeePercent": 50,
+        "requireDeposit": false,
+        "depositAmount": 0
+      }
+    },
+    {
+      "id": "loc_002",
+      "name": "Uptown Studio",
+      "address": "456 Park Ave, New York, NY 10021",
+      "phone": "(555) 987-6543",
+      "timezone": "America/New_York",
+      "bookingPolicies": {
+        "minLeadHours": 12,
+        "bufferMinutes": 10,
+        "defaultDuration": 45,
+        "cancellationWindowHours": 12,
+        "cancellationFeePercent": 25,
+        "requireDeposit": true,
+        "depositAmount": 25
+      }
+    }
+  ],
   "stylists": [
     {
       "id": "stylist_001",
