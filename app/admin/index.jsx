@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Mail as MailIcon } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -12,9 +12,43 @@ const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
 }));
 
 const INITIAL_SERVICES = [
-  { id: 'svc_001', name: 'Haircut & Style', price: 75, duration: 60, category: 'Hair' },
-  { id: 'svc_002', name: 'Color & Highlights', price: 150, duration: 120, category: 'Hair' },
-  { id: 'svc_003', name: 'Manicure', price: 45, duration: 45, category: 'Nails' },
+  { 
+    id: 'svc_001', 
+    name: 'Haircut & Style', 
+    price: 75, 
+    duration: 60, 
+    category: 'Hair',
+    addOns: [
+      { name: 'Deep Conditioning', price: 15 },
+      { name: 'Scalp Massage', price: 20 }
+    ],
+    variants: [
+      { name: 'Short Hair', price: 60 },
+      { name: 'Long Hair', price: 85 }
+    ]
+  },
+  { 
+    id: 'svc_002', 
+    name: 'Color & Highlights', 
+    price: 150, 
+    duration: 120, 
+    category: 'Hair',
+    addOns: [
+      { name: 'Gloss Treatment', price: 30 },
+      { name: 'Bond Builder', price: 25 }
+    ]
+  },
+  { 
+    id: 'svc_003', 
+    name: 'Manicure', 
+    price: 45, 
+    duration: 45, 
+    category: 'Nails',
+    variants: [
+      { name: 'Gel Polish', price: 15 },
+      { name: 'Nail Art', price: 10 }
+    ]
+  },
   { id: 'svc_004', name: 'Pedicure', price: 55, duration: 60, category: 'Nails' },
   { id: 'svc_005', name: 'Blowout', price: 50, duration: 30, category: 'Hair' },
 ];
@@ -224,6 +258,20 @@ export default function AdminDashboard() {
               <Trash2 size={14} color="#fff" />
             </TouchableOpacity>
           </View>
+          {(service.addOns?.length > 0 || service.variants?.length > 0) && (
+            <View style={styles.serviceExtras}>
+              {service.addOns?.map((addon, idx) => (
+                <View key={idx} style={styles.extraChip}>
+                  <Text style={styles.extraChipText}>+ {addon.name} (+${addon.price})</Text>
+                </View>
+              ))}
+              {service.variants?.map((variant, idx) => (
+                <View key={idx} style={[styles.extraChip, styles.variantChip]}>
+                  <Text style={styles.extraChipText}>{variant.name} ${variant.price}</Text>
+                </View>
+              ))}
+            </View>
+          )}
         </View>
       ))}
     </ScrollView>
@@ -714,6 +762,20 @@ export default function AdminDashboard() {
               <ChevronRight size={20} color="#64748b" />
             </View>
           </View>
+          <View style={styles.customerPrefs}>
+            <View style={styles.prefIndicator}>
+              <Smartphone size={12} color={customer.smsEnabled ? '#10b981' : '#64748b'} />
+              <Text style={[styles.prefText, customer.smsEnabled && styles.prefActive]}>SMS</Text>
+            </View>
+            <View style={styles.prefIndicator}>
+              <Mail size={12} color={customer.emailEnabled ? '#10b981' : '#64748b'} />
+              <Text style={[styles.prefText, customer.emailEnabled && styles.prefActive]}>Email</Text>
+            </View>
+            <View style={styles.prefIndicator}>
+              <Bell size={12} color={customer.marketingOptIn ? '#6366f1' : '#64748b'} />
+              <Text style={[styles.prefText, customer.marketingOptIn && { color: '#6366f1' }]}>Marketing</Text>
+            </View>
+          </View>
         </View>
       ))}
     </ScrollView>
@@ -986,6 +1048,11 @@ const styles = StyleSheet.create({
   serviceActions: { flexDirection: 'row', gap: 8 },
   smallEditButton: { width: 32, height: 32, backgroundColor: '#6366f1', borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
   smallDeleteButton: { width: 32, height: 32, backgroundColor: '#ef4444', borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
+  serviceExtras: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  extraChip: { backgroundColor: 'rgba(16, 185, 129, 0.1)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+  variantChip: { backgroundColor: 'rgba(99, 102, 241, 0.1)' },
+  extraChipText: { fontSize: 11, color: '#10b981' },
+  prefRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
   locationList: { gap: 16 },
   locationCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   locationHeader: { flexDirection: 'row', alignItems: 'center', gap: 16 },
@@ -1017,6 +1084,10 @@ const styles = StyleSheet.create({
   tagNew: { backgroundColor: 'rgba(16, 185, 129, 0.2)' },
   tagDefault: { backgroundColor: 'rgba(99, 102, 241, 0.2)' },
   customerTagText: { fontSize: 10, fontWeight: '600' },
+  customerPrefs: { flexDirection: 'row', gap: 12, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  prefIndicator: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  prefText: { fontSize: 11, color: '#64748b' },
+  prefActive: { color: '#10b981' },
   comingSoon: { color: '#64748b', fontSize: 16, textAlign: 'center', marginTop: 100 },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.85)', justifyContent: 'center', alignItems: 'center', padding: 20 },
   modalContent: { width: '100%', maxWidth: 450, backgroundColor: '#1e293b', borderRadius: 24, padding: 24, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
