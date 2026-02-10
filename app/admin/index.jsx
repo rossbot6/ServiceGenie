@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -669,6 +669,80 @@ export default function AdminDashboard() {
     );
   };
 
+  const renderQRCheckIn = () => {
+    const recentCheckIns = [
+      { id: 1, customer: 'Sarah P.', time: '10:15 AM', service: 'Haircut & Style', provider: 'Elena Rodriguez', method: 'QR Code' },
+      { id: 2, customer: 'John D.', time: '10:45 AM', service: 'Beard Trim', provider: 'Marcus Chen', method: 'Manual' },
+      { id: 3, customer: 'Emily W.', time: '11:00 AM', service: 'Color & Highlights', provider: 'Elena Rodriguez', method: 'QR Code' },
+    ];
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <Text style={styles.sectionTitle}>QR Code Check-In</Text>
+          <TouchableOpacity style={styles.addButton}>
+            <Download size={18} color="#fff" /><Text style={styles.addButtonText}>Export Logs</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>127</Text>
+            <Text style={styles.miniStatLabel}>Total Check-Ins</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>89</Text>
+            <Text style={styles.miniStatLabel}>QR Scans</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>38</Text>
+            <Text style={styles.miniStatLabel}>Manual</Text>
+          </View>
+        </View>
+
+        <View style={styles.qrPreviewSection}>
+          <Text style={styles.sectionTitle}>Your Check-In QR Code</Text>
+          <View style={styles.qrCodeDisplay}>
+            <View style={styles.qrCodePlaceholder}>
+              <Text style={styles.qrCodeText}>📱</Text>
+              <Text style={styles.qrCodeLabel}>Scan to Check In</Text>
+              <Text style={styles.qrCodeUrl}>servicegenie.app/checkin</Text>
+            </View>
+          </View>
+          <View style={styles.qrActions}>
+            <TouchableOpacity style={styles.qrButton}>
+              <Download size={16} color="#fff" /><Text style={styles.qrButtonText}>Download QR</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.qrButton}>
+              <RefreshCw size={16} color="#fff" /><Text style={styles.qrButtonText}>Refresh Code</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Recent Check-Ins</Text>
+        {recentCheckIns.map((checkIn) => (
+          <View key={checkIn.id} style={styles.checkInCard}>
+            <View style={styles.checkInInfo}>
+              <View style={styles.checkInAvatar}>
+                <Text style={styles.checkInAvatarText}>{checkIn.customer[0]}</Text>
+              </View>
+              <View style={styles.checkInDetails}>
+                <Text style={styles.checkInCustomer}>{checkIn.customer}</Text>
+                <Text style={styles.checkInService}>{checkIn.service} with {checkIn.provider}</Text>
+              </View>
+            </View>
+            <View style={styles.checkInMeta}>
+              <Text style={styles.checkInTime}>{checkIn.time}</Text>
+              <View style={[styles.checkInBadge, checkIn.method === 'QR Code' ? styles.qrBadge : styles.manualBadge]}>
+                <Text style={styles.checkInBadgeText}>{checkIn.method}</Text>
+              </View>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
+
   const renderRoles = () => (
     <ScrollView style={styles.tabContent}>
       <View style={styles.tabHeader}>
@@ -970,6 +1044,7 @@ export default function AdminDashboard() {
             { id: 'payments', icon: DollarSign, label: 'Payments' },
             { id: 'giftcards', icon: Gift, label: 'Gift Cards' },
             { id: 'loyalty', icon: Award, label: 'Loyalty' },
+            { id: 'qrcheckin', icon: QrCode, label: 'Check-In' },
             { id: 'teams', icon: Users, label: 'Teams' },
             { id: 'roles', icon: Shield, label: 'Roles' },
             { id: 'providers', icon: UserCircle, label: 'Staff' },
@@ -1003,6 +1078,7 @@ export default function AdminDashboard() {
         {activeTab === 'payments' && renderPayments()}
         {activeTab === 'giftcards' && renderGiftCards()}
         {activeTab === 'loyalty' && renderLoyalty()}
+        {activeTab === 'qrcheckin' && renderQRCheckIn()}
         {activeTab === 'teams' && renderTeams()}
         {activeTab === 'roles' && renderRoles()}
         {activeTab === 'providers' && renderProviders()}
@@ -1140,6 +1216,28 @@ const styles = StyleSheet.create({
   settingLabel: { color: '#94a3b8', fontSize: 14 },
   pointsInput: { backgroundColor: '#0f172a', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, width: 80 },
   pointsInputText: { color: '#fff', fontSize: 14, textAlign: 'center' },
+  qrPreviewSection: { backgroundColor: '#1e293b', borderRadius: 16, padding: 24, marginBottom: 24, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  qrCodeDisplay: { marginBottom: 16 },
+  qrCodePlaceholder: { width: 180, height: 180, backgroundColor: '#fff', borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  qrCodeText: { fontSize: 48, marginBottom: 8 },
+  qrCodeLabel: { color: '#0f172a', fontSize: 14, fontWeight: '600' },
+  qrCodeUrl: { color: '#64748b', fontSize: 12, marginTop: 4 },
+  qrActions: { flexDirection: 'row', gap: 12 },
+  qrButton: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#6366f1', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12 },
+  qrButtonText: { color: '#fff', fontWeight: '600', fontSize: 14 },
+  checkInCard: { backgroundColor: '#1e293b', borderRadius: 12, padding: 16, marginBottom: 12, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  checkInInfo: { flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 },
+  checkInAvatar: { width: 44, height: 44, borderRadius: 12, backgroundColor: '#6366f1', alignItems: 'center', justifyContent: 'center' },
+  checkInAvatarText: { color: '#fff', fontWeight: '800', fontSize: 18 },
+  checkInDetails: { flex: 1 },
+  checkInCustomer: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  checkInService: { color: '#64748b', fontSize: 13, marginTop: 2 },
+  checkInMeta: { alignItems: 'flex-end' },
+  checkInTime: { color: '#94a3b8', fontSize: 13 },
+  checkInBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, marginTop: 4 },
+  qrBadge: { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+  manualBadge: { backgroundColor: 'rgba(249, 115, 22, 0.1)' },
+  checkInBadgeText: { fontSize: 10, fontWeight: '700' },
   statsGrid: { flexDirection: 'row', gap: 16, marginBottom: 32, flexWrap: 'wrap' },
   statCard: { flex: 1, minWidth: 180, backgroundColor: '#1e293b', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   statIcon: { width: 48, height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
