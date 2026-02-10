@@ -23,9 +23,9 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
   - Default appointment duration
 
 - [ ] **Multi-Timezone Support**
-  - Display times in customer's local tz
-  - Provider schedules in location tz
-  - Automated timezone conversions
+  - [x] ~~Display times in customer's local tz~~ ✅ **Partial** - Added timezone configuration per location
+  - [x] ~~Provider schedules in location tz~~ ✅ **Partial** - Added timezone configuration per location
+  - [ ] Automated timezone conversions
 
 ---
 

@@ -435,6 +435,11 @@ export default function AdminDashboard() {
                 <Text style={styles.policyLabel}>Deposit</Text>
                 <Text style={styles.policyValue}>{location.bookingPolicies?.requireDeposit ? `$${location.bookingPolicies?.depositAmount || 25}` : 'None'}</Text>
               </View>
+              <View style={styles.policyItem}>
+                <X size={14} color="#ef4444" />
+                <Text style={styles.policyLabel}>No-show Fee</Text>
+                <Text style={styles.policyValue}>${location.bookingPolicies?.noShowFee || 25}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -1434,6 +1439,12 @@ export default function AdminDashboard() {
 
               <Text style={styles.inputLabel}>Cancellation Fee (%)</Text>
               <TextInput style={styles.modalInput} placeholder="50" placeholderTextColor="#64748b" keyboardType="numeric" defaultValue={locationModal.data?.bookingPolicies?.cancellationFeePercent?.toString()} />
+
+              <Text style={styles.inputLabel}>No-show Fee ($)</Text>
+              <TextInput style={styles.modalInput} placeholder="25" placeholderTextColor="#64748b" keyboardType="numeric" defaultValue={locationModal.data?.bookingPolicies?.noShowFee?.toString()} />
+
+              <Text style={styles.inputLabel}>No-show Ban Threshold (count)</Text>
+              <TextInput style={styles.modalInput} placeholder="3" placeholderTextColor="#64748b" keyboardType="numeric" defaultValue={locationModal.data?.bookingPolicies?.noShowBanThreshold?.toString()} />
 
               <View style={styles.prefRow}>
                 <CreditCard size={20} color="#94a3b8" />

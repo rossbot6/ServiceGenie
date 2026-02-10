@@ -56,6 +56,16 @@ CREATE TABLE locations (
   opening_time TIME DEFAULT '08:00',
   closing_time TIME DEFAULT '20:00',
   is_active BOOLEAN DEFAULT true,
+  -- Booking Policies
+  min_lead_hours INT DEFAULT 24,
+  buffer_minutes INT DEFAULT 15,
+  default_duration INT DEFAULT 60,
+  cancellation_window_hours INT DEFAULT 24,
+  cancellation_fee_percent INT DEFAULT 50,
+  require_deposit BOOLEAN DEFAULT false,
+  deposit_amount DECIMAL(10,2) DEFAULT 0,
+  no_show_fee DECIMAL(10,2) DEFAULT 25.00,
+  no_show_ban_threshold INT DEFAULT 3,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

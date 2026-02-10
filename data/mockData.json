@@ -67,7 +67,9 @@
         "cancellationWindowHours": 24,
         "cancellationFeePercent": 50,
         "requireDeposit": false,
-        "depositAmount": 0
+        "depositAmount": 0,
+        "noShowFee": 25,
+        "noShowBanThreshold": 3
       }
     },
     {
@@ -83,7 +85,9 @@
         "cancellationWindowHours": 12,
         "cancellationFeePercent": 25,
         "requireDeposit": true,
-        "depositAmount": 25
+        "depositAmount": 25,
+        "noShowFee": 50,
+        "noShowBanThreshold": 2
       }
     }
   ],
