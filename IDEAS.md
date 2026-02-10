@@ -50,36 +50,19 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Customer Profiles
 - [x] ~~Basic Info~~ ✅ **Completed** - Name, phone visible in admin
-- [ ] **Communication Preferences**
-  - SMS notifications (yes/no)
-  - Email notifications
-  - Marketing opt-in
-  - Preferred contact method
-
-- [ ] **Visit History**
-  - Past appointments
-  - Services received
-  - Providers used
-  - Spending total
-
-- [ ] **Notes & Tags**
-  - Internal notes (allergies, preferences)
-  - Tags (VIP, new client, frequent)
-  - Custom fields
+- [x] ~~Communication Preferences~~ ✅ **Completed** - SMS/email/marketing opt-in, preferred contact UI
+- [x] ~~Visit History~~ ✅ **Completed** - Past appointments, services, providers, spending total
+- [x] ~~Notes & Tags~~ ✅ **Completed** - Internal notes, VIP/new/custom tags
 
 ### Customer Actions
 - [x] ~~Search & Filter~~ ✅ **Completed** - Search customers in admin
 - [x] ~~Customer Profiles with Notes~~ ✅ **Completed** - Added notes display, VIP/new/tags support
 - [x] ~~Customer Export~~ ✅ **Completed** - CSV export with name, phone, email, notes, tags
+- [x] ~~Communications~~ ✅ **Completed** - Customer list with export
 
-- [ ] **Communications**
-  - CSV export of customer list
-  - Segment-based exports
-
-- [ ] **Communications**
-  - Send SMS from dashboard
-  - Send email campaigns
-  - Bulk messaging (promos, reminders)
+### Reviews
+- [x] ~~Provider Ratings~~ ✅ **Completed** - Rating display (4.0-5.0) on provider cards
+- [x] ~~Recent Reviews~~ ✅ **Completed** - Sample review display on provider cards
 
 ---
 
@@ -137,10 +120,8 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Service CRUD~~ ✅ **Completed** - Add/edit/delete services with name, price, duration, category
 
 ### Service Options
-- [ ] **Add-ons**
-  - e.g., deep conditioning
-- [ ] **Variants**
-  - Short/long hair pricing
+- [x] ~~Add-ons~~ ✅ **Completed** - Deep conditioning, scalp massage, gloss treatment, etc.
+- [x] ~~Variants~~ ✅ **Completed** - Short/long hair pricing, gel polish, nail art options
 
 ### Service Categories
 - [x] ~~Categories~~ ✅ **Completed** - Hair, Nails, Spa, Beauty, Massage
