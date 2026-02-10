@@ -39,10 +39,9 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Advanced Provider Features
 - [x] ~~Performance Metrics~~ ✅ **Completed** - Appointments, revenue, rating per provider
-- [ ] **Team Management**
-  - Group providers into teams (colorists, stylists, nails)
-  - Team lead assignment
-  - Cross-training visibility
+- [x] ~~Team Management~~ ✅ **Completed** - Group providers into teams with lead assignments
+- [x] ~~Team Lead Assignment~~ ✅ **Completed** - Display team leads within teams
+- [ ] **Cross-training visibility**
 
 ---
 
@@ -301,6 +300,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **Team Lead Assignment** - Visibility of team leads in the Teams view
 - **Enhanced Appointments View** - Advanced filters (status, provider, search) and CSV export functionality
 - **Customer Communication Preferences** - SMS/Email/Marketing opt-in UI
 - **Service Add-ons & Variants** - Deep conditioning, scalp massage, short/long hair pricing

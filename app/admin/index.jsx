@@ -393,7 +393,7 @@ export default function AdminDashboard() {
           <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Location</Text>
         </TouchableOpacity>
       </View>
-      {mockData.locations.map((location) => (
+      {locations.map((location) => (
         <View key={location.id} style={styles.locationCard}>
           <View style={styles.locationHeader}>
             <View style={styles.locationIcon}><Building2 size={24} color="#6366f1" /></View>
@@ -1331,11 +1331,47 @@ export default function AdminDashboard() {
             <ScrollView style={styles.modalForm}>
               <Text style={styles.inputLabel}>Location Name</Text>
               <TextInput style={styles.modalInput} placeholder="e.g., Downtown Salon" placeholderTextColor="#64748b" defaultValue={locationModal.data?.name} />
+              
               <Text style={styles.inputLabel}>Address</Text>
               <TextInput style={styles.modalInput} placeholder="123 Main St, City, State" placeholderTextColor="#64748b" defaultValue={locationModal.data?.address} />
+              
               <Text style={styles.inputLabel}>Phone</Text>
               <TextInput style={styles.modalInput} placeholder="(555) 123-4567" placeholderTextColor="#64748b" keyboardType="phone-pad" defaultValue={locationModal.data?.phone} />
-              <TouchableOpacity style={styles.modalSubmitButton}><Text style={styles.modalSubmitText}>{locationModal.mode === 'add' ? 'Add Location' : 'Save Changes'}</Text></TouchableOpacity>
+
+              <View style={styles.sectionDivider} />
+              <Text style={styles.sectionTitle}>Booking Policies</Text>
+
+              <Text style={styles.inputLabel}>Min Lead Time (hours)</Text>
+              <TextInput style={styles.modalInput} placeholder="24" placeholderTextColor="#64748b" keyboardType="numeric" defaultValue={locationModal.data?.bookingPolicies?.minLeadHours?.toString()} />
+
+              <Text style={styles.inputLabel}>Buffer Time (minutes)</Text>
+              <TextInput style={styles.modalInput} placeholder="15" placeholderTextColor="#64748b" keyboardType="numeric" defaultValue={locationModal.data?.bookingPolicies?.bufferMinutes?.toString()} />
+
+              <Text style={styles.inputLabel}>Cancellation Window (hours)</Text>
+              <TextInput style={styles.modalInput} placeholder="24" placeholderTextColor="#64748b" keyboardType="numeric" defaultValue={locationModal.data?.bookingPolicies?.cancellationWindowHours?.toString()} />
+
+              <Text style={styles.inputLabel}>Cancellation Fee (%)</Text>
+              <TextInput style={styles.modalInput} placeholder="50" placeholderTextColor="#64748b" keyboardType="numeric" defaultValue={locationModal.data?.bookingPolicies?.cancellationFeePercent?.toString()} />
+
+              <View style={styles.prefRow}>
+                <CreditCard size={20} color="#94a3b8" />
+                <Text style={styles.prefLabel}>Require Deposit</Text>
+                {/* Note: In a real app we'd use a state-controlled Switch here */}
+                <View style={{ width: 50, height: 26, backgroundColor: locationModal.data?.bookingPolicies?.requireDeposit ? '#10b981' : '#334155', borderRadius: 13, justifyContent: 'center', paddingHorizontal: 2 }}>
+                   <View style={{ width: 22, height: 22, backgroundColor: '#fff', borderRadius: 11, alignSelf: locationModal.data?.bookingPolicies?.requireDeposit ? 'flex-end' : 'flex-start' }} />
+                </View>
+              </View>
+
+              {locationModal.data?.bookingPolicies?.requireDeposit && (
+                <>
+                  <Text style={styles.inputLabel}>Deposit Amount ($)</Text>
+                  <TextInput style={styles.modalInput} placeholder="25" placeholderTextColor="#64748b" keyboardType="numeric" defaultValue={locationModal.data?.bookingPolicies?.depositAmount?.toString()} />
+                </>
+              )}
+
+              <TouchableOpacity style={styles.modalSubmitButton} onPress={() => setLocationModal({ ...locationModal, visible: false })}>
+                <Text style={styles.modalSubmitText}>{locationModal.mode === 'add' ? 'Add Location' : 'Save Changes'}</Text>
+              </TouchableOpacity>
             </ScrollView>
           </View>
         </View>
