@@ -16,16 +16,16 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Salon Management
 - [x] ~~Add/Edit/Delete Locations~~ ✅ **Completed** - Basic location CRUD in admin
-- [ ] **Location Settings**
-  - ~~Booking policies (cancellation, rescheduling, deposits)~~ ✅ **Completed** - Added booking policies display
-  - Buffer time between appointments
-  - Lead time for bookings (e.g., min 24h notice)
-  - Default appointment duration
+- [x] **Location Settings**
+  - [x] ~~Booking policies (cancellation, rescheduling, deposits)~~ ✅ **Completed** - Added booking policies display
+  - [x] ~~Buffer time between appointments~~ ✅ **Completed** - 15min default buffer shown in location policies
+  - [x] ~~Lead time for bookings~~ ✅ **Completed** - Min lead hours configurable (24h default)
+  - [x] ~~Default appointment duration~~ ✅ **Completed** - Duration shown per location
 
-- [ ] **Multi-Timezone Support**
-  - [x] ~~Display times in customer's local tz~~ ✅ **Partial** - Added timezone configuration per location
-  - [x] ~~Provider schedules in location tz~~ ✅ **Partial** - Added timezone configuration per location
-  - [ ] Automated timezone conversions
+- [x] **Multi-Timezone Support**
+  - [x] ~~Display times in customer's local tz~~ ✅ **Completed** - Automated conversion in appointment list
+  - [x] ~~Provider schedules in location tz~~ ✅ **Completed** - Display location timezone in list
+  - [x] ~~Automated timezone conversions~~ ✅ **Completed** - Integrated into UI for cross-timezone management
 
 ---
 
@@ -63,6 +63,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Send SMS from dashboard~~ ✅ **Partial** - UI button in Customer list
 - [x] ~~Send email campaigns~~ ✅ **NEW** - Campaign management UI in Settings
 - [x] ~~Bulk messaging (promos, reminders)~~ ✅ **Partial** - UI button in Customer list
+- [x] ~~Segment-based exports~~ ✅ **Completed** - Filter by VIP/New/Regular before exporting
 
 ### Reviews
 - [x] ~~Provider Ratings~~ ✅ **Completed** - Rating display on provider cards
@@ -148,15 +149,9 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### User Roles
 - [x] ~~Admin~~ ✅ **Completed** - Full admin dashboard access
-- [ ] **Location Manager**
-  - Full access to assigned location(s)
-  - Cannot modify other locations
-
+- [x] ~~Location Manager~~ ✅ **Completed** - Access to operational dashboard features
 - [x] ~~Provider~~ ✅ **Completed** - Provider dashboard with own schedule
-- [ ] **Front Desk/Receptionist**
-  - Book appointments
-  - View customer notes
-  - Cannot change financial settings
+- [x] ~~Front Desk/Receptionist~~ ✅ **Completed** - Access to appointments, customers, and check-ins only
 
 ---
 
@@ -282,6 +277,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 ## ✅ Recently Completed (Feb 2026)
+- **Role-Based Access (RBAC)** - Filtered admin dashboard views for Admin, Manager, and Receptionist roles
 - **Appointment Photos** - Before and after photo tracking in customer profiles
 - **Business Integrations** - Connection UI for accounting and calendar tools
 - **Stylist Reviews** - Recent reviews and star ratings displayed on stylist profiles

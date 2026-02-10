@@ -57,6 +57,21 @@ const INITIAL_LOCATIONS = mockData.locations || [];
 
 const CATEGORIES = ['Hair', 'Nails', 'Spa', 'Beauty', 'Massage'];
 
+const convertTime = (time, fromTz, toTz) => {
+  try {
+    const [hours, minutes] = time.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    
+    return new Intl.DateTimeFormat('en-US', {
+      timeStyle: 'short',
+      timeZone: toTz
+    }).format(date);
+  } catch (e) {
+    return time;
+  }
+};
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [providers, setProviders] = useState(INITIAL_PROVIDERS);
@@ -68,6 +83,7 @@ export default function AdminDashboard() {
   const [locationModal, setLocationModal] = useState({ visible: false, mode: 'add', data: null });
   const [aptFilter, setAptFilter] = useState('all');
   const [aptProviderFilter, setAptProviderFilter] = useState('all');
+  const [customerSegment, setCustomerSegment] = useState('all');
   const [userRole, setUserRole] = useState('admin'); // 'admin', 'manager', 'receptionist'
 
   const stats = {
@@ -270,7 +286,14 @@ export default function AdminDashboard() {
               </View>
               <View style={styles.appointmentDetail}>
                 <Clock size={14} color="#94a3b8" />
-                <Text style={styles.appointmentDetailText}>{apt.time}</Text>
+                <Text style={styles.appointmentDetailText}>
+                  {apt.time}
+                  {apt.locationId && mockData.locations.find(l => l.id === apt.locationId)?.timezone !== Intl.DateTimeFormat().resolvedOptions().timeZone && (
+                    <Text style={{ fontSize: 10, color: '#6366f1' }}>
+                      {` (${convertTime(apt.time, mockData.locations.find(l => l.id === apt.locationId).timezone, Intl.DateTimeFormat().resolvedOptions().timeZone)} local)`}
+                    </Text>
+                  )}
+                </Text>
               </View>
               <View style={styles.appointmentDetail}>
                 <User size={14} color="#94a3b8" />
@@ -450,7 +473,11 @@ export default function AdminDashboard() {
 
   const exportCustomers = () => {
     const headers = ['Name', 'Phone', 'Email', 'Notes', 'Tags'];
-    const rows = mockData.customers.map(c => [
+    const filteredCustomers = customerSegment === 'all' 
+      ? mockData.customers 
+      : mockData.customers.filter(c => (c.tags || []).includes(customerSegment));
+
+    const rows = filteredCustomers.map(c => [
       c.name,
       c.phone || '',
       c.email || '',
@@ -462,7 +489,7 @@ export default function AdminDashboard() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `customers_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `customers_${customerSegment}_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   };
@@ -1311,24 +1338,56 @@ export default function AdminDashboard() {
     );
   };
 
-  const renderCustomers = () => (
-    <ScrollView style={styles.tabContent}>
-      <View style={styles.tabHeader}>
-        <View style={styles.searchContainer}>
-          <Search size={18} color="#64748b" />
-          <TextInput style={styles.searchInput} placeholder="Search customers..." placeholderTextColor="#64748b" />
+  const renderCustomers = () => {
+    const filteredCustomers = mockData.customers.filter(c => {
+      const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) || (c.phone || "").includes(searchQuery);
+      const matchesSegment = customerSegment === "all" || (c.tags || []).includes(customerSegment);
+      return matchesSearch && matchesSegment;
+    });
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <View style={styles.searchContainer}>
+            <Search size={18} color="#64748b" />
+            <TextInput 
+              style={styles.searchInput} 
+              placeholder="Search customers..." 
+              placeholderTextColor="#64748b" 
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <TouchableOpacity style={styles.exportButton} onPress={() => alert("Opening Bulk Message composer...")}>
+              <Mail size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Bulk Msg</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.exportButton} onPress={() => exportCustomers()}>
+              <Download size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Export</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.addButton}><Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add</Text></TouchableOpacity>
+          </View>
         </View>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          <TouchableOpacity style={styles.exportButton} onPress={() => alert('Opening Bulk Message composer...')}>
-            <Mail size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Bulk Msg</Text>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterBar}>
+          <TouchableOpacity 
+            style={[styles.filterChip, customerSegment === "all" && styles.filterChipActive]}
+            onPress={() => setCustomerSegment("all")}
+          >
+            <Text style={[styles.filterChipText, customerSegment === "all" && styles.filterChipTextActive]}>All Clients</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.exportButton} onPress={() => exportCustomers()}>
-            <Download size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Export</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.addButton}><Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add</Text></TouchableOpacity>
-        </View>
-      </View>
-      {mockData.customers.map((customer) => (
+          {["VIP", "Regular", "New", "Referral"].map(tag => (
+            <TouchableOpacity 
+              key={tag}
+              style={[styles.filterChip, customerSegment === tag && styles.filterChipActive]}
+              onPress={() => setCustomerSegment(tag)}
+            >
+              <Text style={[styles.filterChipText, customerSegment === tag && styles.filterChipTextActive]}>{tag}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {filteredCustomers.map((customer) => (
         <View key={customer.id} style={styles.customerCard}>
           <View style={styles.customerHeader}>
             <View style={styles.customerAvatar}><Text style={styles.customerAvatarText}>{customer.name[0]}</Text></View>
@@ -1383,6 +1442,7 @@ export default function AdminDashboard() {
     </ScrollView>
   );
 
+  };
   const renderGiftCards = () => {
     const giftCards = [
       { id: 'gc_001', code: 'GIFT50', value: 50, balance: 50, purchasedBy: 'Sarah P.', date: '2026-01-15', status: 'active' },
