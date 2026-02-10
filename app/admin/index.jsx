@@ -942,28 +942,47 @@ export default function AdminDashboard() {
       { name: 'Essential Mani-Pedi', price: 39.99, frequency: 'Bi-monthly', subscribers: 5 },
     ];
 
+    const membershipTiers = [
+      { name: 'Gold Member', price: 199.99, benefits: 'Unlimited Haircuts, 20% off Products', members: 15 },
+      { name: 'Silver Member', price: 99.99, benefits: '2 Haircuts/month, 10% off Products', members: 42 },
+    ];
+
     return (
       <ScrollView style={styles.tabContent}>
         <View style={styles.tabHeader}>
           <Text style={styles.sectionTitle}>Subscription Boxes</Text>
           <TouchableOpacity style={styles.addButton}>
-            <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Plan</Text>
+            <Plus size={18} color=\"#fff\" /><Text style={styles.addButtonText}>Add Plan</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.statsRow}>
           <View style={styles.miniStat}>
-            <Text style={styles.miniStatValue}>{activeSubs.filter(s => s.status === 'active').length}</Text>
-            <Text style={styles.miniStatLabel}>Active Subs</Text>
+            <Text style={styles.miniStatValue}>{activeSubs.filter(s => s.status === 'active').length + 57}</Text>
+            <Text style={styles.miniStatLabel}>Total Recurring</Text>
           </View>
           <View style={styles.miniStat}>
-            <Text style={styles.miniStatValue}>$840</Text>
+            <Text style={styles.miniStatValue}>$7,240</Text>
             <Text style={styles.miniStatLabel}>MRR</Text>
           </View>
           <View style={styles.miniStat}>
             <Text style={styles.miniStatValue}>25</Text>
             <Text style={styles.miniStatLabel}>Total Shipments</Text>
           </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Membership Tiers</Text>
+        <View style={styles.plansGrid}>
+          {membershipTiers.map((tier, idx) => (
+            <View key={idx} style={[styles.planCard, { borderColor: '#ffd700' }]}>
+              <View style={[styles.planIcon, { backgroundColor: 'rgba(255, 215, 0, 0.1)' }]}>
+                <Award size={24} color=\"#ffd700\" />
+              </View>
+              <Text style={styles.planName}>{tier.name}</Text>
+              <Text style={styles.planPrice}>${tier.price} / mo</Text>
+              <Text style={styles.planSubscribers}>{tier.members} members</Text>
+            </View>
+          ))}
         </View>
 
         <Text style={styles.sectionTitle}>Subscription Plans</Text>

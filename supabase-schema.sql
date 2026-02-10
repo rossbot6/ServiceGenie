@@ -215,6 +215,29 @@ CREATE TABLE subscription_plans (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- ============================================
+-- MEMBERSHIP TIERS TABLE
+-- ============================================
+CREATE TABLE membership_tiers (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  price DECIMAL(10,2) NOT NULL,
+  billing_cycle TEXT NOT NULL DEFAULT 'monthly', -- 'monthly', 'yearly'
+  benefits TEXT[], -- e.g. ['Unlimited Haircuts', '10% off products']
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE active_memberships (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  tier_id UUID REFERENCES membership_tiers(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'paused', 'cancelled', 'expired')),
+  current_period_end DATE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 CREATE TABLE active_subscriptions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
