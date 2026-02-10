@@ -297,7 +297,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 5. ~~Walk-in booking support~~ Done
 6. ~~Customer export functionality~~ Done
 7. ~~SMS template management~~ Done
-8. Email templates
+8. ~~Email templates~~ ✅ **NEW** - Rich email content with placeholders
 
 ### Phase 3
 1. Payment processing
@@ -308,6 +308,15 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 1. Analytics dashboard
 2. Marketing automation
 3. Third-party integrations
+
+---
+
+## ✅ Recently Completed (Feb 2026)
+- **Customer Communication Preferences** - SMS/Email/Marketing opt-in UI
+- **Service Add-ons & Variants** - Deep conditioning, scalp massage, short/long hair pricing
+- **Reviews System** - Provider ratings (4.0-5.0) and recent reviews display
+- **Buffer Time Configuration** - 15min default buffer shown in location policies
+- **Admin Dashboard Tabs** - Appointments, Payments, Teams, Roles, Staff, Customers, Services, Locations, Analytics, Settings
 
 ---
 
