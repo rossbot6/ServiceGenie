@@ -326,7 +326,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - **Social Sharing** - Share new look on Instagram
 - **Appointment Photos** - Before/after photos in profile
 - **Recipe Sharing** - Hair care product recommendations
-- **Group Bookings** - Bridal party packages
+- [x] ~~Group Bookings~~ ✅ **NEW** - Bridal parties, birthdays, corporate events with coordinator
 - [x] ~~E-Gift Cards~~ ✅ **NEW** - Gift card management with code, value, balance tracking
 - [x] ~~Loyalty/Rewards Program~~ ✅ **NEW** - Points per dollar, tiers (Bronze/Silver/Gold/Platinum), birthday bonuses
 - **Subscription Boxes** - Monthly product boxes
