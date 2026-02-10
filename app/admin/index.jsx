@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode, Users as UsersIcon, List, Clock3, CardIcon, Lock, Package } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode, Users as UsersIcon, List, Clock3, CardIcon, Lock, Package, Image as ImageIcon } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -1361,6 +1361,22 @@ export default function AdminDashboard() {
               <Text style={[styles.prefText, customer.marketingOptIn && { color: '#6366f1' }]}>Marketing</Text>
             </View>
           </View>
+
+          {customer.photos && (
+            <View style={styles.customerPhotos}>
+              <Text style={styles.photoLabel}>Latest Work:</Text>
+              <View style={styles.photoRow}>
+                <View style={styles.photoItem}>
+                  <Image source={{ uri: customer.photos[0].before }} style={styles.photoThumb} />
+                  <Text style={styles.photoSub}>Before</Text>
+                </View>
+                <View style={styles.photoItem}>
+                  <Image source={{ uri: customer.photos[0].after }} style={styles.photoThumb} />
+                  <Text style={styles.photoSub}>After</Text>
+                </View>
+              </View>
+            </View>
+          )}
         </View>
       ))}
     </ScrollView>
@@ -1898,6 +1914,12 @@ const styles = StyleSheet.create({
   prefIndicator: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   prefText: { fontSize: 11, color: '#64748b' },
   prefActive: { color: '#10b981' },
+  customerPhotos: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  photoLabel: { color: '#64748b', fontSize: 11, fontWeight: '700', marginBottom: 8 },
+  photoRow: { flexDirection: 'row', gap: 12 },
+  photoItem: { alignItems: 'center' },
+  photoThumb: { width: 60, height: 60, borderRadius: 8, backgroundColor: '#0f172a' },
+  photoSub: { color: '#64748b', fontSize: 9, marginTop: 4 },
   comingSoon: { color: '#64748b', fontSize: 16, textAlign: 'center', marginTop: 100 },
   plansGrid: { flexDirection: 'row', gap: 12, marginBottom: 24 },
   planCard: { flex: 1, backgroundColor: '#1e293b', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)', alignItems: 'center' },
