@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode, Users as UsersIcon, List, Clock3 } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -743,6 +743,87 @@ export default function AdminDashboard() {
     );
   };
 
+  const renderWaitlist = () => {
+    const waitlist = [
+      { id: 'w1', name: 'Michael Brown', phone: '+15550300', requestedDate: '2026-02-15', preferredTime: '2:00 PM', service: 'Haircut & Style', status: 'waiting', position: 1 },
+      { id: 'w2', name: 'Sophia Martinez', phone: '+15550600', requestedDate: '2026-02-15', preferredTime: '10:00 AM', service: 'Manicure + Pedicure', status: 'notified', position: 2 },
+      { id: 'w3', name: 'David Wilson', phone: '+15550500', requestedDate: '2026-02-16', preferredTime: 'Any morning', service: 'Color & Highlights', status: 'waiting', position: 3 },
+      { id: 'w4', name: 'James Taylor', phone: '+15550700', requestedDate: '2026-02-20', preferredTime: 'After 5 PM', service: 'Haircut & Style', status: 'waiting', position: 4 },
+    ];
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <View style={styles.searchContainer}>
+            <Search size={18} color="#64748b" />
+            <TextInput style={styles.searchInput} placeholder="Search waitlist..." placeholderTextColor="#64748b" />
+          </View>
+          <TouchableOpacity style={styles.addButton}>
+            <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add to Waitlist</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>{waitlist.length}</Text>
+            <Text style={styles.miniStatLabel}>Total Waiting</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>1</Text>
+            <Text style={styles.miniStatLabel}>Notified</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>3</Text>
+            <Text style={styles.miniStatLabel}>Available Slots</Text>
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Waitlist Queue</Text>
+        {waitlist.map((item) => (
+          <View key={item.id} style={styles.waitlistCard}>
+            <View style={styles.waitlistPosition}>
+              <Text style={styles.waitlistPositionText}>#{item.position}</Text>
+            </View>
+            <View style={styles.waitlistInfo}>
+              <View style={styles.waitlistHeader}>
+                <Text style={styles.waitlistName}>{item.name}</Text>
+                <View style={[styles.waitlistStatus, item.status === 'waiting' ? styles.waitingBadge : styles.notifiedBadge]}>
+                  <Text style={styles.waitlistStatusText}>{item.status === 'waiting' ? 'Waiting' : 'Notified'}</Text>
+                </View>
+              </View>
+              <Text style={styles.waitlistService}>{item.service}</Text>
+              <View style={styles.waitlistDetails}>
+                <View style={styles.waitlistDetail}>
+                  <Calendar size={12} color="#94a3b8" />
+                  <Text style={styles.waitlistDetailText}>{item.requestedDate}</Text>
+                </View>
+                <View style={styles.waitlistDetail}>
+                  <Clock3 size={12} color="#94a3b8" />
+                  <Text style={styles.waitlistDetailText}>{item.preferredTime}</Text>
+                </View>
+                <View style={styles.waitlistDetail}>
+                  <Phone size={12} color="#94a3b8" />
+                  <Text style={styles.waitlistDetailText}>{item.phone}</Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.waitlistActions}>
+              <TouchableOpacity style={styles.waitlistActionButton} onPress={() => alert(`Notifying ${item.name}...`)}>
+                <Bell size={14} color="#10b981" /><Text style={styles.waitlistActionText}>Notify</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.waitlistActionButton} onPress={() => alert(`Booking ${item.name}...`)}>
+                <Calendar size={14} color="#6366f1" /><Text style={styles.waitlistActionText}>Book</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.waitlistActionButton} onPress={() => alert(`Removing ${item.name}...`)}>
+                <X size={14} color="#ef4444" /><Text style={styles.waitlistActionText}>Remove</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
+
   const renderRoles = () => (
     <ScrollView style={styles.tabContent}>
       <View style={styles.tabHeader}>
@@ -1045,6 +1126,7 @@ export default function AdminDashboard() {
             { id: 'giftcards', icon: Gift, label: 'Gift Cards' },
             { id: 'loyalty', icon: Award, label: 'Loyalty' },
             { id: 'qrcheckin', icon: QrCode, label: 'Check-In' },
+            { id: 'waitlist', icon: List, label: 'Waitlist' },
             { id: 'teams', icon: Users, label: 'Teams' },
             { id: 'roles', icon: Shield, label: 'Roles' },
             { id: 'providers', icon: UserCircle, label: 'Staff' },
@@ -1079,6 +1161,7 @@ export default function AdminDashboard() {
         {activeTab === 'giftcards' && renderGiftCards()}
         {activeTab === 'loyalty' && renderLoyalty()}
         {activeTab === 'qrcheckin' && renderQRCheckIn()}
+        {activeTab === 'waitlist' && renderWaitlist()}
         {activeTab === 'teams' && renderTeams()}
         {activeTab === 'roles' && renderRoles()}
         {activeTab === 'providers' && renderProviders()}
@@ -1238,6 +1321,23 @@ const styles = StyleSheet.create({
   qrBadge: { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
   manualBadge: { backgroundColor: 'rgba(249, 115, 22, 0.1)' },
   checkInBadgeText: { fontSize: 10, fontWeight: '700' },
+  waitlistCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 16, marginBottom: 12, flexDirection: 'row', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  waitlistPosition: { width: 50, alignItems: 'center', justifyContent: 'center', marginRight: 16 },
+  waitlistPositionText: { color: '#6366f1', fontSize: 20, fontWeight: '800' },
+  waitlistInfo: { flex: 1 },
+  waitlistHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  waitlistName: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  waitlistStatus: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  waitingBadge: { backgroundColor: 'rgba(99, 102, 241, 0.1)' },
+  notifiedBadge: { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+  waitlistStatusText: { fontSize: 11, fontWeight: '700' },
+  waitlistService: { color: '#94a3b8', fontSize: 14, marginBottom: 8 },
+  waitlistDetails: { flexDirection: 'row', gap: 16, flexWrap: 'wrap' },
+  waitlistDetail: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  waitlistDetailText: { color: '#64748b', fontSize: 12 },
+  waitlistActions: { justifyContent: 'space-between', gap: 8 },
+  waitlistActionButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 12, backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 8 },
+  waitlistActionText: { fontSize: 12, fontWeight: '600' },
   statsGrid: { flexDirection: 'row', gap: 16, marginBottom: 32, flexWrap: 'wrap' },
   statCard: { flex: 1, minWidth: 180, backgroundColor: '#1e293b', borderRadius: 16, padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   statIcon: { width: 48, height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
