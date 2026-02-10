@@ -221,7 +221,17 @@ export default function AdminDashboard() {
           <View style={styles.providerStats}>
             <View style={styles.providerStat}><Calendar size={14} color="#94a3b8" /><Text style={styles.providerStatText}>{provider.appointmentsToday} today</Text></View>
             <View style={styles.providerStat}><DollarSign size={14} color="#10b981" /><Text style={styles.providerStatText}>${provider.revenueMonth}/mo</Text></View>
-            <View style={styles.providerStat}><Clock size={14} color="#f59e0b" /><Text style={styles.providerStatText}>{provider.rating} rating</Text></View>
+            <View style={styles.providerStat}><Star size={14} color="#f59e0b" /><Text style={styles.providerStatText}>{provider.rating}</Text></View>
+          </View>
+          <View style={styles.providerReviews}>
+            <View style={styles.reviewsHeader}>
+              <Star size={14} color="#f59e0b" fill="#f59e0b" />
+              <Text style={styles.reviewsTitle}>Recent Reviews</Text>
+            </View>
+            <View style={styles.reviewItem}>
+              <Text style={styles.reviewText}>"Amazing service! {provider.name.split(' ')[0]} always does an excellent job."</Text>
+              <Text style={styles.reviewAuthor}>- Sarah P.</Text>
+            </View>
           </View>
         </View>
       ))}
@@ -1033,6 +1043,12 @@ const styles = StyleSheet.create({
   providerStats: { flexDirection: 'row', marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)', gap: 24 },
   providerStat: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   providerStatText: { color: '#94a3b8', fontSize: 13 },
+  providerReviews: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  reviewsHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
+  reviewsTitle: { color: '#94a3b8', fontSize: 12, fontWeight: '600' },
+  reviewItem: { backgroundColor: 'rgba(0,0,0,0.2)', padding: 12, borderRadius: 8, marginBottom: 6 },
+  reviewText: { color: '#fff', fontSize: 13, fontStyle: 'italic' },
+  reviewAuthor: { color: '#64748b', fontSize: 11, marginTop: 4, textAlign: 'right' },
   categoryFilter: { gap: 8, marginBottom: 20 },
   categoryChip: { paddingHorizontal: 16, paddingVertical: 8, backgroundColor: '#1e293b', borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   activeCategory: { backgroundColor: '#6366f1', borderColor: '#6366f1' },
