@@ -401,6 +401,7 @@ export default function AdminDashboard() {
               <Text style={styles.locationName}>{location.name}</Text>
               <View style={styles.locationDetail}><MapPin size={14} color="#94a3b8" /><Text style={styles.locationAddress}>{location.address}</Text></View>
               <View style={styles.locationDetail}><Phone size={14} color="#94a3b8" /><Text style={styles.locationPhone}>{location.phone}</Text></View>
+              <View style={styles.locationDetail}><Map size={14} color="#94a3b8" /><Text style={styles.locationTimezone}>{location.timezone}</Text></View>
             </View>
             <TouchableOpacity style={styles.editButton} onPress={() => setLocationModal({ visible: true, mode: 'edit', data: location })}>
               <Edit size={16} color="#6366f1" />
@@ -1416,6 +1417,9 @@ export default function AdminDashboard() {
               <Text style={styles.inputLabel}>Phone</Text>
               <TextInput style={styles.modalInput} placeholder="(555) 123-4567" placeholderTextColor="#64748b" keyboardType="phone-pad" defaultValue={locationModal.data?.phone} />
 
+              <Text style={styles.inputLabel}>Timezone</Text>
+              <TextInput style={styles.modalInput} placeholder="America/New_York" placeholderTextColor="#64748b" defaultValue={locationModal.data?.timezone} />
+
               <View style={styles.sectionDivider} />
               <Text style={styles.sectionTitle}>Booking Policies</Text>
 
@@ -1708,6 +1712,7 @@ const styles = StyleSheet.create({
   locationDetail: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
   locationAddress: { color: '#94a3b8', fontSize: 13 },
   locationPhone: { color: '#94a3b8', fontSize: 13 },
+  locationTimezone: { color: '#64748b', fontSize: 11, marginTop: 2 },
   policiesSection: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
   policiesTitle: { color: '#94a3b8', fontSize: 12, fontWeight: '700', textTransform: 'uppercase', marginBottom: 12 },
   policiesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },

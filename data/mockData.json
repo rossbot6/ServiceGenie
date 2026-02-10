@@ -75,7 +75,7 @@
       "name": "Uptown Studio",
       "address": "456 Park Ave, New York, NY 10021",
       "phone": "(555) 987-6543",
-      "timezone": "America/New_York",
+      "timezone": "America/Los_Angeles",
       "bookingPolicies": {
         "minLeadHours": 12,
         "bufferMinutes": 10,
