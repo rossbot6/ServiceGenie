@@ -94,11 +94,11 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Revenue Tracking
 - [x] ~~Revenue Display~~ ✅ **Completed** - Shows monthly revenue per provider in admin
-- [ ] **Payment Processing**
-  - Card on file
-  - In-app payments
-  - Cash tracking
-  - Refund management
+
+### Payment Processing
+- [x] ~~In-App Payments~~ ✅ **NEW** - Card on file, deposits, tips, Apple Pay/Google Pay
+- [ ] **Cash Tracking** - Record cash payments
+- [ ] **Refund Management** - Process refunds
 
 ### Provider Compensation
 - [ ] **Commission Model**
@@ -182,10 +182,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ### Consumer Features
 - [x] ~~My Bookings~~ ✅ **Completed** - Customer booking flow
-- [ ] **In-App Payments**
-  - Save card
-  - Pay deposits
-  - Tip within app
+- [x] ~~In-App Payments~~ ✅ **Completed** - Save card, pay deposits, tip within app
 
 - [x] ~~Waitlist~~ ✅ **Completed** - Queue management, position tracking, notify/book/remove actions
 
