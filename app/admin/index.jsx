@@ -247,6 +247,67 @@ export default function AdminDashboard() {
     URL.revokeObjectURL(url);
   };
 
+  const renderSettings = () => {
+    const [templates, setTemplates] = useState({
+      confirmation: 'Hi {name}! Your appointment at {location} is confirmed for {date} at {time}. Reply HELP for assistance.',
+      reminder: 'Reminder: You have an appointment at {location} tomorrow at {time}. Reply CANCEL to cancel.',
+      cancellation: 'Your appointment at {location} on {date} at {time} has been cancelled.'
+    });
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Notification Templates</Text>
+          <Text style={styles.sectionSubtitle}>Customize SMS messages sent to customers</Text>
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Confirmation Message</Text>
+          <TextInput
+            style={styles.templateInput}
+            multiline
+            numberOfLines={4}
+            value={templates.confirmation}
+            onChangeText={(text) => setTemplates({ ...templates, confirmation: text })}
+            placeholder="Enter confirmation message..."
+            placeholderTextColor="#64748b"
+          />
+          <Text style={styles.templateHint}>Available: {'{name}'}, {'{date}'}, {'{time}'}, {'{location}'}, {'{service}'}</Text>
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Reminder Message</Text>
+          <TextInput
+            style={styles.templateInput}
+            multiline
+            numberOfLines={4}
+            value={templates.reminder}
+            onChangeText={(text) => setTemplates({ ...templates, reminder: text })}
+            placeholder="Enter reminder message..."
+            placeholderTextColor="#64748b"
+          />
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Cancellation Message</Text>
+          <TextInput
+            style={styles.templateInput}
+            multiline
+            numberOfLines={4}
+            value={templates.cancellation}
+            onChangeText={(text) => setTemplates({ ...templates, cancellation: text })}
+            placeholder="Enter cancellation message..."
+            placeholderTextColor="#64748b"
+          />
+        </View>
+
+        <TouchableOpacity style={styles.saveButton}>
+          <Text style={styles.saveButtonText}>Save Templates</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    );
+  };
+
   const renderCustomers = () => (
     <ScrollView style={styles.tabContent}>
       <View style={styles.tabHeader}>
@@ -325,7 +386,7 @@ export default function AdminDashboard() {
         {activeTab === 'services' && renderServices()}
         {activeTab === 'locations' && renderLocations()}
         {activeTab === 'analytics' && <View style={styles.tabContent}><Text style={styles.comingSoon}>Analytics - Coming Soon</Text></View>}
-        {activeTab === 'settings' && <View style={styles.tabContent}><Text style={styles.comingSoon}>Settings - Coming Soon</Text></View>}
+        {activeTab === 'settings' && renderSettings()}
       </View>
 
       <Modal visible={providerModal.visible} animationType="slide" transparent={true} onRequestClose={() => setProviderModal({ ...providerModal, visible: false })}>
@@ -428,6 +489,14 @@ const styles = StyleSheet.create({
   statLabel: { color: '#64748b', fontSize: 13, marginTop: 4 },
   section: { marginBottom: 32 },
   sectionTitle: { color: '#fff', fontSize: 18, fontWeight: '700', marginBottom: 16 },
+  sectionHeader: { marginBottom: 24 },
+  sectionSubtitle: { color: '#64748b', fontSize: 14, marginTop: 4 },
+  templateCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  templateLabel: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 12 },
+  templateInput: { backgroundColor: '#0f172a', borderRadius: 12, padding: 16, color: '#fff', fontSize: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', minHeight: 100, textAlignVertical: 'top' },
+  templateHint: { color: '#64748b', fontSize: 12, marginTop: 8 },
+  saveButton: { backgroundColor: '#6366f1', paddingVertical: 16, borderRadius: 16, alignItems: 'center', marginTop: 10 },
+  saveButtonText: { color: '#fff', fontSize: 16, fontWeight: '800' },
   quickActions: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
   actionCard: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#1e293b', borderRadius: 12, padding: 16, minWidth: 140, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   actionText: { color: '#fff', fontWeight: '600', fontSize: 14 },
