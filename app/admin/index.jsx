@@ -66,6 +66,8 @@ export default function AdminDashboard() {
   const [providerModal, setProviderModal] = useState({ visible: false, mode: 'add', data: null });
   const [serviceModal, setServiceModal] = useState({ visible: false, mode: 'add', data: null });
   const [locationModal, setLocationModal] = useState({ visible: false, mode: 'add', data: null });
+  const [aptFilter, setAptFilter] = useState('all');
+  const [aptProviderFilter, setAptProviderFilter] = useState('all');
 
   const stats = {
     totalProviders: providers.length,
@@ -132,65 +134,158 @@ export default function AdminDashboard() {
     </ScrollView>
   );
 
-  const renderAppointments = () => (
-    <ScrollView style={styles.tabContent}>
-      <View style={styles.tabHeader}>
-        <View style={styles.searchContainer}>
-          <Search size={18} color="#64748b" />
-          <TextInput style={styles.searchInput} placeholder="Search appointments..." placeholderTextColor="#64748b" />
-        </View>
-        <TouchableOpacity style={styles.addButton}>
-          <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Book</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.statsRow}>
-        <View style={styles.miniStat}>
-          <Text style={styles.miniStatValue}>{mockData.appointments.length}</Text>
-          <Text style={styles.miniStatLabel}>Total</Text>
-        </View>
-        <View style={styles.miniStat}>
-          <Text style={styles.miniStatValue}>1</Text>
-          <Text style={styles.miniStatLabel}>Today</Text>
-        </View>
-        <View style={styles.miniStat}>
-          <Text style={styles.miniStatValue}>1</Text>
-          <Text style={styles.miniStatLabel}>Confirmed</Text>
-        </View>
-      </View>
-      {mockData.appointments.map((apt) => (
-        <View key={apt.id} style={styles.appointmentCard}>
-          <View style={styles.appointmentHeader}>
-            <View style={styles.appointmentInfo}>
-              <Text style={styles.appointmentCustomer}>{apt.customerName || mockData.customers.find(c => c.id === apt.customerId)?.name || 'Unknown'}</Text>
-              <Text style={styles.appointmentService}>{apt.serviceName || apt.service || 'Service'}</Text>
-            </View>
-            <View style={[styles.statusBadge, apt.status === 'confirmed' ? styles.confirmedBadge : styles.pendingBadge]}>
-              <Text style={[styles.statusText, apt.status === 'confirmed' ? styles.confirmedText : styles.pendingText]}>{apt.status}</Text>
-            </View>
+  const exportAppointments = () => {
+    const headers = ['Date', 'Time', 'Customer', 'Service', 'Provider', 'Status', 'Walk-in'];
+    const rows = mockData.appointments.map(apt => [
+      apt.date,
+      apt.time,
+      apt.customerName || mockData.customers.find(c => c.id === apt.customerId)?.name || 'Unknown',
+      apt.serviceName || apt.service || 'Service',
+      mockData.stylists.find(s => s.id === apt.stylistId)?.name || 'Unknown',
+      apt.status,
+      apt.isWalkIn ? 'Yes' : 'No'
+    ]);
+    const csv = [headers.join(','), ...rows.map(r => r.map(cell => `"${cell}"`).join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `appointments_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const renderAppointments = () => {
+    const filteredApts = mockData.appointments.filter(apt => {
+      const matchesStatus = aptFilter === 'all' || apt.status === aptFilter;
+      const matchesProvider = aptProviderFilter === 'all' || apt.stylistId === aptProviderFilter;
+      const matchesSearch = (apt.customerName || mockData.customers.find(c => c.id === apt.customerId)?.name || '').toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesStatus && matchesProvider && matchesSearch;
+    });
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <View style={styles.searchContainer}>
+            <Search size={18} color="#64748b" />
+            <TextInput 
+              style={styles.searchInput} 
+              placeholder="Search appointments..." 
+              placeholderTextColor="#64748b"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
           </View>
-          <View style={styles.appointmentDetails}>
-            <View style={styles.appointmentDetail}>
-              <Calendar size={14} color="#94a3b8" />
-              <Text style={styles.appointmentDetailText}>{apt.date}</Text>
-            </View>
-            <View style={styles.appointmentDetail}>
-              <Clock size={14} color="#94a3b8" />
-              <Text style={styles.appointmentDetailText}>{apt.time}</Text>
-            </View>
-            <View style={styles.appointmentDetail}>
-              <User size={14} color="#94a3b8" />
-              <Text style={styles.appointmentDetailText}>{mockData.stylists.find(s => s.id === apt.stylistId)?.name || 'Unknown'}</Text>
-            </View>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <TouchableOpacity style={styles.exportButton} onPress={exportAppointments}>
+              <Download size={18} color="#94a3b8" /><Text style={styles.exportButtonText}>Export</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.addButton}>
+              <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Book</Text>
+            </TouchableOpacity>
           </View>
-          {apt.isWalkIn && (
-            <View style={styles.walkInIndicator}>
-              <Text style={styles.walkInText}>WALK-IN</Text>
-            </View>
-          )}
         </View>
-      ))}
-    </ScrollView>
-  );
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterBar}>
+          <TouchableOpacity 
+            style={[styles.filterChip, aptFilter === 'all' && styles.filterChipActive]}
+            onPress={() => setAptFilter('all')}
+          >
+            <Text style={[styles.filterChipText, aptFilter === 'all' && styles.filterChipTextActive]}>All</Text>
+          </TouchableOpacity>
+          {['pending', 'confirmed', 'completed', 'cancelled'].map(status => (
+            <TouchableOpacity 
+              key={status}
+              style={[styles.filterChip, aptFilter === status && styles.filterChipActive]}
+              onPress={() => setAptFilter(status)}
+            >
+              <Text style={[styles.filterChipText, aptFilter === status && styles.filterChipTextActive]}>
+                {status.charAt(0).toUpperCase() + status.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.filterBar, { marginTop: 8 }]}>
+          <TouchableOpacity 
+            style={[styles.filterChip, aptProviderFilter === 'all' && styles.filterChipActive]}
+            onPress={() => setAptProviderFilter('all')}
+          >
+            <Text style={[styles.filterChipText, aptProviderFilter === 'all' && styles.filterChipTextActive]}>All Providers</Text>
+          </TouchableOpacity>
+          {mockData.stylists.map(s => (
+            <TouchableOpacity 
+              key={s.id}
+              style={[styles.filterChip, aptProviderFilter === s.id && styles.filterChipActive]}
+              onPress={() => setAptProviderFilter(s.id)}
+            >
+              <Text style={[styles.filterChipText, aptProviderFilter === s.id && styles.filterChipTextActive]}>{s.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <View style={styles.statsRow}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>{filteredApts.length}</Text>
+            <Text style={styles.miniStatLabel}>Filtered</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>{filteredApts.filter(a => a.status === 'confirmed').length}</Text>
+            <Text style={styles.miniStatLabel}>Confirmed</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>{filteredApts.filter(a => a.isWalkIn).length}</Text>
+            <Text style={styles.miniStatLabel}>Walk-ins</Text>
+          </View>
+        </View>
+
+        {filteredApts.map((apt) => (
+          <View key={apt.id} style={styles.appointmentCard}>
+            <View style={styles.appointmentHeader}>
+              <View style={styles.appointmentInfo}>
+                <Text style={styles.appointmentCustomer}>{apt.customerName || mockData.customers.find(c => c.id === apt.customerId)?.name || 'Unknown'}</Text>
+                <Text style={styles.appointmentService}>{apt.serviceName || apt.service || 'Service'}</Text>
+              </View>
+              <View style={[
+                styles.statusBadge, 
+                apt.status === 'confirmed' ? styles.confirmedBadge : 
+                apt.status === 'completed' ? styles.activeBadge :
+                apt.status === 'cancelled' ? styles.inactiveBadge :
+                styles.pendingBadge
+              ]}>
+                <Text style={[
+                  styles.statusText, 
+                  apt.status === 'confirmed' ? styles.confirmedText : 
+                  apt.status === 'completed' ? styles.activeStatusText :
+                  apt.status === 'cancelled' ? styles.inactiveStatusText :
+                  styles.pendingText
+                ]}>{apt.status}</Text>
+              </View>
+            </View>
+            <View style={styles.appointmentDetails}>
+              <View style={styles.appointmentDetail}>
+                <Calendar size={14} color="#94a3b8" />
+                <Text style={styles.appointmentDetailText}>{apt.date}</Text>
+              </View>
+              <View style={styles.appointmentDetail}>
+                <Clock size={14} color="#94a3b8" />
+                <Text style={styles.appointmentDetailText}>{apt.time}</Text>
+              </View>
+              <View style={styles.appointmentDetail}>
+                <User size={14} color="#94a3b8" />
+                <Text style={styles.appointmentDetailText}>{mockData.stylists.find(s => s.id === apt.stylistId)?.name || 'Unknown'}</Text>
+              </View>
+            </View>
+            {apt.isWalkIn && (
+              <View style={styles.walkInIndicator}>
+                <Text style={styles.walkInText}>WALK-IN</Text>
+              </View>
+            )}
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
 
   const renderProviders = () => (
     <ScrollView style={styles.tabContent}>
@@ -1265,6 +1360,11 @@ const styles = StyleSheet.create({
   addButtonText: { color: '#fff', fontWeight: '700' },
   exportButton: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#1e293b', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' },
   exportButtonText: { color: '#94a3b8', fontWeight: '600' },
+  filterBar: { flexDirection: 'row', marginBottom: 16 },
+  filterChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: '#1e293b', marginRight: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  filterChipActive: { backgroundColor: '#6366f1', borderColor: '#6366f1' },
+  filterChipText: { color: '#94a3b8', fontSize: 13, fontWeight: '600' },
+  filterChipTextActive: { color: '#fff' },
   giftCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   giftCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
   giftCardInfo: { flex: 1 },

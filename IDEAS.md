@@ -196,10 +196,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ## 🔄 Integrations
 
 ### External Systems
-- [ ] **Google Calendar**
-  - Sync provider schedules
-  - Customer calendar invites
-
+- [x] ~~Google Calendar~~ ✅ **NEW** - Sync provider schedules, customer calendar invites
 - [ ] **Accounting**
   - QuickBooks integration
   - Xero sync
