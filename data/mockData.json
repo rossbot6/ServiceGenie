@@ -69,7 +69,18 @@
       "email": "sarah@email.com",
       "notes": "Prefers morning appointments. Always asks for Elena.",
       "tags": ["VIP", "Regular"],
-      "linkedStylists": ["stylist_001", "stylist_002"]
+      "linkedStylists": ["stylist_001", "stylist_002"],
+      "smsEnabled": true,
+      "emailEnabled": true,
+      "marketingOptIn": true,
+      "preferredContact": "sms",
+      "visitHistory": [
+        { "date": "2026-01-15", "service": "Haircut & Style", "provider": "Elena Rodriguez", "amount": 75 },
+        { "date": "2025-12-20", "service": "Color & Highlights", "provider": "Elena Rodriguez", "amount": 150 },
+        { "date": "2025-11-10", "service": "Haircut & Style", "provider": "Elena Rodriguez", "amount": 75 }
+      ],
+      "totalSpend": 300,
+      "visitCount": 3
     },
     {
       "id": "cust_002",
@@ -78,7 +89,16 @@
       "email": "john@email.com",
       "notes": "Allergic to certain hair products - avoid ammonia-based dyes",
       "tags": ["Allergies"],
-      "linkedStylists": ["stylist_002"]
+      "linkedStylists": ["stylist_002"],
+      "smsEnabled": true,
+      "emailEnabled": false,
+      "marketingOptIn": false,
+      "preferredContact": "sms",
+      "visitHistory": [
+        { "date": "2026-01-10", "service": "Beard Trim", "provider": "Marcus Chen", "amount": 25 }
+      ],
+      "totalSpend": 25,
+      "visitCount": 1
     },
     {
       "id": "cust_003",
@@ -87,7 +107,14 @@
       "email": "emily@email.com",
       "notes": "New customer referral from Sarah",
       "tags": ["New", "Referral"],
-      "linkedStylists": ["stylist_001"]
+      "linkedStylists": ["stylist_001"],
+      "smsEnabled": true,
+      "emailEnabled": true,
+      "marketingOptIn": true,
+      "preferredContact": "email",
+      "visitHistory": [],
+      "totalSpend": 0,
+      "visitCount": 0
     },
     {
       "id": "cust_004",
@@ -96,7 +123,17 @@
       "email": "michael@email.com",
       "notes": "Prefers short haircuts, no styling products",
       "tags": ["Regular"],
-      "linkedStylists": ["stylist_001"]
+      "linkedStylists": ["stylist_001"],
+      "smsEnabled": true,
+      "emailEnabled": true,
+      "marketingOptIn": false,
+      "preferredContact": "sms",
+      "visitHistory": [
+        { "date": "2026-01-05", "service": "Haircut & Style", "provider": "Elena Rodriguez", "amount": 75 },
+        { "date": "2025-12-01", "service": "Haircut & Style", "provider": "Elena Rodriguez", "amount": 75 }
+      ],
+      "totalSpend": 150,
+      "visitCount": 2
     },
     {
       "id": "cust_005",
@@ -105,7 +142,17 @@
       "email": "jessica@email.com",
       "notes": "Interested in wedding package for 2026",
       "tags": ["Wedding", "VIP"],
-      "linkedStylists": ["stylist_001"]
+      "linkedStylists": ["stylist_001"],
+      "smsEnabled": true,
+      "emailEnabled": true,
+      "marketingOptIn": true,
+      "preferredContact": "email",
+      "visitHistory": [
+        { "date": "2025-10-15", "service": "Color & Highlights", "provider": "Elena Rodriguez", "amount": 150 },
+        { "date": "2025-09-01", "service": "Haircut & Style", "provider": "Elena Rodriguez", "amount": 75 }
+      ],
+      "totalSpend": 225,
+      "visitCount": 2
     },
     {
       "id": "cust_006",
@@ -114,7 +161,14 @@
       "email": "david@email.com",
       "notes": "",
       "tags": [],
-      "linkedStylists": ["stylist_002"]
+      "linkedStylists": ["stylist_002"],
+      "smsEnabled": false,
+      "emailEnabled": true,
+      "marketingOptIn": false,
+      "preferredContact": "email",
+      "visitHistory": [],
+      "totalSpend": 0,
+      "visitCount": 0
     },
     {
       "id": "cust_007",
@@ -123,7 +177,17 @@
       "email": "sophia@email.com",
       "notes": "Sensitive scalp, use gentle products",
       "tags": ["Sensitive"],
-      "linkedStylists": ["stylist_001", "stylist_002"]
+      "linkedStylists": ["stylist_001", "stylist_002"],
+      "smsEnabled": true,
+      "emailEnabled": true,
+      "marketingOptIn": true,
+      "preferredContact": "sms",
+      "visitHistory": [
+        { "date": "2026-01-20", "service": "Manicure", "provider": "Marcus Chen", "amount": 45 },
+        { "date": "2025-12-10", "service": "Pedicure", "provider": "Marcus Chen", "amount": 55 }
+      ],
+      "totalSpend": 100,
+      "visitCount": 2
     },
     {
       "id": "cust_008",
@@ -132,7 +196,14 @@
       "email": "james@email.com",
       "notes": "First-time customer, book with Marcus for nails",
       "tags": ["New"],
-      "linkedStylists": ["stylist_002"]
+      "linkedStylists": ["stylist_002"],
+      "smsEnabled": true,
+      "emailEnabled": true,
+      "marketingOptIn": true,
+      "preferredContact": "sms",
+      "visitHistory": [],
+      "totalSpend": 0,
+      "visitCount": 0
     }
   ],
   "appointments": [

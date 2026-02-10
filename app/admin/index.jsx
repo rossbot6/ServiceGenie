@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
-import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download } from 'lucide-react-native';
+import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -95,6 +95,66 @@ export default function AdminDashboard() {
           </View>
         ))}
       </View>
+    </ScrollView>
+  );
+
+  const renderAppointments = () => (
+    <ScrollView style={styles.tabContent}>
+      <View style={styles.tabHeader}>
+        <View style={styles.searchContainer}>
+          <Search size={18} color="#64748b" />
+          <TextInput style={styles.searchInput} placeholder="Search appointments..." placeholderTextColor="#64748b" />
+        </View>
+        <TouchableOpacity style={styles.addButton}>
+          <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Book</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.statsRow}>
+        <View style={styles miniStat}>
+          <Text style={styles.miniStatValue}>{mockData.appointments.length}</Text>
+          <Text style={styles.miniStatLabel}>Total</Text>
+        </View>
+        <View style={styles.miniStat}>
+          <Text style={styles.miniStatValue}>1</Text>
+          <Text style={styles.miniStatLabel}>Today</Text>
+        </View>
+        <View style={styles.miniStat}>
+          <Text style={styles.miniStatValue}>1</Text>
+          <Text style={styles.miniStatLabel}>Confirmed</Text>
+        </View>
+      </View>
+      {mockData.appointments.map((apt) => (
+        <View key={apt.id} style={styles.appointmentCard}>
+          <View style={styles.appointmentHeader}>
+            <View style={styles.appointmentInfo}>
+              <Text style={styles.appointmentCustomer}>{apt.customerName || mockData.customers.find(c => c.id === apt.customerId)?.name || 'Unknown'}</Text>
+              <Text style={styles.appointmentService}>{apt.serviceName || apt.service || 'Service'}</Text>
+            </View>
+            <View style={[styles.statusBadge, apt.status === 'confirmed' ? styles.confirmedBadge : styles.pendingBadge]}>
+              <Text style={[styles.statusText, apt.status === 'confirmed' ? styles.confirmedText : styles.pendingText]}>{apt.status}</Text>
+            </View>
+          </View>
+          <View style={styles.appointmentDetails}>
+            <View style={styles.appointmentDetail}>
+              <Calendar size={14} color="#94a3b8" />
+              <Text style={styles.appointmentDetailText}>{apt.date}</Text>
+            </View>
+            <View style={styles.appointmentDetail}>
+              <Clock size={14} color="#94a3b8" />
+              <Text style={styles.appointmentDetailText}>{apt.time}</Text>
+            </View>
+            <View style={styles.appointmentDetail}>
+              <User size={14} color="#94a3b8" />
+              <Text style={styles.appointmentDetailText}>{mockData.stylists.find(s => s.id === apt.stylistId)?.name || 'Unknown'}</Text>
+            </View>
+          </View>
+          {apt.isWalkIn && (
+            <View style={styles.walkInIndicator}>
+              <Text style={styles.walkInText}>WALK-IN</Text>
+            </View>
+          )}
+        </View>
+      ))}
     </ScrollView>
   );
 
@@ -301,6 +361,25 @@ export default function AdminDashboard() {
           />
         </View>
 
+        <View style={styles.sectionDivider} />
+        
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Email Templates</Text>
+          <Text style={styles.sectionSubtitle}>Customize email sent to customers</Text>
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Booking Confirmation Email</Text>
+          <TextInput
+            style={styles.templateInput}
+            multiline
+            numberOfLines={6}
+            value={templates.emailConfirmation || 'Dear {name},\n\nYour appointment has been confirmed:\n\n📅 Date: {date}\n⏰ Time: {time}\n📍 Location: {location}\n💇 Service: {service}\n\nThank you for choosing ServiceGenie!'}
+            placeholder="Enter email content..."
+            placeholderTextColor="#64748b"
+          />
+        </View>
+
         <TouchableOpacity style={styles.saveButton}>
           <Text style={styles.saveButtonText}>Save Templates</Text>
         </TouchableOpacity>
@@ -354,6 +433,7 @@ export default function AdminDashboard() {
         <View style={styles.nav}>
           {[
             { id: 'overview', icon: BarChart3, label: 'Overview' },
+            { id: 'appointments', icon: Calendar, label: 'Appointments' },
             { id: 'providers', icon: Users, label: 'Providers' },
             { id: 'customers', icon: UserCircle, label: 'Customers' },
             { id: 'services', icon: CreditCard, label: 'Services' },
@@ -381,6 +461,7 @@ export default function AdminDashboard() {
           </View>
         </View>
         {activeTab === 'overview' && renderOverview()}
+        {activeTab === 'appointments' && renderAppointments()}
         {activeTab === 'providers' && renderProviders()}
         {activeTab === 'customers' && renderCustomers()}
         {activeTab === 'services' && renderServices()}
@@ -497,6 +578,25 @@ const styles = StyleSheet.create({
   templateHint: { color: '#64748b', fontSize: 12, marginTop: 8 },
   saveButton: { backgroundColor: '#6366f1', paddingVertical: 16, borderRadius: 16, alignItems: 'center', marginTop: 10 },
   saveButtonText: { color: '#fff', fontSize: 16, fontWeight: '800' },
+  sectionDivider: { height: 1, backgroundColor: 'rgba(255,255,255,0.05)', marginVertical: 20 },
+  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 20 },
+  miniStat: { flex: 1, backgroundColor: '#1e293b', borderRadius: 12, padding: 16, alignItems: 'center' },
+  miniStatValue: { color: '#fff', fontSize: 24, fontWeight: '800' },
+  miniStatLabel: { color: '#64748b', fontSize: 12, marginTop: 4 },
+  appointmentCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  appointmentHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 },
+  appointmentInfo: { flex: 1 },
+  appointmentCustomer: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  appointmentService: { color: '#94a3b8', fontSize: 14, marginTop: 4 },
+  appointmentDetails: { flexDirection: 'row', gap: 16, flexWrap: 'wrap' },
+  appointmentDetail: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  appointmentDetailText: { color: '#94a3b8', fontSize: 13 },
+  walkInIndicator: { backgroundColor: '#f59e0b', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4, marginTop: 12, alignSelf: 'flex-start' },
+  walkInText: { color: '#000', fontSize: 10, fontWeight: '900' },
+  confirmedBadge: { backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+  pendingBadge: { backgroundColor: 'rgba(251, 191, 36, 0.1)' },
+  confirmedText: { color: '#10b981' },
+  pendingText: { color: '#fbbf24' },
   quickActions: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
   actionCard: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#1e293b', borderRadius: 12, padding: 16, minWidth: 140, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
   actionText: { color: '#fff', fontWeight: '600', fontSize: 14 },
