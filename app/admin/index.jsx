@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Switch, Alert, SafeAreaView, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform } from 'react-native';
 import { useState } from 'react';
 import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
@@ -662,7 +662,8 @@ export default function AdminDashboard() {
     const [templates, setTemplates] = useState({
       confirmation: 'Hi {name}! Your appointment at {location} is confirmed for {date} at {time}. Reply HELP for assistance.',
       reminder: 'Reminder: You have an appointment at {location} tomorrow at {time}. Reply CANCEL to cancel.',
-      cancellation: 'Your appointment at {location} on {date} at {time} has been cancelled.'
+      cancellation: 'Your appointment at {location} on {date} at {time} has been cancelled.',
+      emailConfirmation: 'Dear {name},\n\nYour appointment has been confirmed:\n\n📅 Date: {date}\n⏰ Time: {time}\n📍 Location: {location}\n💇 Service: {service}\n\nThank you for choosing ServiceGenie!'
     });
 
     return (
@@ -725,7 +726,8 @@ export default function AdminDashboard() {
             style={styles.templateInput}
             multiline
             numberOfLines={6}
-            value={templates.emailConfirmation || 'Dear {name},\n\nYour appointment has been confirmed:\n\n📅 Date: {date}\n⏰ Time: {time}\n📍 Location: {location}\n💇 Service: {service}\n\nThank you for choosing ServiceGenie!'}
+            value={templates.emailConfirmation}
+            onChangeText={(text) => setTemplates({ ...templates, emailConfirmation: text })}
             placeholder="Enter email content..."
             placeholderTextColor="#64748b"
           />
