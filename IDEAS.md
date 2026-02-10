@@ -17,7 +17,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ### Salon Management
 - [x] ~~Add/Edit/Delete Locations~~ ✅ **Completed** - Basic location CRUD in admin
 - [ ] **Location Settings**
-  - Booking policies (cancellation, rescheduling, deposits)
+  - ~~Booking policies (cancellation, rescheduling, deposits)~~ ✅ **Completed** - Added booking policies display
   - Buffer time between appointments
   - Lead time for bookings (e.g., min 24h notice)
   - Default appointment duration
@@ -313,7 +313,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 1. ~~Service catalog~~ ✅ Done
 2. ~~Provider metrics~~ Done
 3. ~~Customer detailed profiles with notes~~ Done
-4. Location settings (booking policies, cancellation rules)
+4. ~~Location settings (booking policies)~~ Done
 5. Walk-in booking support
 
 ### Phase 3
