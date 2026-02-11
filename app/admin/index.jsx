@@ -86,7 +86,6 @@ export default function AdminDashboard() {
   const [customerSegment, setCustomerSegment] = useState('all');
   const [userRole, setUserRole] = useState('admin');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const languages = [
     { code: 'en', name: 'English', flag: '🇺🇸' },
