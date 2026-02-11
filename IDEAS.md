@@ -386,3 +386,26 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 1. Run `supabase-updates.sql` in Supabase SQL Editor
 2. Configure `.env` with Supabase credentials
 3. Admin will automatically switch from mock data to live data
+
+---
+
+## 🔧 2026-02-11 - Customer Loyalty Dashboard
+
+### New Feature: Standalone Loyalty Dashboard
+
+**Location:** `/loyalty`
+
+**Features:**
+- **Overview Tab** - Stats cards, tier distribution, quick actions, recent activity
+- **Tiers Tab** - Manage Bronze/Silver/Gold/Platinum tiers with discounts and benefits
+- **Rewards Tab** - Create and manage rewards with point costs
+- **Members Tab** - Search and filter loyalty members with detailed stats
+- **Settings Tab** - Points per dollar, expiry, bonuses configuration
+
+**Database Integration:**
+- Connected to `loyalty_tiers` and `loyalty_points` tables
+- Fallback to mock data if Supabase not connected
+
+**Route:** `/loyalty`
+
+**Preview:** Run `npm run web` and navigate to `/loyalty`
