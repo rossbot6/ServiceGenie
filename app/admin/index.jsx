@@ -1618,6 +1618,77 @@ export default function AdminDashboard() {
             </View>
           </View>
         ))}
+
+        <View style={styles.sectionDivider} />
+        
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Accessibility Settings</Text>
+          <Text style={styles.sectionSubtitle}>Configure accessibility options for all users</Text>
+        </View>
+
+        <View style={styles.templateCard}>
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.templateLabel}>Large Text Mode</Text>
+              <Text style={styles.templateHint}>Increase text size throughout the app for better readability</Text>
+            </View>
+            <TouchableOpacity 
+              style={[styles.toggleButton, true && styles.toggleButtonActive]}
+              accessibilityLabel="Toggle large text"
+              accessibilityRole="button"
+            >
+              <View style={[styles.toggleKnob, true && styles.toggleKnobActive]} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.templateCard}>
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.templateLabel}>High Contrast Mode</Text>
+              <Text style={styles.templateHint}>Increase contrast for better visibility in bright environments</Text>
+            </View>
+            <TouchableOpacity 
+              style={[styles.toggleButton, false && styles.toggleButtonActive]}
+              accessibilityLabel="Toggle high contrast"
+              accessibilityRole="button"
+            >
+              <View style={[styles.toggleKnob, false && styles.toggleKnobActive]} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.templateCard}>
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.templateLabel}>Reduce Motion</Text>
+              <Text style={styles.templateHint}>Minimize animations and transitions</Text>
+            </View>
+            <TouchableOpacity 
+              style={[styles.toggleButton, false && styles.toggleButtonActive]}
+              accessibilityLabel="Toggle reduce motion"
+              accessibilityRole="button"
+            >
+              <View style={[styles.toggleKnob, false && styles.toggleKnobActive]} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.templateCard}>
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.templateLabel}>Screen Reader Support</Text>
+              <Text style={styles.templateHint}>Optimize for VoiceOver and TalkBack accessibility features</Text>
+            </View>
+            <TouchableOpacity 
+              style={[styles.toggleButton, true && styles.toggleButtonActive]}
+              accessibilityLabel="Toggle screen reader support"
+              accessibilityRole="button"
+            >
+              <View style={[styles.toggleKnob, true && styles.toggleKnobActive]} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
     );
   };
@@ -2162,4 +2233,10 @@ const styles = StyleSheet.create({
   categoryButtonActive: { backgroundColor: '#6366f1', borderColor: '#6366f1' },
   categoryButtonText: { color: '#94a3b8', fontSize: 13, fontWeight: '600' },
   categoryButtonTextActive: { color: '#fff' },
+  settingRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12 },
+  settingInfo: { flex: 1, paddingRight: 16 },
+  toggleButton: { width: 52, height: 28, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.1)', padding: 2 },
+  toggleButtonActive: { backgroundColor: '#6366f1' },
+  toggleKnob: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#fff' },
+  toggleKnobActive: { backgroundColor: '#fff', marginLeft: 24 },
 });

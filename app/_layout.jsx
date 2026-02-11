@@ -1,21 +1,47 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
+import { View, Text, AccessibilityInfo, useWindowDimensions } from 'react-native';
+import { useState, useEffect } from 'react';
 
 export default function Layout() {
+  const [largeTextEnabled, setLargeTextEnabled] = useState(false);
+  const [highContrastEnabled, setHighContrastEnabled] = useState(false);
+  const { fontScale } = useWindowDimensions();
+
+  useEffect(() => {
+    // Load accessibility preferences from storage (mock)
+    AccessibilityInfo.isReduceMotionEnabled().then(reduceMotion => {
+      if (reduceMotion) {
+        setLargeTextEnabled(true);
+      }
+    });
+  }, []);
+
+  const getTextStyle = () => {
+    const baseStyle = { fontWeight: 'bold' };
+    if (largeTextEnabled) {
+      return { ...baseStyle, fontSize: 24 * fontScale };
+    }
+    return baseStyle;
+  };
+
+  const getBackgroundColor = () => {
+    return highContrastEnabled ? '#000000' : '#0f172a';
+  };
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#0f172a' }}>
+    <View style={{ flex: 1, backgroundColor: getBackgroundColor() }}>
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: '#1e293b',
+            backgroundColor: highContrastEnabled ? '#000000' : '#1e293b',
           },
-          headerTintColor: '#fff',
+          headerTintColor: highContrastEnabled ? '#ffff00' : '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold',
+            ...getTextStyle(),
           },
           contentStyle: {
-            backgroundColor: '#0f172a',
+            backgroundColor: getBackgroundColor(),
           },
         }}
       >
@@ -47,7 +73,7 @@ export default function Layout() {
           }} 
         />
       </Stack>
-      <StatusBar style="light" />
+      <StatusBar style={highContrastEnabled ? 'dark' : 'light'} />
     </View>
   );
 }

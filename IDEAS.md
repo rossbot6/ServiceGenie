@@ -204,10 +204,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
   - Spanish, French, etc.
   - Provider preference settings
 
-- [ ] **Accessibility Features**
-  - Screen reader support
-  - Large text mode
-  - High contrast
+- [x] **Accessibility Features** ✅ **NEW** - Screen reader support, large text mode, high contrast mode, reduce motion options
 
 - [ ] **API for Third-Party Apps**
   - Public API
