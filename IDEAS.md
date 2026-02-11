@@ -68,7 +68,6 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ### Reviews
 - [x] ~~Provider Ratings~~ ✅ **Completed** - Rating display on provider cards
 - [x] ~~Recent Reviews~~ ✅ **Completed** - Review list on stylist profile page
-- [ ] Public reviews on profile
 
 ---
 
