@@ -7,7 +7,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- ============================================
 -- CUSTOMERS TABLE
 -- ============================================
-CREATE TABLE customers (
+CREATE TABLE IF NOT EXISTS customers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   email TEXT UNIQUE,
@@ -19,13 +19,13 @@ CREATE TABLE customers (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_customers_name ON customers(name);
-CREATE INDEX idx_customers_phone ON customers(phone);
+CREATE INDEX IF NOT EXISTS idx_customers_name ON customers(name);
+CREATE INDEX IF NOT EXISTS idx_customers_phone ON customers(phone);
 
 -- ============================================
 -- PROVIDERS (STYLISTS) TABLE
 -- ============================================
-CREATE TABLE providers (
+CREATE TABLE IF NOT EXISTS providers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   email TEXT UNIQUE,
@@ -38,13 +38,13 @@ CREATE TABLE providers (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_providers_name ON providers(name);
-CREATE INDEX idx_providers_active ON providers(is_active);
+CREATE INDEX IF NOT EXISTS idx_providers_name ON providers(name);
+CREATE INDEX IF NOT EXISTS idx_providers_active ON providers(is_active);
 
 -- ============================================
 -- LOCATIONS TABLE
 -- ============================================
-CREATE TABLE locations (
+CREATE TABLE IF NOT EXISTS locations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   address TEXT,
@@ -69,12 +69,12 @@ CREATE TABLE locations (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_locations_active ON locations(is_active);
+CREATE INDEX IF NOT EXISTS idx_locations_active ON locations(is_active);
 
 -- ============================================
 -- SERVICES TABLE
 -- ============================================
-CREATE TABLE services (
+CREATE TABLE IF NOT EXISTS services (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   description TEXT,
@@ -86,14 +86,14 @@ CREATE TABLE services (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_services_category ON services(category);
-CREATE INDEX idx_services_active ON services(is_active);
-CREATE INDEX idx_services_name ON services(name);
+CREATE INDEX IF NOT EXISTS idx_services_category ON services(category);
+CREATE INDEX IF NOT EXISTS idx_services_active ON services(is_active);
+CREATE INDEX IF NOT EXISTS idx_services_name ON services(name);
 
 -- ============================================
 -- APPOINTMENTS TABLE
 -- ============================================
-CREATE TABLE appointments (
+CREATE TABLE IF NOT EXISTS appointments (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
   provider_id UUID REFERENCES providers(id) ON DELETE SET NULL,
@@ -110,15 +110,15 @@ CREATE TABLE appointments (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_appointments_date ON appointments(date);
-CREATE INDEX idx_appointments_provider ON appointments(provider_id);
-CREATE INDEX idx_appointments_customer ON appointments(customer_id);
-CREATE INDEX idx_appointments_status ON appointments(status);
+CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(date);
+CREATE INDEX IF NOT EXISTS idx_appointments_provider ON appointments(provider_id);
+CREATE INDEX IF NOT EXISTS idx_appointments_customer ON appointments(customer_id);
+CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);
 
 -- ============================================
 -- BLOCKED TIMES TABLE
 -- ============================================
-CREATE TABLE blocked_times (
+CREATE TABLE IF NOT EXISTS blocked_times (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   provider_id UUID REFERENCES providers(id) ON DELETE CASCADE,
   location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
@@ -132,27 +132,34 @@ CREATE TABLE blocked_times (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_blocked_provider ON blocked_times(provider_id);
-CREATE INDEX idx_blocked_dates ON blocked_times(start_date, end_date);
+CREATE INDEX IF NOT EXISTS idx_blocked_provider ON blocked_times(provider_id);
+CREATE INDEX IF NOT EXISTS idx_blocked_dates ON blocked_times(start_date, end_date);
 
 -- ============================================
 -- TEAMS TABLE
 -- ============================================
-CREATE TABLE teams (
+CREATE TABLE IF NOT EXISTS teams (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   color TEXT DEFAULT '#8b5cf6',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Update providers to link to teams
-ALTER TABLE providers ADD COLUMN team_id UUID REFERENCES teams(id) ON DELETE SET NULL;
-ALTER TABLE providers ADD COLUMN is_team_lead BOOLEAN DEFAULT false;
+-- Update providers to link to teams (run once)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'providers' AND column_name = 'team_id') THEN
+    ALTER TABLE providers ADD COLUMN team_id UUID REFERENCES teams(id) ON DELETE SET NULL;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'providers' AND column_name = 'is_team_lead') THEN
+    ALTER TABLE providers ADD COLUMN is_team_lead BOOLEAN DEFAULT false;
+  END IF;
+END $$;
 
 -- ============================================
 -- WAITLIST TABLE
 -- ============================================
-CREATE TABLE waitlist (
+CREATE TABLE IF NOT EXISTS waitlist (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
   location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
@@ -164,13 +171,13 @@ CREATE TABLE waitlist (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_waitlist_date ON waitlist(requested_date);
-CREATE INDEX idx_waitlist_status ON waitlist(status);
+CREATE INDEX IF NOT EXISTS idx_waitlist_date ON waitlist(requested_date);
+CREATE INDEX IF NOT EXISTS idx_waitlist_status ON waitlist(status);
 
 -- ============================================
 -- GIFT CARDS TABLE
 -- ============================================
-CREATE TABLE gift_cards (
+CREATE TABLE IF NOT EXISTS gift_cards (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   code TEXT UNIQUE NOT NULL,
   initial_value DECIMAL(10,2) NOT NULL,
@@ -181,12 +188,12 @@ CREATE TABLE gift_cards (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_gift_cards_code ON gift_cards(code);
+CREATE INDEX IF NOT EXISTS idx_gift_cards_code ON gift_cards(code);
 
 -- ============================================
 -- LOYALTY PROGRAM TABLES
 -- ============================================
-CREATE TABLE loyalty_tiers (
+CREATE TABLE IF NOT EXISTS loyalty_tiers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL, -- Bronze, Silver, etc.
   min_points INT NOT NULL DEFAULT 0,
@@ -195,7 +202,7 @@ CREATE TABLE loyalty_tiers (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE loyalty_points (
+CREATE TABLE IF NOT EXISTS loyalty_points (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
   points_balance INT DEFAULT 0,
@@ -206,7 +213,7 @@ CREATE TABLE loyalty_points (
 -- ============================================
 -- SUBSCRIPTIONS TABLE
 -- ============================================
-CREATE TABLE subscription_plans (
+CREATE TABLE IF NOT EXISTS subscription_plans (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   price DECIMAL(10,2) NOT NULL,
@@ -218,7 +225,7 @@ CREATE TABLE subscription_plans (
 -- ============================================
 -- MEMBERSHIP TIERS TABLE
 -- ============================================
-CREATE TABLE membership_tiers (
+CREATE TABLE IF NOT EXISTS membership_tiers (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
   price DECIMAL(10,2) NOT NULL,
@@ -228,7 +235,7 @@ CREATE TABLE membership_tiers (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE active_memberships (
+CREATE TABLE IF NOT EXISTS active_memberships (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
   tier_id UUID REFERENCES membership_tiers(id) ON DELETE CASCADE,
@@ -238,7 +245,7 @@ CREATE TABLE active_memberships (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE active_subscriptions (
+CREATE TABLE IF NOT EXISTS active_subscriptions (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
   plan_id UUID REFERENCES subscription_plans(id) ON DELETE CASCADE,
@@ -251,7 +258,7 @@ CREATE TABLE active_subscriptions (
 -- ============================================
 -- CHECK-INS TABLE
 -- ============================================
-CREATE TABLE check_ins (
+CREATE TABLE IF NOT EXISTS check_ins (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   appointment_id UUID REFERENCES appointments(id) ON DELETE SET NULL,
   customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,
@@ -260,12 +267,12 @@ CREATE TABLE check_ins (
   check_in_time TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_check_ins_time ON check_ins(check_in_time);
+CREATE INDEX IF NOT EXISTS idx_check_ins_time ON check_ins(check_in_time);
 
 -- ============================================
 -- REVENUE/ANALYTICS TABLE
 -- ============================================
-CREATE TABLE daily_revenue (
+CREATE TABLE IF NOT EXISTS daily_revenue (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   date DATE NOT NULL UNIQUE,
   location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
@@ -277,35 +284,101 @@ CREATE TABLE daily_revenue (
 );
 
 -- ============================================
+-- NOTIFICATION TEMPLATES TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS notification_templates (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  template_type TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  content TEXT NOT NULL,
+  is_sms BOOLEAN DEFAULT false,
+  is_email BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- SETTINGS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS settings (
+  id UUID PRIMARY KEY DEFAULT 1,
+  business_name TEXT DEFAULT 'ServiceGenie Salon',
+  default_language TEXT DEFAULT 'en',
+  supported_languages TEXT[] DEFAULT ARRAY['en', 'es', 'fr'],
+  auto_detect_language BOOLEAN DEFAULT false,
+  large_text_mode BOOLEAN DEFAULT false,
+  high_contrast_mode BOOLEAN DEFAULT false,
+  reduce_motion BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- CAMPAIGNS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS campaigns (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('email', 'sms', 'both')),
+  status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'scheduled', 'sending', 'sent', 'cancelled')),
+  content TEXT NOT NULL,
+  target_segment TEXT,
+  recipient_count INT DEFAULT 0,
+  sent_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- INTEGRATIONS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS integrations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  provider TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  access_token TEXT,
+  refresh_token TEXT,
+  token_expires_at TIMESTAMPTZ,
+  config JSONB DEFAULT '{}',
+  is_connected BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
 -- ROW LEVEL SECURITY (RLS)
 -- ============================================
-ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE providers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
-ALTER TABLE blocked_times ENABLE ROW LEVEL SECURITY;
-ALTER TABLE teams ENABLE ROW LEVEL SECURITY;
-ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
-ALTER TABLE gift_cards ENABLE ROW LEVEL SECURITY;
-ALTER TABLE loyalty_tiers ENABLE ROW LEVEL SECURITY;
-ALTER TABLE loyalty_points ENABLE ROW LEVEL SECURITY;
-ALTER TABLE subscription_plans ENABLE ROW LEVEL SECURITY;
-ALTER TABLE active_subscriptions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE check_ins ENABLE ROW LEVEL SECURITY;
+DO $$
+DECLARE
+  tbl text;
+BEGIN
+  FOR tbl IN 
+    SELECT table_name FROM information_schema.columns 
+    WHERE column_name = 'id' 
+    AND table_schema = 'public'
+    AND table_name NOT LIKE 'pg_%'
+  LOOP
+    EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', tbl);
+  END LOOP;
+END $$;
 
--- Simple RLS: Allow authenticated users to read/write
--- In production, you'd want more granular policies
-CREATE POLICY "Allow authenticated access" ON customers FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON providers FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON appointments FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON blocked_times FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON teams FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON waitlist FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON gift_cards FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON loyalty_tiers FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON loyalty_points FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON subscription_plans FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON active_subscriptions FOR ALL TO authenticated USING (true);
-CREATE POLICY "Allow authenticated access" ON check_ins FOR ALL TO authenticated USING (true);
+-- Simple RLS policies (update as needed for production)
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON customers FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON providers FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON appointments FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON blocked_times FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON teams FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON waitlist FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON gift_cards FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON loyalty_tiers FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON loyalty_points FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON subscription_plans FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON active_subscriptions FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON check_ins FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON notification_templates FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON settings FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON campaigns FOR ALL TO authenticated USING (true);
+CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON integrations FOR ALL TO authenticated USING (true);
 
 -- ============================================
 -- SAMPLE DATA (Optional)
@@ -344,14 +417,39 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER update_customers_updated_at BEFORE UPDATE ON customers
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_providers_updated_at BEFORE UPDATE ON providers
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
-CREATE TRIGGER update_appointments_updated_at BEFORE UPDATE ON appointments
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Create triggers only if they don't exist
+DO $$
+DECLARE
+  trig text;
+  tbl text;
+BEGIN
+  FOR trig, tbl IN 
+    SELECT DISTINCT tgname, relname FROM pg_trigger WHERE tgname LIKE 'update_%_updated_at'
+  LOOP
+    -- Triggers exist, skip
+  END LOOP;
+  
+  -- Create triggers for each table
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_customers_updated_at') THEN
+    CREATE TRIGGER update_customers_updated_at BEFORE UPDATE ON customers
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_providers_updated_at') THEN
+    CREATE TRIGGER update_providers_updated_at BEFORE UPDATE ON providers
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_appointments_updated_at') THEN
+    CREATE TRIGGER update_appointments_updated_at BEFORE UPDATE ON appointments
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_loyalty_points_updated_at') THEN
+    CREATE TRIGGER update_loyalty_points_updated_at BEFORE UPDATE ON loyalty_points
+      FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END $$;
 
 -- Function to calculate appointment end_time from start_time and duration
 CREATE OR REPLACE FUNCTION calculate_end_time()
@@ -362,8 +460,14 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER calculate_appointment_end_time BEFORE INSERT OR UPDATE ON appointments
-  FOR EACH ROW EXECUTE FUNCTION calculate_end_time();
+-- Create trigger only if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'calculate_appointment_end_time') THEN
+    CREATE TRIGGER calculate_appointment_end_time BEFORE INSERT OR UPDATE ON appointments
+      FOR EACH ROW EXECUTE FUNCTION calculate_end_time();
+  END IF;
+END $$;
 
 -- ============================================
 -- DONE!
