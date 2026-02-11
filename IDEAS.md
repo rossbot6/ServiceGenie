@@ -108,10 +108,10 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ## 📱 Customer App Enhancements
 
-- [ ] My Bookings
+- [x] My Bookings
 - [ ] Waitlist
 - [ ] Reviews
-- [ ] Group Bookings
+- [x] Group Bookings
 
 ---
 
