@@ -1249,6 +1249,144 @@ export default function AdminDashboard() {
     </ScrollView>
   );
 
+  const renderMarketing = () => {
+    const campaigns = [
+      { id: 1, name: 'Spring Hair Refresh', type: 'Email', status: 'Active', sent: 1247, openRate: 42, clicks: 234 },
+      { id: 2, name: 'Loyalty Program Launch', type: 'SMS + Email', status: 'Scheduled', sent: 0, openRate: 0, clicks: 0 },
+      { id: 3, name: 'VIP Early Access', type: 'Email', status: 'Draft', sent: 0, openRate: 0, clicks: 0 },
+      { id: 4, name: 'Birthday Club', type: 'Automated', status: 'Active', sent: 89, openRate: 68, clicks: 156 },
+    ];
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <View style={styles.searchContainer}>
+            <Search size={18} color="#64748b" />
+            <TextInput style={styles.searchInput} placeholder="Search campaigns..." placeholderTextColor="#64748b" />
+          </View>
+          <TouchableOpacity style={styles.addButton}>
+            <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>New Campaign</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.marketingStatsRow}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>4</Text>
+            <Text style={styles.miniStatLabel}>Campaigns</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>1,336</Text>
+            <Text style={styles.miniStatLabel}>Total Sent</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>47%</Text>
+            <Text style={styles.miniStatLabel}>Avg Open Rate</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>390</Text>
+            <Text style={styles.miniStatLabel}>Total Clicks</Text>
+          </View>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Marketing Integrations</Text>
+          <Text style={styles.sectionSubtitle}>Connect your marketing tools</Text>
+        </View>
+
+        <View style={styles.integrationList}>
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#FFE01B' }]}>
+                <Mail size={24} color="#000" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Mailchimp</Text>
+                <Text style={styles.integrationDesc}>Email marketing & automation</Text>
+              </View>
+              <TouchableOpacity style={[styles.connectButton, styles.connectedButton]}>
+                <Check size={14} color="#10b981" />
+                <Text style={styles.connectedButtonText}>Connected</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#4B5563' }]}>
+                <Mail size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Klaviyo</Text>
+                <Text style={styles.integrationDesc}>E-commerce email marketing</Text>
+              </View>
+              <TouchableOpacity style={styles.connectButton}>
+                <Text style={styles.connectButtonText}>Connect</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#F22F46' }]}>
+                <Smartphone size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Twilio</Text>
+                <Text style={styles.integrationDesc}>SMS & Voice messaging</Text>
+              </View>
+              <TouchableOpacity style={[styles.connectButton, styles.connectedButton]}>
+                <Check size={14} color="#10b981" />
+                <Text style={styles.connectedButtonText}>Connected</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.sectionDivider} />
+
+        <Text style={styles.sectionTitle}>Recent Campaigns</Text>
+        
+        {campaigns.map((campaign) => (
+          <View key={campaign.id} style={styles.campaignCard}>
+            <View style={styles.campaignHeader}>
+              <View style={styles.campaignInfo}>
+                <Text style={styles.campaignName}>{campaign.name}</Text>
+                <View style={styles.campaignMeta}>
+                  <View style={[styles.campaignTypeBadge, campaign.type.includes('SMS') && styles.smsBadge]}>
+                    <Smartphone size={12} color={campaign.type.includes('SMS') ? '#fff' : '#6366f1'} />
+                    <Text style={[styles.campaignTypeText, campaign.type.includes('SMS') && styles.smsBadgeText]}>{campaign.type}</Text>
+                  </View>
+                  <View style={[styles.statusBadge, campaign.status === 'Active' ? styles.activeBadge : campaign.status === 'Scheduled' ? styles.pendingBadge : styles.inactiveBadge]}>
+                    <Text style={[styles.statusText, campaign.status === 'Active' ? styles.activeStatusText : campaign.status === 'Scheduled' ? styles.pendingText : styles.inactiveStatusText]}>{campaign.status}</Text>
+                  </View>
+                </View>
+              </View>
+              <TouchableOpacity style={styles.campaignActionsButton}>
+                <MoreHorizontal size={20} color="#94a3b8" />
+              </TouchableOpacity>
+            </View>
+            {campaign.status === 'Active' && (
+              <View style={styles.campaignStats}>
+                <View style={styles.campaignStat}>
+                  <Text style={styles.campaignStatValue}>{campaign.sent}</Text>
+                  <Text style={styles.campaignStatLabel}>Sent</Text>
+                </View>
+                <View style={styles.campaignStat}>
+                  <Text style={styles.campaignStatValue}>{campaign.openRate}%</Text>
+                  <Text style={styles.campaignStatLabel}>Open Rate</Text>
+                </View>
+                <View style={styles.campaignStat}>
+                  <Text style={styles.campaignStatValue}>{campaign.clicks}</Text>
+                  <Text style={styles.campaignStatLabel}>Clicks</Text>
+                </View>
+              </View>
+            )}
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
+
   const renderSettings = () => {
     const [templates, setTemplates] = useState({
       confirmation: 'Hi {name}! Your appointment at {location} is confirmed for {date} at {time}. Reply HELP for assistance.',
@@ -2093,6 +2231,7 @@ export default function AdminDashboard() {
     { id: 'customers', icon: User, label: 'Customers', roles: ['admin', 'manager', 'receptionist'] },
     { id: 'services', icon: CreditCard, label: 'Services', roles: ['admin', 'manager'] },
     { id: 'locations', icon: Building2, label: 'Locations', roles: ['admin'] },
+    { id: 'marketing', icon: Mail, label: 'Marketing', roles: ['admin', 'manager'] },
     { id: 'analytics', icon: BarChart3, label: 'Analytics', roles: ['admin'] },
     { id: 'settings', icon: Settings, label: 'Settings', roles: ['admin'] },
   ].filter(item => item.roles.includes(userRole));
@@ -2181,6 +2320,7 @@ export default function AdminDashboard() {
         {activeTab === 'customers' && renderCustomers()}
         {activeTab === 'services' && renderServices()}
         {activeTab === 'locations' && renderLocations()}
+        {activeTab === 'marketing' && renderMarketing()}
         {activeTab === 'analytics' && <View style={styles.tabContent}><Text style={styles.comingSoon}>Analytics - Coming Soon</Text></View>}
         {activeTab === 'settings' && renderSettings()}
       </View>
@@ -2728,4 +2868,21 @@ const styles = StyleSheet.create({
   skillTagText: { color: '#10b981', fontSize: 12, fontWeight: '600' },
   skillTagLearning: { backgroundColor: 'rgba(245, 158, 11, 0.1)' },
   skillTagTextLearning: { color: '#f59e0b', fontSize: 12, fontWeight: '600' },
+  marketingStatsRow: { flexDirection: 'row', gap: 12, marginBottom: 24 },
+  campaignCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 16, marginBottom: 12 },
+  campaignHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  campaignInfo: { flex: 1 },
+  campaignName: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 8 },
+  campaignMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  campaignTypeBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: 6 },
+  campaignTypeText: { color: '#6366f1', fontSize: 11, fontWeight: '600' },
+  smsBadge: { backgroundColor: 'rgba(242, 47, 70, 0.1)' },
+  smsBadgeText: { color: '#F22F46' },
+  campaignActionsButton: { padding: 4 },
+  campaignStats: { flexDirection: 'row', marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  campaignStat: { flex: 1, alignItems: 'center' },
+  campaignStatValue: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  campaignStatLabel: { color: '#64748b', fontSize: 11, marginTop: 4 },
+  connectedButton: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  connectedButtonText: { color: '#10b981', fontSize: 13, fontWeight: '600' },
 });
