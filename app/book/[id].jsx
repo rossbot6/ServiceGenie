@@ -350,10 +350,13 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 20,
     alignItems: 'center',
+    // iOS shadow (deprecated, use boxShadow for web)
     shadowColor: '#6366f1',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
     shadowRadius: 20,
+    // Web boxShadow
+    boxShadow: '0 10px 30px -5px rgba(99, 102, 241, 0.3)',
   },
   bookButtonText: {
     color: '#fff',
