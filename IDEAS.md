@@ -41,7 +41,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Performance Metrics~~ ✅ **Completed** - Appointments, revenue, rating per provider
 - [x] ~~Team Management~~ ✅ **Completed** - Group providers into teams with lead assignments
 - [x] ~~Team Lead Assignment~~ ✅ **Completed** - Display team leads within teams
-- [ ] **Cross-training visibility**
+- [x] **Cross-training visibility** ✅ **NEW** - Display provider skills with certified and learning status
 
 ---
 
