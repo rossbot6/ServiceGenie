@@ -165,8 +165,8 @@ CREATE TABLE IF NOT EXISTS pos_transactions (
     currency VARCHAR(3) DEFAULT 'USD',
     external_transaction_id VARCHAR(255),
     device_id VARCHAR(100),
-    receipt_number),
-    status VARCHAR VARCHAR(100(20) DEFAULT 'completed', -- 'pending', 'completed', 'failed', 'refunded'
+    receipt_number VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'completed', -- 'pending', 'completed', 'failed', 'refunded'
     customer_id UUID REFERENCES customers(id),
     appointment_id UUID REFERENCES appointments(id),
     provider_id UUID REFERENCES providers(id),
