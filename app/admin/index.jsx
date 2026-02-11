@@ -1500,6 +1500,66 @@ export default function AdminDashboard() {
             </View>
           </View>
         </View>
+
+        <View style={styles.sectionDivider} />
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>API for Third-Party Apps</Text>
+          <Text style={styles.sectionSubtitle}>Generate API keys to integrate with external applications</Text>
+        </View>
+
+        <View style={styles.apiSection}>
+          <View style={styles.apiKeyCard}>
+            <View style={styles.apiKeyHeader}>
+              <Key size={20} color="#6366f1" />
+              <Text style={styles.apiKeyTitle}>Production API Key</Text>
+            </View>
+            <View style={styles.apiKeyRow}>
+              <Text style={styles.apiKeyLabel}>Key:</Text>
+              <Text style={styles.apiKeyValue}>sg_live_••••••••••••••••</Text>
+              <TouchableOpacity style={styles.copyButton} onPress={() => alert("API key copied!")}>
+                <Copy size={14} color="#6366f1" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.apiKeyMeta}>
+              <Text style={styles.apiKeyCreated}>Created: Jan 15, 2026</Text>
+              <Text style={styles.apiKeyExpiry}>Expires: Jan 15, 2027</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.generateApiButton}>
+            <Plus size={18} color="#fff" />
+            <Text style={styles.generateApiButtonText}>Generate New API Key</Text>
+          </TouchableOpacity>
+
+          <View style={styles.apiDocsSection}>
+            <Text style={styles.apiDocsTitle}>API Endpoints</Text>
+            <View style={styles.apiEndpoint}>
+              <Text style={styles.apiMethod}>GET</Text>
+              <Text style={styles.apiPath}>/api/v1/appointments</Text>
+            </View>
+            <View style={styles.apiEndpoint}>
+              <Text style={styles.apiMethod}>POST</Text>
+              <Text style={styles.apiPath}>/api/v1/appointments</Text>
+            </View>
+            <View style={styles.apiEndpoint}>
+              <Text style={styles.apiMethod}>GET</Text>
+              <Text style={styles.apiPath}>/api/v1/services</Text>
+            </View>
+            <View style={styles.apiEndpoint}>
+              <Text style={styles.apiMethod}>GET</Text>
+              <Text style={styles.apiPath}>/api/v1/providers</Text>
+            </View>
+            <View style={styles.apiEndpoint}>
+              <Text style={styles.apiMethod}>GET</Text>
+              <Text style={styles.apiPath}>/api/v1/customers</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.viewDocsButton}>
+            <Text style={styles.viewDocsButtonText}>View Full API Documentation →</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     );
   };
@@ -2412,4 +2472,24 @@ const styles = StyleSheet.create({
   progressBar: { flex: 1, height: 6, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 3, marginHorizontal: 10 },
   progressFill: { height: 6, backgroundColor: '#10b981', borderRadius: 3 },
   progressText: { fontSize: 12, color: '#94a3b8', width: 40, textAlign: 'right' },
+  apiSection: { marginTop: 8 },
+  apiKeyCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  apiKeyHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
+  apiKeyTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  apiKeyRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#0f172a', padding: 12, borderRadius: 10, marginBottom: 12 },
+  apiKeyLabel: { color: '#64748b', fontSize: 13 },
+  apiKeyValue: { color: '#94a3b8', fontSize: 13, fontFamily: 'monospace', flex: 1 },
+  copyButton: { padding: 4 },
+  apiKeyMeta: { flexDirection: 'row', gap: 16 },
+  apiKeyCreated: { color: '#64748b', fontSize: 12 },
+  apiKeyExpiry: { color: '#f59e0b', fontSize: 12 },
+  generateApiButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#6366f1', paddingVertical: 14, borderRadius: 12, marginBottom: 20 },
+  generateApiButtonText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  apiDocsSection: { backgroundColor: '#1e293b', borderRadius: 16, padding: 20, marginBottom: 16 },
+  apiDocsTitle: { color: '#fff', fontSize: 15, fontWeight: '700', marginBottom: 16 },
+  apiEndpoint: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.05)' },
+  apiMethod: { color: '#10b981', fontSize: 12, fontWeight: '700', width: 60 },
+  apiPath: { color: '#94a3b8', fontSize: 13, fontFamily: 'monospace' },
+  viewDocsButton: { alignItems: 'center', paddingVertical: 12 },
+  viewDocsButtonText: { color: '#6366f1', fontSize: 14, fontWeight: '600' },
 });
