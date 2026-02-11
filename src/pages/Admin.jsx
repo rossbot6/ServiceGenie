@@ -1666,6 +1666,120 @@ export default function Admin() {
           </div>
         </div>
       )}
+      
+      {/* Payments Tab */}
+      {activeTab === 'payments' && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">Payments & Revenue</h2>
+            <p className="text-sm text-gray-500">Track revenue and provider payouts</p>
+          </div>
+          
+          {/* Revenue Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="card">
+              <p className="text-sm text-gray-500">Total Revenue</p>
+              <p className="text-2xl font-bold text-green-600">
+                ${appointments.reduce((acc, a) => acc + a.price, 0).toLocaleString()}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">All time</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">This Week</p>
+              <p className="text-2xl font-bold text-blue-600">$2,450</p>
+              <p className="text-xs text-green-600 mt-1">+15% vs last week</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Pending Payments</p>
+              <p className="text-2xl font-bold text-amber-600">
+                ${appointments.filter(a => a.status === 'pending').reduce((acc, a) => acc + a.price, 0)}
+              </p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Completed Payments</p>
+              <p className="text-2xl font-bold text-green-600">
+                ${appointments.filter(a => a.status === 'completed').reduce((acc, a) => acc + a.price, 0)}
+              </p>
+            </div>
+          </div>
+          
+          {/* Provider Compensation */}
+          <div className="card">
+            <h3 className="font-semibold text-gray-900 mb-4">Provider Payouts (Commission 60%)</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-sm text-gray-500 border-b border-gray-100">
+                    <th className="px-4 py-3 font-medium">Provider</th>
+                    <th className="px-4 py-3 font-medium">Appointments</th>
+                    <th className="px-4 py-3 font-medium">Revenue</th>
+                    <th className="px-4 py-3 font-medium">Commission (60%)</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {providers.map(provider => {
+                    const providerAppointments = appointments.filter(a => a.provider === provider.name && a.status === 'completed');
+                    const revenue = providerAppointments.reduce((acc, a) => acc + a.price, 0);
+                    const commission = revenue * 0.6;
+                    return (
+                      <tr key={provider.id} className="text-sm">
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                              <span className="text-blue-600 font-medium text-sm">
+                                {provider.name.split(' ').map(n => n[0]).join('')}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{provider.name}</p>
+                              <p className="text-xs text-gray-500">{provider.specialty}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-gray-600">{providerAppointments.length}</td>
+                        <td className="px-4 py-3 text-green-600 font-medium">${revenue.toLocaleString()}</td>
+                        <td className="px-4 py-3 text-blue-600 font-medium">${commission.toLocaleString()}</td>
+                        <td className="px-4 py-3">
+                          <span className="badge bg-green-100 text-green-700">Ready to Pay</span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          {/* Recent Transactions */}
+          <div className="card">
+            <h3 className="font-semibold text-gray-900 mb-4">Recent Transactions</h3>
+            <div className="space-y-3">
+              {appointments.filter(a => a.status === 'completed' || a.status === 'confirmed').slice(0, 5).map(apt => (
+                <div key={apt.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <DollarSign size={18} className="text-green-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{apt.customer}</p>
+                      <p className="text-sm text-gray-500">{apt.service} - {apt.date}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-green-600">${apt.price}</p>
+                    <span className={`badge ${
+                      apt.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                    }`}>
+                      {apt.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
