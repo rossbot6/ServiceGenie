@@ -1197,6 +1197,25 @@ export default function AdminDashboard() {
       emailCancellation: 'Dear {name},\n\nYour appointment has been cancelled:\n\n📅 Date: {date}\n⏰ Time: {time}\n📍 Location: {location}\n💇 Service: {service}\n\nIf you did not request this cancellation, please contact us.',
       emailMarketing: 'Dear {name},\n\n{content}\n\n---\n\nTo manage your communication preferences, visit your account settings or reply STOP to opt out.'
     });
+    
+    const [languageSettings, setLanguageSettings] = useState({
+      defaultLanguage: 'en',
+      supportedLanguages: ['en', 'es', 'fr'],
+      autoDetect: false
+    });
+    
+    const languages = [
+      { code: 'en', name: 'English', flag: '🇺🇸' },
+      { code: 'es', name: 'Español', flag: '🇪🇸' },
+      { code: 'fr', name: 'Français', flag: '🇫🇷' },
+      { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+      { code: 'zh', name: '中文', flag: '🇨🇳' },
+      { code: 'ja', name: '日本語', flag: '🇯🇵' },
+      { code: 'ko', name: '한국어', flag: '🇰🇷' },
+      { code: 'pt', name: 'Português', flag: '🇧🇷' },
+      { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+      { code: 'ar', name: 'العربية', flag: '🇸🇦' }
+    ];
 
     return (
       <ScrollView style={styles.tabContent}>
@@ -1687,6 +1706,108 @@ export default function AdminDashboard() {
             >
               <View style={[styles.toggleKnob, true && styles.toggleKnobActive]} />
             </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.sectionDivider} />
+        
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Language Settings</Text>
+          <Text style={styles.sectionSubtitle}>Configure supported languages for your customers</Text>
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Default App Language</Text>
+          <View style={styles.languageGrid}>
+            {languages.slice(0, 6).map((lang) => (
+              <TouchableOpacity 
+                key={lang.code}
+                style={[
+                  styles.languageButton,
+                  languageSettings.defaultLanguage === lang.code && styles.languageButtonActive
+                ]}
+                onPress={() => setLanguageSettings({ ...languageSettings, defaultLanguage: lang.code })}
+              >
+                <Text style={styles.languageFlag}>{lang.flag}</Text>
+                <Text style={[styles.languageName, languageSettings.defaultLanguage === lang.code && styles.languageNameActive]}>
+                  {lang.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Supported Languages</Text>
+          <Text style={styles.templateHint}>Select languages your customers can choose from</Text>
+          <View style={styles.languageGrid}>
+            {languages.map((lang) => {
+              const isSupported = languageSettings.supportedLanguages.includes(lang.code);
+              return (
+                <TouchableOpacity 
+                  key={lang.code}
+                  style={[
+                    styles.languageButton,
+                    isSupported && styles.languageButtonActive
+                  ]}
+                  onPress={() => {
+                    if (isSupported) {
+                      setLanguageSettings({
+                        ...languageSettings,
+                        supportedLanguages: languageSettings.supportedLanguages.filter(l => l !== lang.code)
+                      });
+                    } else {
+                      setLanguageSettings({
+                        ...languageSettings,
+                        supportedLanguages: [...languageSettings.supportedLanguages, lang.code]
+                      });
+                    }
+                  }}
+                >
+                  <Text style={styles.languageFlag}>{lang.flag}</Text>
+                  <Text style={[styles.languageName, isSupported && styles.languageNameActive]}>
+                    {lang.name}
+                  </Text>
+                  {isSupported && <Text style={styles.languageCheck}>✓</Text>}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+
+        <View style={styles.templateCard}>
+          <View style={styles.settingRow}>
+            <View style={styles.settingInfo}>
+              <Text style={styles.templateLabel}>Auto-Detect User Language</Text>
+              <Text style={styles.templateHint}>Automatically detect and use customer's device language setting</Text>
+            </View>
+            <TouchableOpacity 
+              style={[styles.toggleButton, languageSettings.autoDetect && styles.toggleButtonActive]}
+              accessibilityLabel="Toggle auto-detect language"
+              accessibilityRole="button"
+              onPress={() => setLanguageSettings({ ...languageSettings, autoDetect: !languageSettings.autoDetect })}
+            >
+              <View style={[styles.toggleKnob, languageSettings.autoDetect && styles.toggleKnobActive]} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Translation Progress</Text>
+          <View style={styles.translationProgress}>
+            {languages.slice(0, 5).map((lang) => {
+              const progress = Math.floor(Math.random() * 30) + 70; // Mock progress
+              return (
+                <View key={lang.code} style={styles.translationRow}>
+                  <Text style={styles.translationFlag}>{lang.flag}</Text>
+                  <Text style={styles.translationLang}>{lang.name}</Text>
+                  <View style={styles.progressBar}>
+                    <View style={[styles.progressFill, { width: `${progress}%` }]} />
+                  </View>
+                  <Text style={styles.progressText}>{progress}%</Text>
+                </View>
+              );
+            })}
           </View>
         </View>
       </ScrollView>
@@ -2239,4 +2360,18 @@ const styles = StyleSheet.create({
   toggleButtonActive: { backgroundColor: '#6366f1' },
   toggleKnob: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#fff' },
   toggleKnobActive: { backgroundColor: '#fff', marginLeft: 24 },
+  languageGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 },
+  languageButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 8, backgroundColor: '#0f172a', borderRadius: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)', minWidth: 90, justifyContent: 'center' },
+  languageButtonActive: { backgroundColor: 'rgba(99, 102, 241, 0.2)', borderColor: '#6366f1' },
+  languageFlag: { fontSize: 18, marginRight: 6 },
+  languageName: { fontSize: 12, color: '#94a3b8', fontWeight: '600' },
+  languageNameActive: { color: '#fff' },
+  languageCheck: { fontSize: 10, color: '#10b981', marginLeft: 4 },
+  translationProgress: { marginTop: 12 },
+  translationRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  translationFlag: { fontSize: 16, width: 30 },
+  translationLang: { fontSize: 13, color: '#fff', width: 80 },
+  progressBar: { flex: 1, height: 6, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 3, marginHorizontal: 10 },
+  progressFill: { height: 6, backgroundColor: '#10b981', borderRadius: 3 },
+  progressText: { fontSize: 12, color: '#94a3b8', width: 40, textAlign: 'right' },
 });
