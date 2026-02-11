@@ -5,7 +5,8 @@ import {
   BarChart3, Mail, MessageSquare, CreditCard,
   MapPin, Edit, Trash2, Building2, Phone,
   Star, Mail as MailIcon, Award, CalendarCheck,
-  User, Tag, Heart, MessageCircle
+  User, Tag, Heart, MessageCircle, Scissors,
+  Timer, Package
 } from 'lucide-react';
 
 // Sample locations data
@@ -31,11 +32,24 @@ const initialCustomers = [
   { id: 5, name: 'David Lee', email: 'david@email.com', phone: '(212) 555-1003', visits: 15, totalSpent: 4100, tags: ['VIP', 'Regular'], notes: 'Always requests afternoon slots', preferredProvider: 'Emma Wilson', lastVisit: '2026-02-09' },
 ];
 
+// Sample services data
+const initialServices = [
+  { id: 1, name: "Women's Haircut", category: 'Cut', price: 85, duration: 60, description: 'Professional haircut styled to perfection' },
+  { id: 2, name: "Men's Haircut", category: 'Cut', price: 45, duration: 30, description: 'Clean and modern men's styling' },
+  { id: 3, name: 'Full Balayage', category: 'Color', price: 180, duration: 180, description: 'Hand-painted highlights for natural look' },
+  { id: 4, name: 'Partial Highlights', category: 'Color', price: 120, duration: 120, description: 'Partial head highlights and toning' },
+  { id: 5, name: 'Keratin Treatment', category: 'Treatment', price: 250, duration: 120, description: 'Smoothing keratin blowout' },
+  { id: 6, name: 'Blowout', category: 'Style', price: 55, duration: 45, description: 'Voluminous blowout styling' },
+  { id: 7, name: 'Updo', category: 'Style', price: 150, duration: 90, description: 'Elegant updo for special occasions' },
+  { id: 8, name: 'Scalp Treatment', category: 'Treatment', price: 75, duration: 45, description: 'Rejuvenating scalp massage and treatment' },
+];
+
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('overview');
   const [locations, setLocations] = useState(initialLocations);
   const [providers, setProviders] = useState(initialProviders);
   const [customers, setCustomers] = useState(initialCustomers);
+  const [services, setServices] = useState(initialServices);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showProviderModal, setShowProviderModal] = useState(false);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -166,6 +180,41 @@ export default function Admin() {
     } else {
       setCustomerForm({ ...customerForm, tags: [...customerForm.tags, tag] });
     }
+  };
+  
+  // Service management functions
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [editingService, setEditingService] = useState(null);
+  const [serviceForm, setServiceForm] = useState({ name: '', category: 'Cut', price: 0, duration: 30, description: '' });
+  
+  const handleAddService = () => {
+    setEditingService(null);
+    setServiceForm({ name: '', category: 'Cut', price: 0, duration: 30, description: '' });
+    setShowServiceModal(true);
+  };
+  
+  const handleEditService = (service) => {
+    setEditingService(service);
+    setServiceForm(service);
+    setShowServiceModal(true);
+  };
+  
+  const handleDeleteService = (id) => {
+    if (confirm('Are you sure you want to delete this service?')) {
+      setServices(services.filter(s => s.id !== id));
+    }
+  };
+  
+  const handleServiceSubmit = (e) => {
+    e.preventDefault();
+    if (editingService) {
+      setServices(services.map(s => 
+        s.id === editingService.id ? { ...serviceForm, id: editingService.id } : s
+      ));
+    } else {
+      setServices([...services, { ...serviceForm, id: Date.now() }]);
+    }
+    setShowServiceModal(false);
   };
   
   const recentAppointments = [
@@ -996,6 +1045,233 @@ export default function Admin() {
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   {editingCustomer ? 'Save Changes' : 'Add Customer'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      
+      {/* Services Tab */}
+      {activeTab === 'services' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Manage Services</h2>
+              <p className="text-sm text-gray-500">Add, edit, or manage salon services</p>
+            </div>
+            <button 
+              onClick={handleAddService}
+              className="btn-primary flex items-center gap-2"
+            >
+              <Plus size={18} />
+              Add Service
+            </button>
+          </div>
+          
+          {/* Service Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="card">
+              <p className="text-sm text-gray-500">Total Services</p>
+              <p className="text-2xl font-bold text-gray-900">{services.length}</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Categories</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {new Set(services.map(s => s.category)).size}
+              </p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Avg Price</p>
+              <p className="text-2xl font-bold text-green-600">
+                ${Math.round(services.reduce((acc, s) => acc + s.price, 0) / services.length)}
+              </p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Avg Duration</p>
+              <p className="text-2xl font-bold text-amber-600">
+                {Math.round(services.reduce((acc, s) => acc + s.duration, 0) / services.length)}min
+              </p>
+            </div>
+          </div>
+          
+          {/* Service Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {services.map((service) => (
+              <div key={service.id} className="card">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${
+                      service.category === 'Cut' ? 'bg-blue-50' :
+                      service.category === 'Color' ? 'bg-purple-50' :
+                      service.category === 'Style' ? 'bg-pink-50' :
+                      'bg-green-50'
+                    }`}>
+                      <Scissors size={20} className={
+                        service.category === 'Cut' ? 'text-blue-600' :
+                        service.category === 'Color' ? 'text-purple-600' :
+                        service.category === 'Style' ? 'text-pink-600' :
+                        'text-green-600'
+                      } />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">{service.name}</h3>
+                      <span className="badge bg-gray-100 text-gray-700">{service.category}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    <button 
+                      onClick={() => handleEditService(service)}
+                      className="p-1.5 hover:bg-gray-100 rounded text-gray-600"
+                    >
+                      <Edit size={16} />
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteService(service.id)}
+                      className="p-1.5 hover:bg-red-50 rounded text-red-600"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+                
+                <p className="text-sm text-gray-600 mb-4">{service.description}</p>
+                
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <div className="flex items-center gap-4 text-sm">
+                    <div className="flex items-center gap-1">
+                      <DollarSign size={14} className="text-green-600" />
+                      <span className="font-medium">${service.price}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Timer size={14} className="text-amber-600" />
+                      <span>{service.duration}min</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {services.length === 0 && (
+            <div className="card text-center py-12">
+              <Package size={48} className="mx-auto text-gray-300 mb-3" />
+              <p className="text-gray-500">No services yet</p>
+              <button 
+                onClick={handleAddService}
+                className="btn-primary mt-4"
+              >
+                Add Your First Service
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Service Modal */}
+      {showServiceModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {editingService ? 'Edit Service' : 'Add New Service'}
+              </h2>
+              <button 
+                onClick={() => setShowServiceModal(false)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleServiceSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Service Name
+                </label>
+                <input
+                  type="text"
+                  value={serviceForm.name}
+                  onChange={(e) => setServiceForm({ ...serviceForm, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., Women's Haircut"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                </label>
+                <select
+                  value={serviceForm.category}
+                  onChange={(e) => setServiceForm({ ...serviceForm, category: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="Cut">Cut</option>
+                  <option value="Color">Color</option>
+                  <option value="Style">Style</option>
+                  <option value="Treatment">Treatment</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Price ($)
+                </label>
+                <input
+                  type="number"
+                  value={serviceForm.price}
+                  onChange={(e) => setServiceForm({ ...serviceForm, price: Number(e.target.value) })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="85"
+                  min="0"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Duration (minutes)
+                </label>
+                <input
+                  type="number"
+                  value={serviceForm.duration}
+                  onChange={(e) => setServiceForm({ ...serviceForm, duration: Number(e.target.value) })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="60"
+                  min="5"
+                  step="5"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Description
+                </label>
+                <textarea
+                  value={serviceForm.description}
+                  onChange={(e) => setServiceForm({ ...serviceForm, description: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                  placeholder="Brief description of the service..."
+                />
+              </div>
+              
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowServiceModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  {editingService ? 'Save Changes' : 'Add Service'}
                 </button>
               </div>
             </form>
