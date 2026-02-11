@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, Users, DollarSign, Gift, Briefcase, Menu, X } from 'lucide-react';
+import { Home, Calendar, Users, DollarSign, Gift, Briefcase, Menu, X, Clock } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Layout() {
@@ -8,6 +8,7 @@ export default function Layout() {
   
   const navigation = [
     { name: 'Home', path: '/', icon: Home },
+    { name: 'My Bookings', path: '/bookings', icon: Clock },
     { name: 'Book', path: '/book/service', icon: Calendar },
     { name: 'Admin', path: '/admin', icon: Users },
     { name: 'Loyalty', path: '/loyalty', icon: Gift },

@@ -3,6 +3,7 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import Admin from './pages/Admin';
 import Booking from './pages/Booking';
+import Bookings from './pages/Bookings';
 import GroupBooking from './pages/GroupBooking';
 import Loyalty from './pages/Loyalty';
 import Payouts from './pages/Payouts';
@@ -14,6 +15,7 @@ export default function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="admin" element={<Admin />} />
+        <Route path="bookings" element={<Bookings />} />
         <Route path="book/:id" element={<Booking />} />
         <Route path="group-booking" element={<GroupBooking />} />
         <Route path="loyalty" element={<Loyalty />} />
