@@ -25,7 +25,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 - [x] Remove any old references and files pertaining to expo
 
 ### Salon Management
-- [ ] Add/Edit/Delete Locations
+- [x] Add/Edit/Delete Locations
 - [ ] Location Settings
   - [ ] Booking policies (cancellation, rescheduling, deposits)
   - [ ] Buffer time between appointments
