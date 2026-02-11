@@ -352,6 +352,44 @@ export default function AdminDashboard() {
               <Text style={styles.reviewAuthor}>- Sarah P.</Text>
             </View>
           </View>
+          
+          <View style={styles.publicReviewsSection}>
+            <View style={styles.reviewsHeader}>
+              <Star size={14} color="#f59e0b" fill="#f59e0b" />
+              <Text style={styles.reviewsTitle}>Public Reviews ({Math.floor(Math.random() * 50) + 20})</Text>
+              <TouchableOpacity style={styles.publicReviewsButton}>
+                <Text style={styles.publicReviewsButtonText}>View All</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.publicReviewCard}>
+              <View style={styles.publicReviewHeader}>
+                <View style={styles.publicReviewAvatar}>
+                  <Text style={styles.publicReviewAvatarText}>JD</Text>
+                </View>
+                <View style={styles.publicReviewInfo}>
+                  <Text style={styles.publicReviewName}>John D.</Text>
+                  <View style={styles.publicReviewStars}>
+                    {[1,2,3,4,5].map((star) => (
+                      <Star key={star} size={12} color="#f59e0b" fill={star <= 5 ? "#f59e0b" : "transparent"} />
+                    ))}
+                  </View>
+                </View>
+                <Text style={styles.publicReviewDate}>2 days ago</Text>
+              </View>
+              <Text style={styles.publicReviewText}>Had an amazing haircut! Will definitely be coming back. {provider.name.split(' ')[0]} is a true professional.</Text>
+              <View style={styles.publicReviewService}>
+                <Text style={styles.publicReviewServiceText}>Service: Haircut & Style</Text>
+              </View>
+              <View style={styles.publicReviewActions}>
+                <TouchableOpacity style={styles.publicReviewHelpful}>
+                  <Text style={styles.publicReviewHelpfulText}>👍 Helpful ({Math.floor(Math.random() * 10) + 1})</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.publicReviewResponse}>
+                  <Text style={styles.publicReviewResponseText}>💬 Respond</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
         </View>
       ))}
     </ScrollView>
