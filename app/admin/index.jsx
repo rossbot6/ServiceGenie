@@ -1560,6 +1560,110 @@ export default function AdminDashboard() {
             <Text style={styles.viewDocsButtonText}>View Full API Documentation →</Text>
           </TouchableOpacity>
         </View>
+
+        <View style={styles.sectionDivider} />
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Loyalty & Rewards Program</Text>
+          <Text style={styles.sectionSubtitle}>Boost customer retention with points and rewards</Text>
+        </View>
+
+        <View style={styles.loyaltyStatsRow}>
+          <View style={styles.loyaltyStatCard}>
+            <Text style={styles.loyaltyStatValue}>2,847</Text>
+            <Text style={styles.loyaltyStatLabel}>Active Members</Text>
+          </View>
+          <View style={styles.loyaltyStatCard}>
+            <Text style={styles.loyaltyStatValue}>45.2K</Text>
+            <Text style={styles.loyaltyStatLabel}>Points Issued</Text>
+          </View>
+          <View style={styles.loyaltyStatCard}>
+            <Text style={styles.loyaltyStatValue}>$12.4K</Text>
+            <Text style={styles.loyaltyStatLabel}>Rewards Redeemed</Text>
+          </View>
+        </View>
+
+        <View style={styles.loyaltyTiersSection}>
+          <Text style={styles.loyaltySectionTitle}>Reward Tiers</Text>
+          
+          <View style={styles.loyaltyTierCard}>
+            <View style={styles.tierHeader}>
+              <View style={[styles.tierBadge, { backgroundColor: '#94a3b4' }]}>
+                <Text style={styles.tierBadgeText}>BRONZE</Text>
+              </View>
+              <Text style={styles.tierPoints}>1 point/$1</Text>
+            </View>
+            <Text style={styles.tierDesc}>Entry level - 0 to 499 points</Text>
+            <Text style={styles.tierPerk}>• 1 point per dollar spent</Text>
+          </View>
+
+          <View style={styles.loyaltyTierCard}>
+            <View style={styles.tierHeader}>
+              <View style={[styles.tierBadge, { backgroundColor: '#f59e0b' }]}>
+                <Text style={styles.tierBadgeText}>SILVER</Text>
+              </View>
+              <Text style={styles.tierPoints}>1.5 points/$1</Text>
+            </View>
+            <Text style={styles.tierDesc}>Mid level - 500 to 1,499 points</Text>
+            <Text style={styles.tierPerk}>• 1.5 points per dollar spent</Text>
+            <Text style={styles.tierPerk}>• Birthday bonus: 50 points</Text>
+          </View>
+
+          <View style={styles.loyaltyTierCard}>
+            <View style={styles.tierHeader}>
+              <View style={[styles.tierBadge, { backgroundColor: '#10b981' }]}>
+                <Text style={styles.tierBadgeText}>GOLD</Text>
+              </View>
+              <Text style={styles.tierPoints}>2 points/$1</Text>
+            </View>
+            <Text style={styles.tierDesc}>Top level - 1,500+ points</Text>
+            <Text style={styles.tierPerk}>• 2 points per dollar spent</Text>
+            <Text style={styles.tierPerk}>• Birthday bonus: 100 points</Text>
+            <Text style={styles.tierPerk}>• Priority booking</Text>
+            <Text style={styles.tierPerk}>• Free add-on with each visit</Text>
+          </View>
+        </View>
+
+        <View style={styles.loyaltyRewardsSection}>
+          <Text style={styles.loyaltySectionTitle}>Available Rewards</Text>
+          
+          <View style={styles.rewardItem}>
+            <View style={styles.rewardInfo}>
+              <Text style={styles.rewardName}>$5 Off</Text>
+              <Text style={styles.rewardCost}>500 points</Text>
+            </View>
+            <Text style={styles.rewardRedemptions}>234 redeemed this month</Text>
+          </View>
+
+          <View style={styles.rewardItem}>
+            <View style={styles.rewardInfo}>
+              <Text style={styles.rewardName}>Free Scalp Treatment</Text>
+              <Text style={styles.rewardCost}>1,000 points</Text>
+            </View>
+            <Text style={styles.rewardRedemptions}>89 redeemed this month</Text>
+          </View>
+
+          <View style={styles.rewardItem}>
+            <View style={styles.rewardInfo}>
+              <Text style={styles.rewardName}>$25 Off</Text>
+              <Text style={styles.rewardCost}>2,500 points</Text>
+            </View>
+            <Text style={styles.rewardRedemptions}>156 redeemed this month</Text>
+          </View>
+
+          <View style={styles.rewardItem}>
+            <View style={styles.rewardInfo}>
+              <Text style={styles.rewardName}>Free Haircut</Text>
+              <Text style={styles.rewardCost}>3,000 points</Text>
+            </View>
+            <Text style={styles.rewardRedemptions}>45 redeemed this month</Text>
+          </View>
+        </View>
+
+        <TouchableOpacity style={styles.addRewardButton}>
+          <Plus size={18} color="#fff" />
+          <Text style={styles.addRewardButtonText}>Add New Reward</Text>
+        </TouchableOpacity>
       </ScrollView>
     );
   };
@@ -2492,4 +2596,25 @@ const styles = StyleSheet.create({
   apiPath: { color: '#94a3b8', fontSize: 13, fontFamily: 'monospace' },
   viewDocsButton: { alignItems: 'center', paddingVertical: 12 },
   viewDocsButtonText: { color: '#6366f1', fontSize: 14, fontWeight: '600' },
+  loyaltyStatsRow: { flexDirection: 'row', gap: 12, marginBottom: 24 },
+  loyaltyStatCard: { flex: 1, backgroundColor: '#1e293b', borderRadius: 16, padding: 16, alignItems: 'center' },
+  loyaltyStatValue: { color: '#fff', fontSize: 24, fontWeight: '800' },
+  loyaltyStatLabel: { color: '#64748b', fontSize: 12, marginTop: 4 },
+  loyaltyTiersSection: { marginBottom: 24 },
+  loyaltySectionTitle: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 16 },
+  loyaltyTierCard: { backgroundColor: '#1e293b', borderRadius: 16, padding: 16, marginBottom: 12 },
+  tierHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  tierBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
+  tierBadgeText: { color: '#fff', fontSize: 11, fontWeight: '800' },
+  tierPoints: { color: '#10b981', fontSize: 14, fontWeight: '600' },
+  tierDesc: { color: '#64748b', fontSize: 13, marginBottom: 8 },
+  tierPerk: { color: '#94a3b8', fontSize: 13, marginBottom: 4 },
+  loyaltyRewardsSection: { marginBottom: 24 },
+  rewardItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#1e293b', borderRadius: 12, padding: 16, marginBottom: 10 },
+  rewardInfo: {},
+  rewardName: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  rewardCost: { color: '#6366f1', fontSize: 13, marginTop: 4 },
+  rewardRedemptions: { color: '#64748b', fontSize: 12 },
+  addRewardButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#6366f1', paddingVertical: 14, borderRadius: 12 },
+  addRewardButtonText: { color: '#fff', fontSize: 14, fontWeight: '600' },
 });
