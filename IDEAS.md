@@ -169,10 +169,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ### External Systems
 - [x] ~~Google Calendar~~ ✅ **NEW** - Sync provider schedules, customer calendar invites
 - [x] ~~Accounting~~ ✅ **NEW** - QuickBooks and Xero integration UI
-- [ ] **Marketing**
-  - Mailchimp
-  - Klaviyo
-  - SMS providers (Twilio, etc.)
+- [x] **Marketing** ✅ **NEW** - Mailchimp, Klaviyo, and Twilio SMS integrations with campaign management
 
 - [ ] **POS Systems**
   - Square integration
