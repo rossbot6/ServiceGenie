@@ -77,9 +77,9 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 ## 📅 Booking Management
 
 ### Appointments Dashboard
-- [ ] Calendar View
-- [ ] All Appointments View
-- [ ] Appointment Actions
+- [x] Calendar View
+- [x] All Appointments View
+- [x] Appointment Actions
 - [ ] Blocked Time Management
 
 ### Booking Policies
