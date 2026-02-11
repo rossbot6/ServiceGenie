@@ -201,7 +201,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 - [x] **Accessibility Features** ✅ **NEW** - Screen reader support, large text mode, high contrast mode, reduce motion options
 
-- [ ] **API for Third-Party Apps**
+- [x] **API for Third-Party Apps** ✅ **NEW** - API key management, endpoints documentation (appointments, services, providers, customers)
   - Public API
   - Partner integrations
 
