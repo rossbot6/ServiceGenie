@@ -92,7 +92,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 ## 💰 Financial Features
 
 ### Revenue Tracking
-- [ ] Revenue Display
+- [x] Revenue Display
 
 ### Payment Processing
 - [ ] In-App Payments
@@ -100,9 +100,9 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 - [ ] Refund Management
 
 ### Provider Compensation
-- [ ] Commission Model
+- [x] Commission Model
 - [ ] Salary + Commission
-- [ ] Payout Reports
+- [x] Payout Reports
 
 ---
 
