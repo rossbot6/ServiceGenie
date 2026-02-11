@@ -42,7 +42,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 ## 👥 Provider (Stylist) Management
 
 ### CRUD Operations
-- [ ] Add Provider
+- [x] Add Provider
 - [ ] Manage Provider Profile
 - [ ] Schedule Management
 - [ ] Provider Status
