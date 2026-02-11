@@ -78,6 +78,12 @@ export default function Layout() {
             title: 'Loyalty Program',
           }} 
         />
+        <Stack.Screen 
+          name="payouts" 
+          options={{ 
+            title: 'Provider Payouts',
+          }} 
+        />
       </Stack>
       <StatusBar style={highContrastEnabled ? 'dark' : 'light'} />
     </View>
