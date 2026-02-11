@@ -171,7 +171,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 - [x] ~~Accounting~~ ✅ **NEW** - QuickBooks and Xero integration UI
 - [x] **Marketing** ✅ **NEW** - Mailchimp, Klaviyo, and Twilio SMS integrations with campaign management
 
-- [ ] **POS Systems**
+- [x] **POS Systems** ✅ **NEW** - Square and Clover payment terminals with transaction tracking
   - Square integration
   - Clover
   - In-person payment sync
