@@ -161,10 +161,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 - [x] ~~Waitlist~~ ✅ **Completed** - Queue management, position tracking, notify/book/remove actions
 
-- [ ] **Reviews**
-  - Rate appointment
-  - Leave feedback
-  - Public reviews on profile
+- [x] **Reviews** ✅ **NEW** - Rate appointment, leave feedback, public reviews on profile with helpful/respond features
 
 ---
 
