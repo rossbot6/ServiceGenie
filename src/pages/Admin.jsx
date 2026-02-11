@@ -1816,6 +1816,83 @@ export default function Admin() {
           </div>
         </div>
       )}
+      
+      {/* Loyalty Tab */}
+      {activeTab === 'loyalty' && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">Loyalty Program</h2>
+            <p className="text-sm text-gray-500">Manage rewards, tiers, and member benefits</p>
+          </div>
+          
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="card">
+              <p className="text-sm text-gray-500">Total Members</p>
+              <p className="text-2xl font-bold text-blue-600">90</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Points Issued</p>
+              <p className="text-2xl font-bold text-green-600">45,250</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Points Redeemed</p>
+              <p className="text-2xl font-bold text-amber-600">12,800</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Active Rewards</p>
+              <p className="text-2xl font-bold text-purple-600">4</p>
+            </div>
+          </div>
+          
+          {/* Tier Distribution */}
+          <div className="card">
+            <h3 className="font-semibold text-gray-900 mb-4">Tier Distribution</h3>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="text-center p-4 bg-orange-50 rounded-lg">
+                <p className="text-2xl font-bold text-orange-600">45</p>
+                <p className="text-sm text-gray-600">Bronze</p>
+              </div>
+              <div className="text-center p-4 bg-gray-100 rounded-lg">
+                <p className="text-2xl font-bold text-gray-600">28</p>
+                <p className="text-sm text-gray-600">Silver</p>
+              </div>
+              <div className="text-center p-4 bg-amber-50 rounded-lg">
+                <p className="text-2xl font-bold text-amber-600">12</p>
+                <p className="text-sm text-gray-600">Gold</p>
+              </div>
+              <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <p className="text-2xl font-bold text-purple-600">5</p>
+                <p className="text-sm text-gray-600">Platinum</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Recent Member Activity */}
+          <div className="card">
+            <h3 className="font-semibold text-gray-900 mb-4">Recent Member Activity</h3>
+            <div className="space-y-3">
+              {customers.slice(0, 5).map(customer => (
+                <div key={customer.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <User size={18} className="text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{customer.name}</p>
+                      <p className="text-sm text-gray-500">{customer.tags.join(', ')}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-blue-600">1,250 pts</p>
+                    <span className="badge bg-orange-100 text-orange-700">Bronze</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
