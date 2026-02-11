@@ -42,16 +42,6 @@ CREATE TABLE IF NOT EXISTS providers (
 CREATE INDEX IF NOT EXISTS idx_providers_name ON providers(name);
 CREATE INDEX IF NOT EXISTS idx_providers_active ON providers(is_active);
 
--- Add team columns if not exist
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'providers' AND column_name = 'team_id') THEN
-    ALTER TABLE providers ADD COLUMN team_id UUID REFERENCES teams(id) ON DELETE SET NULL;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'providers' AND column_name = 'is_team_lead') THEN
-    ALTER TABLE providers ADD COLUMN is_team_lead BOOLEAN DEFAULT false;
-  END IF;
-END $$;
-
 -- ============================================
 -- LOCATIONS TABLE
 -- ============================================
@@ -154,6 +144,16 @@ CREATE TABLE IF NOT EXISTS teams (
   color TEXT DEFAULT '#8b5cf6',
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Add team columns to providers (after teams table exists)
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'providers' AND column_name = 'team_id') THEN
+    ALTER TABLE providers ADD COLUMN team_id UUID REFERENCES teams(id) ON DELETE SET NULL;
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'providers' AND column_name = 'is_team_lead') THEN
+    ALTER TABLE providers ADD COLUMN is_team_lead BOOLEAN DEFAULT false;
+  END IF;
+END $$;
 
 -- ============================================
 -- WAITLIST TABLE
@@ -515,28 +515,216 @@ BEGIN
 END $$;
 
 -- ============================================
--- SAMPLE DATA (Optional - uncomment to add)
+-- SAMPLE DATA (Optional - uncomment or run separately)
 -- ============================================
--- INSERT INTO customers (name, email, phone) VALUES
---   ('John Smith', 'john@email.com', '555-0101'),
---   ('Sarah Johnson', 'sarah@email.com', '555-0102');
 
--- INSERT INTO providers (name, email, phone, specialty) VALUES
---   ('Emma Wilson', 'emma@servicegenie.com', '555-0201', 'Color Specialist'),
---   ('James Brown', 'james@servicegenie.com', '555-0202', 'Senior Stylist');
+-- Teams
+INSERT INTO teams (name, color) VALUES
+  ('Creative Team', '#8b5cf6'),
+  ('Style Squad', '#ec4899'),
+  ('Color Crew', '#06b6d4')
+ON CONFLICT DO NOTHING;
 
--- INSERT INTO services (name, category, duration, price, color) VALUES
---   ('Haircut', 'Cut', 60, 75.00, '#6366f1'),
---   ('Color & Style', 'Color', 120, 150.00, '#ec4899');
+-- Locations
+INSERT INTO locations (name, address, city, state, zip, phone, opening_time, closing_time) VALUES
+  ('Downtown Salon', '123 Main St', 'New York', 'NY', '10001', '(555) 100-0001', '09:00', '20:00'),
+  ('Uptown Studio', '456 Park Ave', 'New York', 'NY', '10065', '(555) 100-0002', '10:00', '21:00'),
+  ('Brooklyn Loft', '789 Bedford Ave', 'Brooklyn', 'NY', '11211', '(555) 100-0003', '08:00', '19:00')
+ON CONFLICT DO NOTHING;
 
--- INSERT INTO loyalty_tiers (name, min_points, discount_percent, color) VALUES
---   ('Bronze', 0, 0, '#cd7f32'),
---   ('Silver', 500, 5, '#c0c0c0'),
---   ('Gold', 1500, 10, '#ffd700'),
---   ('Platinum', 5000, 15, '#e5e4e2');
+-- Providers (Stylists) - add team_id separately after teams created
+INSERT INTO providers (name, email, phone, specialty, bio, avatar_url) VALUES
+  ('Emma Wilson', 'emma@servicegenie.com', '(555) 200-0001', 'Color Specialist', 'Master colorist with 10+ years experience. Specializes in balayage and highlights.', NULL),
+  ('James Brown', 'james@servicegenie.com', '(555) 200-0002', 'Senior Stylist', 'Expert in cuts and styling. Trained in London and Paris.', NULL),
+  ('Sofia Garcia', 'sofia@servicegenie.com', '(555) 200-0003', 'Texture Expert', 'Curl specialist and natural hair care expert.', NULL),
+  ('Michael Chen', 'michael@servicegenie.com', '(555) 200-0004', 'Master Stylist', 'Award-winning stylist featured in Vogue.', NULL),
+  ('Aisha Patel', 'aisha@servicegenie.com', '(555) 200-0005', 'Extensions Specialist', 'Premium hair extensions and keratin treatments.', NULL)
+ON CONFLICT DO NOTHING;
 
--- INSERT INTO membership_tiers (name, price, billing_cycle, benefits) VALUES
---   ('Silver', 49.99, 'monthly', ARRAY['Unlimited Haircuts', '10% off products']),
---   ('Gold', 99.99, 'monthly', ARRAY['Unlimited Haircuts', '20% off products', 'Priority Booking']);
+-- Update providers with team_id (after teams exist)
+DO $$
+DECLARE
+  t_creative UUID := (SELECT id FROM teams WHERE name = 'Creative Team' LIMIT 1);
+  t_style UUID := (SELECT id FROM teams WHERE name = 'Style Squad' LIMIT 1);
+  t_color UUID := (SELECT id FROM teams WHERE name = 'Color Crew' LIMIT 1);
+BEGIN
+  UPDATE providers SET team_id = t_creative, is_team_lead = true WHERE name = 'Emma Wilson';
+  UPDATE providers SET team_id = t_style, is_team_lead = true WHERE name = 'James Brown';
+  UPDATE providers SET team_id = t_color WHERE name = 'Sofia Garcia';
+  UPDATE providers SET team_id = t_style WHERE name = 'Michael Chen';
+  UPDATE providers SET team_id = t_creative WHERE name = 'Aisha Patel';
+END $$;
+
+-- Customers
+INSERT INTO customers (name, email, phone, notes, total_spent, visit_count) VALUES
+  ('John Smith', 'john.smith@email.com', '(555) 300-0001', 'Prefers afternoon appointments', 1250.00, 15),
+  ('Sarah Johnson', 'sarah.j@email.com', '(555) 300-0002', 'Allergic to ammonia', 890.50, 8),
+  ('Michael Davis', 'm.davis@email.com', '(555) 300-0003', 'VIP client - always tip 25%', 2100.00, 22),
+  ('Emily Rodriguez', 'emily.r@email.com', '(555) 300-0004', 'Birthday: March 15', 675.00, 6),
+  ('David Kim', 'david.kim@email.com', '(555) 300-0005', 'Prefers natural products', 450.00, 4),
+  ('Jessica Williams', 'jess.w@email.com', '(555) 300-0006', 'Referral: Michael Chen client', 1890.00, 18),
+  ('Robert Taylor', 'rob.taylor@email.com', '(555) 300-0007 client', 'First-time referral', 0.00, 0),
+  ('Amanda Martinez', 'amanda.m@email.com', '(555) 300-0008', 'Member since 2024', 3200.00, 35),
+  ('Christopher Lee', 'chris.lee@email.com', '(555) 300-0009', 'Corporate account', 550.00, 5),
+  ('Nicole Thompson', 'nicole.t@email.com', '(555) 300-0010', 'Loyalty Gold tier', 1450.00, 14)
+ON CONFLICT DO NOTHING;
+
+-- Services
+INSERT INTO services (name, description, category, duration, price, color, is_active) VALUES
+  -- Cuts
+  ('Women''s Haircut', 'Precision cut and blowout', 'Cut', 60, 85.00, '#6366f1', true),
+  ('Men''s Haircut', 'Classic or modern style', 'Cut', 30, 45.00, '#8b5cf6', true),
+  ('Kids Haircut', 'For children under 12', 'Cut', 25, 30.00, '#a78bfa', true),
+  ('Bang Trim', 'Quick trim of bangs', 'Cut', 15, 20.00, '#c4b5fd', true),
+  
+  -- Color
+  ('Full Balayage', 'Hand-painted highlights', 'Color', 180, 180.00, '#ec4899', true),
+  ('Root Touch-up', 'Cover regrowth', 'Color', 90, 95.00, '#f472b6', true),
+  ('Full Color', 'Single process color', 'Color', 120, 120.00, '#f9a8d4', true),
+  ('Highlights', 'Foil highlights', 'Color', 150, 150.00, '#fbcfe8', true),
+  ('Gloss/Toner', 'Add shine and tone', 'Color', 45, 65.00, '#fda4af', true),
+  
+  -- Treatments
+  ('Keratin Treatment', 'Smoothing treatment', 'Treatment', 120, 250.00, '#06b6d4', true),
+  ('Deep Conditioning', 'Intensive moisture', 'Treatment', 30, 45.00, '#22d3ee', true),
+  ('Scalp Treatment', 'Exfoliating scalp massage', 'Treatment', 30, 50.00, '#67e8f9', true),
+  
+  -- Styling
+  ('Blowout', 'Professional blow dry', 'Style', 45, 55.00, '#10b981', true),
+  ('Updo', 'Special occasion styling', 'Style', 90, 125.00, '#34d399', true),
+  ('Bridal Styling', 'Complete wedding look', 'Style', 180, 350.00, '#6ee7b7', true),
+  ('Event Styling', 'Special event prep', 'Style', 60, 85.00, '#a7f3d0', true),
+  
+  -- Add-ons
+  ('Deep Conditioning Add-on', '', 'Add-on', 15, 25.00, '#fbbf24', true),
+  ('Scalp Massage Add-on', '', 'Add-on', 15, 30.00, '#fcd34d', true),
+  ('Hot Towel Finish', '', 'Add-on', 5, 10.00, '#fde68a', true)
+ON CONFLICT DO NOTHING;
+
+-- Loyalty Tiers
+INSERT INTO loyalty_tiers (name, min_points, discount_percent, color) VALUES
+  ('Bronze', 0, 0, '#cd7f32'),
+  ('Silver', 500, 5, '#c0c0c0'),
+  ('Gold', 1500, 10, '#ffd700'),
+  ('Platinum', 5000, 15, '#e5e4e2')
+ON CONFLICT DO NOTHING;
+
+-- Loyalty Points
+INSERT INTO loyalty_points (customer_id, points_balance, lifetime_points) VALUES
+  ((SELECT id FROM customers WHERE email = 'john.smith@email.com' LIMIT 1), 12500, 15000),
+  ((SELECT id FROM customers WHERE email = 'sarah.j@email.com' LIMIT 1), 4500, 5000),
+  ((SELECT id FROM customers WHERE email = 'm.davis@email.com' LIMIT 1), 21000, 25000),
+  ((SELECT id FROM customers WHERE email = 'emily.r@email.com' LIMIT 1), 3375, 4000),
+  ((SELECT id FROM customers WHERE email = 'david.kim@email.com' LIMIT 1), 2250, 2500),
+  ((SELECT id FROM customers WHERE email = 'jess.w@email.com' LIMIT 1), 9450, 11000),
+  ((SELECT id FROM customers WHERE email = 'rob.taylor@email.com' LIMIT 1), 0, 0),
+  ((SELECT id FROM customers WHERE email = 'amanda.m@email.com' LIMIT 1), 32000, 40000),
+  ((SELECT id FROM customers WHERE email = 'chris.lee@email.com' LIMIT 1), 2750, 3000),
+  ((SELECT id FROM customers WHERE email = 'nicole.t@email.com' LIMIT 1), 7250, 9000)
+ON CONFLICT DO NOTHING;
+
+-- Membership Tiers
+INSERT INTO membership_tiers (name, price, billing_cycle, benefits, is_active) VALUES
+  ('Silver', 49.99, 'monthly', ARRAY['Unlimited Haircuts', '10% off color services', 'Free deep conditioning'], true),
+  ('Gold', 99.99, 'monthly', ARRAY['Unlimited Cuts & Styles', '15% off all services', 'Priority Booking', 'Birthday treatment on us'], true),
+  ('Platinum', 199.99, 'monthly', ARRAY['All Gold benefits', '25% off all services', 'Exclusive events access', 'Complimentary products', 'VIP phone line'], true),
+  ('Annual Gold', 899.99, 'yearly', ARRAY['13 months for price of 12', 'All Gold monthly benefits'], true)
+ON CONFLICT DO NOTHING;
+
+-- Active Memberships
+INSERT INTO active_memberships (customer_id, tier_id, status, current_period_end) VALUES
+  ((SELECT id FROM customers WHERE email = 'm.davis@email.com' LIMIT 1), (SELECT id FROM membership_tiers WHERE name = 'Gold' LIMIT 1), 'active', '2026-03-11'),
+  ((SELECT id FROM customers WHERE email = 'amanda.m@email.com' LIMIT 1), (SELECT id FROM membership_tiers WHERE name = 'Platinum' LIMIT 1), 'active', '2026-04-15'),
+  ((SELECT id FROM customers WHERE email = 'nicole.t@email.com' LIMIT 1), (SELECT id FROM membership_tiers WHERE name = 'Silver' LIMIT 1), 'active', '2026-02-28'),
+  ((SELECT id FROM customers WHERE email = 'jess.w@email.com' LIMIT 1), (SELECT id FROM membership_tiers WHERE name = 'Gold' LIMIT 1), 'active', '2026-03-20')
+ON CONFLICT DO NOTHING;
+
+-- Subscription Plans
+INSERT INTO subscription_plans (name, price, frequency, is_active) VALUES
+  ('Product Box Monthly', 39.99, 'monthly', true),
+  ('Product Box Quarterly', 99.99, 'quarterly', true),
+  ('Hair Care Essentials', 29.99, 'monthly', true),
+  ('Premium Styling Kit', 59.99, 'monthly', true)
+ON CONFLICT DO NOTHING;
+
+-- Active Subscriptions
+INSERT INTO active_subscriptions (customer_id, plan_id, status, next_shipment_date) VALUES
+  ((SELECT id FROM customers WHERE email = 'john.smith@email.com' LIMIT 1), (SELECT id FROM subscription_plans WHERE name = 'Product Box Monthly' LIMIT 1), 'active', '2026-02-15'),
+  ((SELECT id FROM customers WHERE email = 'sarah.j@email.com' LIMIT 1), (SELECT id FROM subscription_plans WHERE name = 'Hair Care Essentials' LIMIT 1), 'active', '2026-02-20')
+ON CONFLICT DO NOTHING;
+
+-- Appointments (Sample for next 7 days)
+INSERT INTO appointments (customer_id, provider_id, service_id, location_id, date, start_time, duration, price, status, notes) VALUES
+  -- Today
+  ((SELECT id FROM customers WHERE email = 'john.smith@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Emma Wilson' LIMIT 1), (SELECT id FROM services WHERE name = 'Full Balayage' LIMIT 1), (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), CURRENT_DATE, '10:00', 180, 180.00, 'confirmed', 'Client wants ash brown tones'),
+  ((SELECT id FROM customers WHERE email = 'sarah.j@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'James Brown' LIMIT 1), (SELECT id FROM services WHERE name = 'Women''s Haircut' LIMIT 1), (SELECT id FROM locations WHERE name = 'Uptown Studio' LIMIT 1), CURRENT_DATE, '11:00', 60, 85.00, 'confirmed', ''),
+  ((SELECT id FROM customers WHERE email = 'm.davis@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Sofia Garcia' LIMIT 1), (SELECT id FROM services WHERE name = 'Keratin Treatment' LIMIT 1), (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), CURRENT_DATE, '14:00', 120, 250.00, 'completed', 'Client loves the results'),
+  
+  -- Tomorrow
+  ((SELECT id FROM customers WHERE email = 'emily.r@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Michael Chen' LIMIT 1), (SELECT id FROM services WHERE name = 'Blowout' LIMIT 1), (SELECT id FROM locations WHERE name = 'Brooklyn Loft' LIMIT 1), CURRENT_DATE + 1, '09:00', 45, 55.00, 'confirmed', 'Event tomorrow night'),
+  ((SELECT id FROM customers WHERE email = 'david.kim@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Aisha Patel' LIMIT 1), (SELECT id FROM services WHERE name = 'Women''s Haircut' LIMIT 1), (SELECT id FROM locations WHERE name = 'Uptown Studio' LIMIT 1), CURRENT_DATE + 1, '11:00', 60, 85.00, 'scheduled', ''),
+  ((SELECT id FROM customers WHERE email = 'jess.w@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Emma Wilson' LIMIT 1), (SELECT id FROM services WHERE name = 'Root Touch-up' LIMIT 1), (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), CURRENT_DATE + 1, '15:00', 90, 95.00, 'confirmed', ''),
+  
+  -- Day after tomorrow
+  ((SELECT id FROM customers WHERE email = 'amanda.m@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'James Brown' LIMIT 1), (SELECT id FROM services WHERE name = 'Full Balayage' LIMIT 1), (SELECT id FROM locations WHERE name = 'Uptown Studio' LIMIT 1), CURRENT_DATE + 2, '10:00', 180, 180.00, 'confirmed', 'Platinum member - priority booking'),
+  ((SELECT id FROM customers WHERE email = 'nicole.t@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Sofia Garcia' LIMIT 1), (SELECT id FROM services WHERE name = 'Deep Conditioning' LIMIT 1), (SELECT id FROM locations WHERE name = 'Brooklyn Loft' LIMIT 1), CURRENT_DATE + 2, '13:00', 30, 45.00, 'scheduled', ''),
+  ((SELECT id FROM customers WHERE email = 'chris.lee@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Michael Chen' LIMIT 1), (SELECT id FROM services WHERE name = 'Men''s Haircut' LIMIT 1), (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), CURRENT_DATE + 2, '16:00', 30, 45.00, 'scheduled', 'First visit'),
+  
+  -- Later in week
+  ((SELECT id FROM customers WHERE email = 'john.smith@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Aisha Patel' LIMIT 1), (SELECT id FROM services WHERE name = 'Blowout' LIMIT 1), (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), CURRENT_DATE + 3, '11:00', 45, 55.00, 'scheduled', ''),
+  ((SELECT id FROM customers WHERE email = 'sarah.j@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'Emma Wilson' LIMIT 1), (SELECT id FROM services WHERE name = 'Gloss/Toner' LIMIT 1), (SELECT id FROM locations WHERE name = 'Uptown Studio' LIMIT 1), CURRENT_DATE + 4, '14:00', 45, 65.00, 'scheduled', ''),
+  ((SELECT id FROM customers WHERE email = 'm.davis@email.com' LIMIT 1), (SELECT id FROM providers WHERE name = 'James Brown' LIMIT 1), (SELECT id FROM services WHERE name = 'Bridal Styling' LIMIT 1), (SELECT id FROM locations WHERE name = 'Brooklyn Loft' LIMIT 1), CURRENT_DATE + 5, '08:00', 180, 350.00, 'confirmed', 'Trial run next week')
+ON CONFLICT DO NOTHING;
+
+-- Blocked Times (Provider time off)
+INSERT INTO blocked_times (provider_id, location_id, day_of_week, start_date, end_date, start_time, end_time, reason, is_approved) VALUES
+  ((SELECT id FROM providers WHERE name = 'Emma Wilson' LIMIT 1), (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), NULL, CURRENT_DATE + 7, CURRENT_DATE + 9, '09:00', '17:00', 'Vacation', true),
+  ((SELECT id FROM providers WHERE name = 'James Brown' LIMIT 1), (SELECT id FROM locations WHERE name = 'Uptown Studio' LIMIT 1), 0, NULL, NULL, '10:00', '18:00', 'Day off', true),
+  ((SELECT id FROM providers WHERE name = 'Sofia Garcia' LIMIT 1), (SELECT id FROM locations WHERE name = 'Brooklyn Loft' LIMIT 1), NULL, CURRENT_DATE + 3, CURRENT_DATE + 3, '00:00', '23:59', 'Personal day', true)
+ON CONFLICT DO NOTHING;
+
+-- Waitlist
+INSERT INTO waitlist (customer_id, location_id, service_id, requested_date, preferred_time_range, status, position) VALUES
+  ((SELECT id FROM customers WHERE email = 'rob.taylor@email.com' LIMIT 1), (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), (SELECT id FROM services WHERE name = 'Full Balayage' LIMIT 1), CURRENT_DATE + 10, 'Morning', 'waiting', 1),
+  ((SELECT id FROM customers WHERE email = 'chris.lee@email.com' LIMIT 1), (SELECT id FROM locations WHERE name = 'Uptown Studio' LIMIT 1), (SELECT id FROM services WHERE name = 'Bridal Styling' LIMIT 1), CURRENT_DATE + 14, 'Afternoon', 'waiting', 2)
+ON CONFLICT DO NOTHING;
+
+-- Gift Cards
+INSERT INTO gift_cards (code, initial_value, balance, purchased_by_id, status, expires_at, recipient_name, recipient_email, message) VALUES
+  ('GC-001-ABC123', 100.00, 100.00, (SELECT id FROM customers WHERE email = 'john.smith@email.com' LIMIT 1), 'active', CURRENT_DATE + 365, 'Friend', 'friend@email.com', 'Happy Birthday!'),
+  ('GC-002-DEF456', 50.00, 25.00, (SELECT id FROM customers WHERE email = 'sarah.j@email.com' LIMIT 1), 'partial', CURRENT_DATE + 180, 'Mom', 'mom@email.com', 'Treat yourself!'),
+  ('GC-003-GHI789', 200.00, 200.00, (SELECT id FROM customers WHERE email = 'm.davis@email.com' LIMIT 1), 'active', CURRENT_DATE + 730, 'Wife', 'wife@email.com', 'Anniversary gift')
+ON CONFLICT DO NOTHING;
+
+-- Daily Revenue (Sample historical data)
+INSERT INTO daily_revenue (date, location_id, total_revenue, appointment_count, customer_count, provider_count) VALUES
+  (CURRENT_DATE - 7, (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), 1250.00, 12, 10, 4),
+  (CURRENT_DATE - 6, (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), 980.00, 9, 8, 3),
+  (CURRENT_DATE - 5, (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), 1540.00, 15, 12, 5),
+  (CURRENT_DATE - 4, (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), 890.00, 8, 7, 3),
+  (CURRENT_DATE - 3, (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), 2100.00, 18, 15, 5),
+  (CURRENT_DATE - 2, (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), 1670.00, 14, 12, 4),
+  (CURRENT_DATE - 1, (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), 1890.00, 16, 14, 5)
+ON CONFLICT DO NOTHING;
+
+-- Check-ins
+INSERT INTO check_ins (appointment_id, customer_id, location_id, method, check_in_time) VALUES
+  (NULL, (SELECT id FROM customers WHERE email = 'john.smith@email.com' LIMIT 1), (SELECT id FROM locations WHERE name = 'Downtown Salon' LIMIT 1), 'QR', CURRENT_TIMESTAMP - INTERVAL '30 minutes'),
+  (NULL, (SELECT id FROM customers WHERE email = 'sarah.j@email.com' LIMIT 1), (SELECT id FROM locations WHERE name = 'Uptown Studio' LIMIT 1), 'manual', CURRENT_TIMESTAMP - INTERVAL '15 minutes')
+ON CONFLICT DO NOTHING;
+
+-- Campaigns
+INSERT INTO campaigns (name, type, status, content, target_segment, recipient_count, sent_at) VALUES
+  ('Spring Color Event', 'email', 'sent', 'Get 20% off all color services this spring! Book by March 31st.', 'all_clients', 250, CURRENT_DATE - 3),
+  ('New Stylist Introduction', 'both', 'draft', 'Meet our new specialist Aisha Patel - book your first appointment for 15% off!', 'new_clients', 50, NULL),
+  ('Loyalty Rewards Reminder', 'email', 'scheduled', 'Your points are expiring soon! Redeem them for discounts on your next visit.', 'tier_silver', 120, CURRENT_DATE + 2)
+ON CONFLICT DO NOTHING;
+
+-- Integrations (placeholder connections)
+INSERT INTO integrations (provider, name, is_connected, config) VALUES
+  ('quickbooks', 'QuickBooks Online', false, '{"last_sync": null}'),
+  ('mailchimp', 'Mailchimp', true, '{"list_id": "abc123", "last_sync": "2026-02-10"}'),
+  ('klaviyo', 'Klaviyo', false, '{"api_key": "hidden"}')
+ON CONFLICT DO NOTHING;
 
 -- Done!
