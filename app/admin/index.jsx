@@ -1192,7 +1192,10 @@ export default function AdminDashboard() {
       confirmation: 'Hi {name}! Your appointment at {location} is confirmed for {date} at {time}. Reply HELP for assistance.',
       reminder: 'Reminder: You have an appointment at {location} tomorrow at {time}. Reply CANCEL to cancel.',
       cancellation: 'Your appointment at {location} on {date} at {time} has been cancelled.',
-      emailConfirmation: 'Dear {name},\n\nYour appointment has been confirmed:\n\n📅 Date: {date}\n⏰ Time: {time}\n📍 Location: {location}\n💇 Service: {service}\n\nThank you for choosing ServiceGenie!'
+      emailConfirmation: 'Dear {name},\n\nYour appointment has been confirmed:\n\n📅 Date: {date}\n⏰ Time: {time}\n📍 Location: {location}\n💇 Service: {service}\n\nThank you for choosing ServiceGenie!',
+      emailReminder: 'Dear {name},\n\nThis is a friendly reminder about your upcoming appointment:\n\n📅 Date: {date}\n⏰ Time: {time}\n📍 Location: {location}\n💇 Service: {service}\n\nWe look forward to seeing you!',
+      emailCancellation: 'Dear {name},\n\nYour appointment has been cancelled:\n\n📅 Date: {date}\n⏰ Time: {time}\n📍 Location: {location}\n💇 Service: {service}\n\nIf you did not request this cancellation, please contact us.',
+      emailMarketing: 'Dear {name},\n\n{content}\n\n---\n\nTo manage your communication preferences, visit your account settings or reply STOP to opt out.'
     });
 
     return (
@@ -1260,6 +1263,48 @@ export default function AdminDashboard() {
             placeholder="Enter email content..."
             placeholderTextColor="#64748b"
           />
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Booking Reminder Email</Text>
+          <TextInput
+            style={styles.templateInput}
+            multiline
+            numberOfLines={6}
+            value={templates.emailReminder}
+            onChangeText={(text) => setTemplates({ ...templates, emailReminder: text })}
+            placeholder="Enter reminder email content..."
+            placeholderTextColor="#64748b"
+          />
+          <Text style={styles.templateHint}>Available: {'{name}'}, {'{date}'}, {'{time}'}, {'{location}'}, {'{service}'}</Text>
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Cancellation Email</Text>
+          <TextInput
+            style={styles.templateInput}
+            multiline
+            numberOfLines={6}
+            value={templates.emailCancellation}
+            onChangeText={(text) => setTemplates({ ...templates, emailCancellation: text })}
+            placeholder="Enter cancellation email content..."
+            placeholderTextColor="#64748b"
+          />
+          <Text style={styles.templateHint}>Available: {'{name}'}, {'{date}'}, {'{time}'}, {'{location}'}, {'{service}'}</Text>
+        </View>
+
+        <View style={styles.templateCard}>
+          <Text style={styles.templateLabel}>Marketing Email Template</Text>
+          <TextInput
+            style={styles.templateInput}
+            multiline
+            numberOfLines={6}
+            value={templates.emailMarketing}
+            onChangeText={(text) => setTemplates({ ...templates, emailMarketing: text })}
+            placeholder="Enter marketing email template..."
+            placeholderTextColor="#64748b"
+          />
+          <Text style={styles.templateHint}>Available: {'{name}'}, {'{content}'} (for campaign content)</Text>
         </View>
 
         <TouchableOpacity style={styles.saveButton}>
