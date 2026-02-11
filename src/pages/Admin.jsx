@@ -6,7 +6,7 @@ import {
   MapPin, Edit, Trash2, Building2, Phone,
   Star, Mail as MailIcon, Award, CalendarCheck,
   User, Tag, Heart, MessageCircle, Scissors,
-  Timer, Package
+  Timer, Package, Download
 } from 'lucide-react';
 
 // Sample locations data
@@ -195,6 +195,33 @@ export default function Admin() {
     } else {
       setCustomerForm({ ...customerForm, tags: [...customerForm.tags, tag] });
     }
+  };
+  
+  const handleCustomerExport = () => {
+    // Create CSV content
+    const headers = ['Name', 'Email', 'Phone', 'Visits', 'Total Spent', 'Tags', 'Preferred Provider', 'Last Visit'];
+    const rows = customers.map(c => [
+      c.name,
+      c.email,
+      c.phone || '',
+      c.visits,
+      c.totalSpent,
+      c.tags.join(', '),
+      c.preferredProvider || '',
+      c.lastVisit || 'N/A'
+    ]);
+    
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    // Download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `customers_export_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
   };
   
   // Service management functions
@@ -1087,6 +1114,16 @@ export default function Admin() {
           
           {/* Customer Table */}
           <div className="card overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
+              <span className="text-sm font-medium text-gray-700">Customers ({customers.length})</span>
+              <button
+                onClick={handleCustomerExport}
+                className="flex items-center gap-1 px-3 py-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
+              >
+                <Download size={16} />
+                Export CSV
+              </button>
+            </div>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
