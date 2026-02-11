@@ -69,6 +69,8 @@ export default function Admin() {
     }
     setShowLocationModal(false);
   };
+  
+  const recentAppointments = [
     { id: 1, customer: 'John Smith', service: 'Full Balayage', provider: 'Emma Wilson', time: '10:00 AM', status: 'confirmed' },
     { id: 2, customer: 'Sarah Johnson', service: "Women's Haircut", provider: 'James Brown', time: '11:00 AM', status: 'confirmed' },
     { id: 3, customer: 'Michael Davis', service: 'Keratin Treatment', provider: 'Sofia Garcia', time: '2:00 PM', status: 'completed' },
