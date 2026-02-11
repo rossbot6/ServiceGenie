@@ -409,3 +409,25 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 **Route:** `/loyalty`
 
 **Preview:** Run `npm run web` and navigate to `/loyalty`
+
+---
+
+## 🔧 2026-02-11 - Provider Payouts Dashboard
+
+### New Feature: Provider Payout Management
+
+**Location:** `/payouts`
+
+**Features:**
+- **Overview Tab** - Revenue, commission, paid/pending stats
+- **Providers Tab** - Individual provider commission details
+- **Payouts Tab** - Process and track payouts
+- **Settings Tab** - Configure rates and schedules
+
+**Key Metrics:**
+- Total revenue by provider
+- Commission rates (30-50% configurable)
+- Base salary + commission model
+- Pending payout tracking
+
+**Route:** `/payouts`
