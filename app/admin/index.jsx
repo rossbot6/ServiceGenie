@@ -2387,14 +2387,14 @@ export default function AdminDashboard() {
         <TouchableOpacity style={styles.sidebarOverlay} activeOpacity={1} onPress={() => setSidebarOpen(false)}>
           <View style={styles.mobileSidebar}>
             <View style={styles.logo}><Building2 size={28} color="#6366f1" /><Text style={styles.logoText}>Admin</Text></View>
-            <View style={styles.nav}>
+            <ScrollView style={styles.nav} showsVerticalScrollIndicator={false}>
               {NAV_ITEMS.map((item) => (
                 <TouchableOpacity key={item.id} style={[styles.navItem, activeTab === item.id && styles.activeNavItem]} onPress={() => { setActiveTab(item.id); setSidebarOpen(false); }}>
                   <item.icon size={20} color={activeTab === item.id ? '#fff' : '#94a3b8'} />
                   <Text style={[styles.navText, activeTab === item.id && styles.activeNavText]}>{item.label}</Text>
                 </TouchableOpacity>
               ))}
-            </View>
+            </ScrollView>
             <View style={styles.roleSwitcher}>
               <Text style={styles.roleLabel}>Active Role:</Text>
               <View style={styles.roleButtons}>
@@ -2413,14 +2413,14 @@ export default function AdminDashboard() {
       {!isMobile && (
         <View style={styles.sidebar}>
           <View style={styles.logo}><Building2 size={28} color="#6366f1" /><Text style={styles.logoText}>Admin</Text></View>
-          <View style={styles.nav}>
+          <ScrollView style={styles.nav} showsVerticalScrollIndicator={false}>
             {NAV_ITEMS.map((item) => (
               <TouchableOpacity key={item.id} style={[styles.navItem, activeTab === item.id && styles.activeNavItem]} onPress={() => setActiveTab(item.id)}>
                 <item.icon size={20} color={activeTab === item.id ? '#fff' : '#94a3b8'} />
                 <Text style={[styles.navText, activeTab === item.id && styles.activeNavText]}>{item.label}</Text>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
           <View style={styles.roleSwitcher}>
             <Text style={styles.roleLabel}>Active Role:</Text>
             <View style={styles.roleButtons}>
@@ -2586,10 +2586,10 @@ export default function AdminDashboard() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, flexDirection: 'row', backgroundColor: '#0f172a' },
-  sidebar: { width: 240, backgroundColor: '#1e293b', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.05)', paddingVertical: 24 },
+  sidebar: { width: 240, backgroundColor: '#1e293b', borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.05)', paddingVertical: 24, height: '100%' },
   logo: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, marginBottom: 32, gap: 12 },
   logoText: { color: '#fff', fontSize: 20, fontWeight: '800' },
-  nav: { gap: 4, paddingHorizontal: 12 },
+  nav: { flex: 1, gap: 4, paddingHorizontal: 12 },
   navItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 12, borderRadius: 12 },
   activeNavItem: { backgroundColor: 'rgba(99, 102, 241, 0.2)' },
   navText: { color: '#94a3b8', fontSize: 14, fontWeight: '600' },
