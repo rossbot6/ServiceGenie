@@ -186,9 +186,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 - [x] **Loyalty/Rewards Program** ✅ **NEW** - Bronze/Silver/Gold tiers with points per dollar, birthday bonuses, and rewards redemption
 
-- [ ] **Gift Cards**
-  - Purchase gift cards
-  - Redeem for services
+- [x] **Gift Cards** ✅ **NEW** - Purchase, send via email, redeem for services with templates and expiry tracking
 
 - [x] ~~Membership Subscriptions~~ ✅ **Completed** - Monthly tiers (Gold/Silver) with unlimited benefits
   - Monthly packages
