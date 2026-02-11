@@ -357,3 +357,32 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 ---
 
 *Document updated: 2026-02-11 - Fixed SQL syntax error in supabase-updates.sql (malformed receipt_number column), verified Expo server running on all interfaces, restarted server after brief downtime*
+
+---
+
+## 🔧 2026-02-11 - Admin Dashboard Backend Integration
+
+### Changes Made:
+1. **Added Supabase Helpers** (`lib/supabase.js`)
+   - `getGiftCards()`, `createGiftCard()`, `updateGiftCard()`, `redeemGiftCard()`
+   - `getTemplates()`, `saveTemplate()`
+   - `getSettings()`, `saveSettings()`
+   - `getCampaigns()`, `createCampaign()`
+
+2. **Created Database Schema** (`supabase-updates.sql`)
+   - `notification_templates` table - SMS/email templates
+   - `settings` table - App settings & accessibility options
+   - `campaigns` table - Marketing campaigns
+   - `integrations` table - OAuth tokens for QuickBooks, Xero, Square, etc.
+   - Extended `gift_cards` with recipient info
+
+3. **Updated Admin Dashboard** (`app/admin/index.jsx`)
+   - Gift Cards now fetch from Supabase (with mock fallback)
+   - Settings templates load/save to database
+   - Added loading states and error handling
+   - Redeem functionality connected to backend
+
+### To Activate Full Functionality:
+1. Run `supabase-updates.sql` in Supabase SQL Editor
+2. Configure `.env` with Supabase credentials
+3. Admin will automatically switch from mock data to live data

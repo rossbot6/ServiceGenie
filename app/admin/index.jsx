@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform, Dimensions } from 'react-native';
-import { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform, Dimensions, ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
 import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode, Users as UsersIcon, List, Clock3, CardIcon, Lock, Package, Image as ImageIcon, MoreHorizontal } from 'lucide-react-native';
+import { supabase, supabaseHelpers } from '../../lib/supabase';
 import mockData from '../../data/mockData.json';
 
 const INITIAL_PROVIDERS = mockData.stylists.map((s) => ({
@@ -1560,6 +1561,58 @@ export default function AdminDashboard() {
       autoDetect: false
     });
     
+    const [saving, setSaving] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    // Fetch templates from Supabase on mount
+    useEffect(() => {
+      const loadTemplates = async () => {
+        try {
+          setLoading(true);
+          const { data, error } = await supabaseHelpers.getTemplates();
+          if (error || !data) return; // Keep defaults
+          
+          // Map database data to state
+          const newTemplates = { ...templates };
+          if (data.find(t => t.template_type === 'confirmation')) {
+            newTemplates.confirmation = data.find(t => t.template_type === 'confirmation')?.content || templates.confirmation;
+          }
+          if (data.find(t => t.template_type === 'reminder')) {
+            newTemplates.reminder = data.find(t => t.template_type === 'reminder')?.content || templates.reminder;
+          }
+          if (data.find(t => t.template_type === 'cancellation')) {
+            newTemplates.cancellation = data.find(t => t.template_type === 'cancellation')?.content || templates.cancellation;
+          }
+          setTemplates(newTemplates);
+        } catch (err) {
+          console.warn('Error loading templates:', err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadTemplates();
+    }, []);
+
+    const saveTemplates = async () => {
+      try {
+        setSaving(true);
+        // Save each template type
+        await supabaseHelpers.saveTemplate('confirmation', templates.confirmation);
+        await supabaseHelpers.saveTemplate('reminder', templates.reminder);
+        await supabaseHelpers.saveTemplate('cancellation', templates.cancellation);
+        await supabaseHelpers.saveTemplate('email_confirmation', templates.emailConfirmation);
+        await supabaseHelpers.saveTemplate('email_reminder', templates.emailReminder);
+        await supabaseHelpers.saveTemplate('email_cancellation', templates.emailCancellation);
+        await supabaseHelpers.saveTemplate('email_marketing', templates.emailMarketing);
+        Alert.alert('Success', 'Templates saved successfully');
+      } catch (err) {
+        console.error('Error saving templates:', err);
+        Alert.alert('Error', 'Failed to save templates. Using local state only.');
+      } finally {
+        setSaving(false);
+      }
+    };
+    
     return (
       <ScrollView style={styles.tabContent}>
         <View style={styles.sectionHeader}>
@@ -1669,8 +1722,8 @@ export default function AdminDashboard() {
           <Text style={styles.templateHint}>Available: {'{name}'}, {'{content}'} (for campaign content)</Text>
         </View>
 
-        <TouchableOpacity style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>Save Templates</Text>
+        <TouchableOpacity style={styles.saveButton} onPress={saveTemplates} disabled={saving}>
+          <Text style={styles.saveButtonText}>{saving ? 'Saving...' : 'Save Templates'}</Text>
         </TouchableOpacity>
 
         <View style={styles.sectionDivider} />
@@ -2079,12 +2132,37 @@ export default function AdminDashboard() {
 
   };
   const renderGiftCards = () => {
-    const giftCards = [
+    // State for Supabase data
+    const [giftCards, setGiftCards] = useState([
       { id: 'gc_001', code: 'GIFT50', value: 50, balance: 50, purchasedBy: 'Sarah P.', date: '2026-01-15', status: 'active', recipient: 'Emily R.', expires: '2027-01-15' },
       { id: 'gc_002', code: 'HOLIDAY100', value: 100, balance: 75, purchasedBy: 'John D.', date: '2025-12-20', status: 'partial', recipient: 'Michael T.', expires: '2026-12-20' },
       { id: 'gc_003', code: 'BIRTHDAY25', value: 25, balance: 0, purchasedBy: 'Emily W.', date: '2025-11-10', status: 'redeemed', recipient: 'Lisa K.', expires: '2026-05-10' },
       { id: 'gc_004', code: 'WELCOME75', value: 75, balance: 75, purchasedBy: 'James B.', date: '2026-02-01', status: 'active', recipient: 'Amanda C.', expires: '2027-02-01' },
-    ];
+    ]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Fetch from Supabase on mount
+    useEffect(() => {
+      const fetchGiftCards = async () => {
+        try {
+          setLoading(true);
+          const { data, error } = await supabaseHelpers.getGiftCards();
+          if (error) {
+            console.warn('Supabase not connected, using mock data');
+            return; // Keep using mock data
+          }
+          if (data && data.length > 0) {
+            setGiftCards(data);
+          }
+        } catch (err) {
+          console.warn('Error fetching gift cards:', err.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchGiftCards();
+    }, []);
 
     return (
       <ScrollView style={styles.tabContent}>
