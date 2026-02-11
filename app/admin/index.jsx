@@ -355,6 +355,27 @@ export default function AdminDashboard() {
               <Text style={styles.reviewAuthor}>- Sarah P.</Text>
             </View>
           </View>
+
+          <View style={styles.crossTrainingSection}>
+            <View style={styles.crossTrainingHeader}>
+              <Award size={14} color="#10b981" />
+              <Text style={styles.crossTrainingTitle}>Cross-Training Skills</Text>
+            </View>
+            <View style={styles.skillTags}>
+              {['Haircut', 'Coloring', 'Styling', 'Treatments'].map((skill) => (
+                <View key={skill} style={styles.skillTag}>
+                  <Check size={10} color="#10b981" />
+                  <Text style={styles.skillTagText}>{skill}</Text>
+                </View>
+              ))}
+              {['Nails', 'Makeup'].map((skill) => (
+                <View key={skill} style={[styles.skillTag, styles.skillTagLearning]}>
+                  <Clock size={10} color="#f59e0b" />
+                  <Text style={styles.skillTagTextLearning}>{skill} (Learning)</Text>
+                </View>
+              ))}
+            </View>
+          </View>
           
           <View style={styles.publicReviewsSection}>
             <View style={styles.reviewsHeader}>
@@ -2699,4 +2720,12 @@ const styles = StyleSheet.create({
   giftCardButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 12, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8 },
   giftCardButtonText: { color: '#6366f1', fontSize: 13, fontWeight: '600' },
   giftCardButtonTextEmail: { color: '#94a3b8', fontSize: 13, fontWeight: '600' },
+  crossTrainingSection: { marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  crossTrainingHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 },
+  crossTrainingTitle: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  skillTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  skillTag: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 6, backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: 8 },
+  skillTagText: { color: '#10b981', fontSize: 12, fontWeight: '600' },
+  skillTagLearning: { backgroundColor: 'rgba(245, 158, 11, 0.1)' },
+  skillTagTextLearning: { color: '#f59e0b', fontSize: 12, fontWeight: '600' },
 });
