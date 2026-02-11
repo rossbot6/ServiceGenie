@@ -331,7 +331,7 @@ CREATE TABLE IF NOT EXISTS settings (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-INSERT INTO settings (id) VALUES (1) ON CONFLICT (id) DO NOTHING;
+INSERT INTO settings (id) VALUES ('11111111-1111-1111-1111-111111111111') ON CONFLICT (id) DO NOTHING;
 
 -- ============================================
 -- CAMPAIGNS TABLE
@@ -391,26 +391,78 @@ BEGIN
   END LOOP;
 END $$;
 
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON customers FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON providers FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON appointments FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON blocked_times FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON teams FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON waitlist FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON gift_cards FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON loyalty_tiers FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON loyalty_points FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON subscription_plans FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON active_subscriptions FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON check_ins FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON notification_templates FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON settings FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON campaigns FOR ALL TO authenticated USING (true);
-CREATE POLICY IF NOT EXISTS "Allow authenticated access" ON integrations FOR ALL TO authenticated USING (true);
+-- Create RLS policies one by one (PostgreSQL doesn't support CREATE POLICY IF NOT EXISTS)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'customers') THEN
+    CREATE POLICY "Allow authenticated access" ON customers FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'providers') THEN
+    CREATE POLICY "Allow authenticated access" ON providers FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'appointments') THEN
+    CREATE POLICY "Allow authenticated access" ON appointments FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'blocked_times') THEN
+    CREATE POLICY "Allow authenticated access" ON blocked_times FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'teams') THEN
+    CREATE POLICY "Allow authenticated access" ON teams FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'waitlist') THEN
+    CREATE POLICY "Allow authenticated access" ON waitlist FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'gift_cards') THEN
+    CREATE POLICY "Allow authenticated access" ON gift_cards FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'loyalty_tiers') THEN
+    CREATE POLICY "Allow authenticated access" ON loyalty_tiers FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'loyalty_points') THEN
+    CREATE POLICY "Allow authenticated access" ON loyalty_points FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'subscription_plans') THEN
+    CREATE POLICY "Allow authenticated access" ON subscription_plans FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'active_subscriptions') THEN
+    CREATE POLICY "Allow authenticated access" ON active_subscriptions FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'check_ins') THEN
+    CREATE POLICY "Allow authenticated access" ON check_ins FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'notification_templates') THEN
+    CREATE POLICY "Allow authenticated access" ON notification_templates FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'settings') THEN
+    CREATE POLICY "Allow authenticated access" ON settings FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'campaigns') THEN
+    CREATE POLICY "Allow authenticated access" ON campaigns FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'integrations') THEN
+    CREATE POLICY "Allow authenticated access" ON integrations FOR ALL TO authenticated USING (true);
+  END IF;
+END $$;
 
 -- ============================================
 -- FUNCTIONS & TRIGGERS
 -- ============================================
+-- Create the function (will replace if exists)
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -419,8 +471,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create triggers only if they don't exist
+-- Create triggers only if they don't exist (check by function name)
 DO $$
+DECLARE
+  trig_name text;
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'update_customers_updated_at') THEN
     CREATE TRIGGER update_customers_updated_at BEFORE UPDATE ON customers
