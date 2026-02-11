@@ -1778,9 +1778,10 @@ export default function AdminDashboard() {
   };
   const renderGiftCards = () => {
     const giftCards = [
-      { id: 'gc_001', code: 'GIFT50', value: 50, balance: 50, purchasedBy: 'Sarah P.', date: '2026-01-15', status: 'active' },
-      { id: 'gc_002', code: 'HOLIDAY100', value: 100, balance: 75, purchasedBy: 'John D.', date: '2025-12-20', status: 'partial' },
-      { id: 'gc_003', code: 'BIRTHDAY25', value: 25, balance: 0, purchasedBy: 'Emily W.', date: '2025-11-10', status: 'redeemed' },
+      { id: 'gc_001', code: 'GIFT50', value: 50, balance: 50, purchasedBy: 'Sarah P.', date: '2026-01-15', status: 'active', recipient: 'Emily R.', expires: '2027-01-15' },
+      { id: 'gc_002', code: 'HOLIDAY100', value: 100, balance: 75, purchasedBy: 'John D.', date: '2025-12-20', status: 'partial', recipient: 'Michael T.', expires: '2026-12-20' },
+      { id: 'gc_003', code: 'BIRTHDAY25', value: 25, balance: 0, purchasedBy: 'Emily W.', date: '2025-11-10', status: 'redeemed', recipient: 'Lisa K.', expires: '2026-05-10' },
+      { id: 'gc_004', code: 'WELCOME75', value: 75, balance: 75, purchasedBy: 'James B.', date: '2026-02-01', status: 'active', recipient: 'Amanda C.', expires: '2027-02-01' },
     ];
 
     return (
@@ -1808,6 +1809,36 @@ export default function AdminDashboard() {
             <Text style={styles.miniStatValue}>${giftCards.reduce((s, g) => s + g.balance, 0)}</Text>
             <Text style={styles.miniStatLabel}>Remaining</Text>
           </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>${giftCards.filter(g => g.balance === 0).length}</Text>
+            <Text style={styles.miniStatLabel}>Redeemed</Text>
+          </View>
+        </View>
+
+        <View style={styles.giftCardTemplates}>
+          <Text style={styles.giftSectionTitle}>Popular Templates</Text>
+          <View style={styles.giftTemplateGrid}>
+            <TouchableOpacity style={styles.giftTemplateCard}>
+              <Gift size={24} color="#6366f1" />
+              <Text style={styles.giftTemplatePrice}>$25</Text>
+              <Text style={styles.giftTemplateLabel}>Birthday</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.giftTemplateCard}>
+              <Gift size={24} color="#10b981" />
+              <Text style={styles.giftTemplatePrice}>$50</Text>
+              <Text style={styles.giftTemplateLabel}>Thank You</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.giftTemplateCard}>
+              <Gift size={24} color="#f59e0b" />
+              <Text style={styles.giftTemplatePrice}>$100</Text>
+              <Text style={styles.giftTemplateLabel}>Holiday</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.giftTemplateCard}>
+              <Gift size={24} color="#ec4899" />
+              <Text style={styles.giftTemplatePrice}>Custom</Text>
+              <Text style={styles.giftTemplateLabel}>Any Amount</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text style={styles.sectionTitle}>Active Gift Cards</Text>
@@ -1816,7 +1847,7 @@ export default function AdminDashboard() {
             <View style={styles.giftCardHeader}>
               <View style={styles.giftCardInfo}>
                 <Text style={styles.giftCardCode}>{card.code}</Text>
-                <Text style={styles.giftCardPurchasedBy}>Purchased by {card.purchasedBy} on {card.date}</Text>
+                <Text style={styles.giftCardPurchasedBy}>To: {card.recipient} | From: {card.purchasedBy}</Text>
               </View>
               <View style={[styles.statusBadge, card.status === 'active' ? styles.activeBadge : card.status === 'partial' ? styles.pendingBadge : styles.inactiveBadge]}>
                 <Text style={[styles.statusText, card.status === 'active' ? styles.activeStatusText : card.status === 'partial' ? styles.pendingText : styles.inactiveStatusText]}>{card.status}</Text>
@@ -1831,10 +1862,17 @@ export default function AdminDashboard() {
                 <Text style={styles.balanceLabel}>Remaining</Text>
                 <Text style={[styles.balanceValue, card.balance === 0 && styles.balanceZero]}>${card.balance}</Text>
               </View>
+              <View style={styles.balanceItem}>
+                <Text style={styles.balanceLabel}>Expires</Text>
+                <Text style={styles.balanceValue}>{card.expires}</Text>
+              </View>
             </View>
             <View style={styles.giftCardActions}>
               <TouchableOpacity style={styles.giftCardButton}>
                 <Edit size={14} color="#6366f1" /><Text style={styles.giftCardButtonText}>Edit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.giftCardButton}>
+                <Mail size={14} color="#94a3b8" /><Text style={styles.giftCardButtonTextEmail}>Send</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.giftCardButton}>
                 <DollarSign size={14} color="#10b981" /><Text style={styles.giftCardButtonText}>Redeem</Text>
@@ -2650,4 +2688,15 @@ const styles = StyleSheet.create({
   sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100 },
   mobileSidebar: { width: 280, backgroundColor: '#1e293b', height: '100%', paddingVertical: 24 },
   menuButton: { width: 44, height: 44, backgroundColor: '#1e293b', borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  giftCardTemplates: { marginBottom: 24 },
+  giftSectionTitle: { color: '#fff', fontSize: 16, fontWeight: '700', marginBottom: 16 },
+  giftTemplateGrid: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
+  giftTemplateCard: { width: '23%', minWidth: 80, backgroundColor: '#1e293b', borderRadius: 16, padding: 16, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.05)' },
+  giftTemplatePrice: { color: '#fff', fontSize: 18, fontWeight: '800', marginTop: 8 },
+  giftTemplateLabel: { color: '#64748b', fontSize: 12, marginTop: 4 },
+  giftCardPurchasedBy: { color: '#64748b', fontSize: 12, marginTop: 4 },
+  giftCardActions: { flexDirection: 'row', marginTop: 12, gap: 8 },
+  giftCardButton: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 12, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: 8 },
+  giftCardButtonText: { color: '#6366f1', fontSize: 13, fontWeight: '600' },
+  giftCardButtonTextEmail: { color: '#94a3b8', fontSize: 13, fontWeight: '600' },
 });
