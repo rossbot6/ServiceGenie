@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, Modal, Alert, SafeAreaView, Platform, Dimensions } from 'react-native';
 import { useState } from 'react';
 import { Building2, Users, UserCircle, Calendar, CreditCard, Settings, BarChart3, Bell, Plus, Search, Edit, Trash2, ChevronRight, MapPin, Phone, DollarSign, Clock, XCircle, RefreshCw, Download, User, UserCheck, Shield, Check, X, Smartphone, Mail, Star, Map, Gift, Award, QrCode, Users as UsersIcon, List, Clock3, CardIcon, Lock, Package, Image as ImageIcon } from 'lucide-react-native';
 import mockData from '../../data/mockData.json';
@@ -84,7 +84,10 @@ export default function AdminDashboard() {
   const [aptFilter, setAptFilter] = useState('all');
   const [aptProviderFilter, setAptProviderFilter] = useState('all');
   const [customerSegment, setCustomerSegment] = useState('all');
-  const [userRole, setUserRole] = useState('admin'); // 'admin', 'manager', 'receptionist'
+  const [userRole, setUserRole] = useState('admin');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const isMobile = Dimensions.get('window').width < 768;
 
   const stats = {
     totalProviders: providers.length,
@@ -2037,38 +2040,65 @@ export default function AdminDashboard() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.sidebar}>
-        <View style={styles.logo}><Building2 size={28} color="#6366f1" /><Text style={styles.logoText}>Admin</Text></View>
-        <View style={styles.nav}>
-          {NAV_ITEMS.map((item) => (
-            <TouchableOpacity key={item.id} style={[styles.navItem, activeTab === item.id && styles.activeNavItem]} onPress={() => setActiveTab(item.id)}>
-              <item.icon size={20} color={activeTab === item.id ? '#fff' : '#94a3b8'} />
-              <Text style={[styles.navText, activeTab === item.id && styles.activeNavText]}>{item.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+      {/* Mobile Sidebar Overlay */}
+      {isMobile && sidebarOpen && (
+        <TouchableOpacity style={styles.sidebarOverlay} activeOpacity={1} onPress={() => setSidebarOpen(false)}>
+          <View style={styles.mobileSidebar}>
+            <View style={styles.logo}><Building2 size={28} color="#6366f1" /><Text style={styles.logoText}>Admin</Text></View>
+            <View style={styles.nav}>
+              {NAV_ITEMS.map((item) => (
+                <TouchableOpacity key={item.id} style={[styles.navItem, activeTab === item.id && styles.activeNavItem]} onPress={() => { setActiveTab(item.id); setSidebarOpen(false); }}>
+                  <item.icon size={20} color={activeTab === item.id ? '#fff' : '#94a3b8'} />
+                  <Text style={[styles.navText, activeTab === item.id && styles.activeNavText]}>{item.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <View style={styles.roleSwitcher}>
+              <Text style={styles.roleLabel}>Active Role:</Text>
+              <View style={styles.roleButtons}>
+                {['admin', 'manager', 'receptionist'].map(role => (
+                  <TouchableOpacity key={role} onPress={() => setUserRole(role)} style={[styles.roleBtn, userRole === role && styles.roleBtnActive]}>
+                    <Text style={[styles.roleBtnText, userRole === role && styles.roleBtnTextActive]}>{role[0].toUpperCase()}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+      )}
 
-        <View style={styles.roleSwitcher}>
-          <Text style={styles.roleLabel}>Active Role:</Text>
-          <View style={styles.roleButtons}>
-            {['admin', 'manager', 'receptionist'].map(role => (
-              <TouchableOpacity 
-                key={role} 
-                onPress={() => {
-                  setUserRole(role);
-                  if (!NAV_ITEMS.find(i => i.id === activeTab)) setActiveTab('appointments');
-                }}
-                style={[styles.roleBtn, userRole === role && styles.roleBtnActive]}
-              >
-                <Text style={[styles.roleBtnText, userRole === role && styles.roleBtnTextActive]}>{role[0].toUpperCase()}</Text>
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <View style={styles.sidebar}>
+          <View style={styles.logo}><Building2 size={28} color="#6366f1" /><Text style={styles.logoText}>Admin</Text></View>
+          <View style={styles.nav}>
+            {NAV_ITEMS.map((item) => (
+              <TouchableOpacity key={item.id} style={[styles.navItem, activeTab === item.id && styles.activeNavItem]} onPress={() => setActiveTab(item.id)}>
+                <item.icon size={20} color={activeTab === item.id ? '#fff' : '#94a3b8'} />
+                <Text style={[styles.navText, activeTab === item.id && styles.activeNavText]}>{item.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
+          <View style={styles.roleSwitcher}>
+            <Text style={styles.roleLabel}>Active Role:</Text>
+            <View style={styles.roleButtons}>
+              {['admin', 'manager', 'receptionist'].map(role => (
+                <TouchableOpacity key={role} onPress={() => { setUserRole(role); if (!NAV_ITEMS.find(i => i.id === activeTab)) setActiveTab('appointments'); }} style={[styles.roleBtn, userRole === role && styles.roleBtnActive]}>
+                  <Text style={[styles.roleBtnText, userRole === role && styles.roleBtnTextActive]}>{role[0].toUpperCase()}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
         </View>
-      </View>
+      )}
 
       <View style={styles.main}>
         <View style={styles.header}>
+          {isMobile && (
+            <TouchableOpacity style={styles.menuButton} onPress={() => setSidebarOpen(true)}>
+              <List size={24} color="#fff" />
+            </TouchableOpacity>
+          )}
           <View>
             <Text style={styles.headerTitle}>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</Text>
             <Text style={styles.headerSubtitle}>Manage your salon operations</Text>
@@ -2617,4 +2647,7 @@ const styles = StyleSheet.create({
   rewardRedemptions: { color: '#64748b', fontSize: 12 },
   addRewardButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#6366f1', paddingVertical: 14, borderRadius: 12 },
   addRewardButtonText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  sidebarOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 100 },
+  mobileSidebar: { width: 280, backgroundColor: '#1e293b', height: '100%', paddingVertical: 24 },
+  menuButton: { width: 44, height: 44, backgroundColor: '#1e293b', borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
 });
