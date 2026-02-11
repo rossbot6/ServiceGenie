@@ -302,4 +302,58 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ---
 
-*This document will evolve as features are prioritized and implemented.*
+## 🚀 Future Roadmap (V3+)
+
+### 📱 Customer App Enhancements
+- **Customer Loyalty Dashboard** - View points balance, tier status, and rewards redemption history in mobile app
+- **Push Notifications** - Appointment reminders, waitlist updates, promotional alerts
+- **In-App Messaging** - Chat with salon staff directly
+- **Appointment History** - Complete service history with photos and notes
+- **Favorite Providers** - Quick access to preferred stylists
+- **Smart Recommendations** - AI-suggested services based on past appointments
+
+### 📦 Inventory & Products
+- **Product Inventory Management** - Track retail products in stock
+- **Point-of-Sale Integration** - Sell retail items with appointments
+- **Product Recommendations** - Suggest products based on services rendered
+- **Inventory Alerts** - Low stock notifications
+
+### 👥 Employee Management
+- **Commission Tracking** - Per-service commission calculations
+- **Employee Scheduling** - Drag-and-drop weekly schedules
+- **Time Off Requests** - PTO request workflow
+- **Performance Reports** - Revenue per employee, appointment count, customer satisfaction
+
+### 💳 Payments & Billing
+- **Auto-Pay Subscriptions** - Monthly membership billing
+- **Package Tracking** - Prepaid service packages (10 visits remaining)
+- **Group Packages** - Bulk service packages for teams/families
+- **Partial Payments** - Deposit + balance payment flow
+
+### 🌐 Public Booking Page
+- **Standalone Booking URL** - Shareable booking page for new customers
+- **Provider Selection** - Customer chooses specific stylist
+- **Service Menu Display** - Public-facing pricing and descriptions
+- **Real-Time Availability** - Live appointment slots
+
+### 📊 Analytics & Reports
+- **Revenue Analytics Dashboard** - Charts, trends, comparisons
+- **Customer Insights** - Retention rate, lifetime value, demographics
+- **Popular Services Report** - Most booked services, peak hours
+- **Export Reports** - PDF/Excel reports for accountants
+
+### 🤖 Automation
+- **Automated Review Requests** - Post-appointment review invites
+- **Birthday Campaigns** - Automated birthday discounts
+- **Win-Back Campaigns** - Re-engage inactive customers
+- **No-Show Reminders** - Extra reminder 2 hours before
+
+### 🔐 Security & Compliance
+- **Two-Factor Authentication** - Extra login security
+- **Audit Log** - Track all admin actions
+- **Data Export** - GDPR compliance data downloads
+- **Session Management** - Force logout remote sessions
+
+---
+
+*Document updated: 2026-02-10 - All V1-V2 features completed, added V3+ roadmap*
