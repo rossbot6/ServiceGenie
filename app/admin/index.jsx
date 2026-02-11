@@ -1249,6 +1249,149 @@ export default function AdminDashboard() {
     </ScrollView>
   );
 
+  const renderPOS = () => {
+    const transactions = [
+      { id: 'txn_001', type: 'Sale', amount: 125.50, items: 'Haircut + Style', paymentMethod: 'Square', date: '2 min ago' },
+      { id: 'txn_002', type: 'Tip', amount: 20.00, items: 'Tip', paymentMethod: 'Cash', date: '15 min ago' },
+      { id: 'txn_003', type: 'Refund', amount: -25.00, items: 'Product Return', paymentMethod: 'Original Card', date: '1 hour ago' },
+    ];
+
+    return (
+      <ScrollView style={styles.tabContent}>
+        <View style={styles.tabHeader}>
+          <View>
+            <Text style={styles.headerTitle}>POS Systems</Text>
+            <Text style={styles.headerSubtitle}>Manage payment terminals and transactions</Text>
+          </View>
+          <TouchableOpacity style={styles.addButton}>
+            <Plus size={18} color="#fff" /><Text style={styles.addButtonText}>Add Terminal</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.posStatsRow}>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>3</Text>
+            <Text style={styles.miniStatLabel}>Active Terminals</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>$2,847</Text>
+            <Text style={styles.miniStatLabel}>Today</Text>
+          </View>
+          <View style={styles.miniStat}>
+            <Text style={styles.miniStatValue}>156</Text>
+            <Text style={styles.miniStatLabel}>Transactions</Text>
+          </View>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Connected Terminals</Text>
+        </View>
+
+        <View style={styles.integrationList}>
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#006AFF' }]}>
+                <CreditCard size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Square</Text>
+                <Text style={styles.integrationDesc}>Terminal #1 - Front Desk</Text>
+              </View>
+              <View style={styles.posStatusIndicator}>
+                <View style={styles.statusDot} />
+                <Text style={styles.statusDotText}>Online</Text>
+              </View>
+            </View>
+            <View style={styles.posTerminalDetails}>
+              <View style={styles.posDetailRow}>
+                <Text style={styles.posDetailLabel}>Device ID</Text>
+                <Text style={styles.posDetailValue}>SQ-001-FRONT</Text>
+              </View>
+              <View style={styles.posDetailRow}>
+                <Text style={styles.posDetailLabel}>Last Transaction</Text>
+                <Text style={styles.posDetailValue}>$125.50 - 2 min ago</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#006AFF' }]}>
+                <CreditCard size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Square</Text>
+                <Text style={styles.integrationDesc}>Terminal #2 - Station 4</Text>
+              </View>
+              <View style={styles.posStatusIndicator}>
+                <View style={styles.statusDot} />
+                <Text style={styles.statusDotText}>Online</Text>
+              </View>
+            </View>
+            <View style={styles.posTerminalDetails}>
+              <View style={styles.posDetailRow}>
+                <Text style={styles.posDetailLabel}>Device ID</Text>
+                <Text style={styles.posDetailValue}>SQ-002-STAT4</Text>
+              </View>
+              <View style={styles.posDetailRow}>
+                <Text style={styles.posDetailLabel}>Last Transaction</Text>
+                <Text style={styles.posDetailValue}>$85.00 - 32 min ago</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.integrationItem}>
+            <View style={styles.integrationHeader}>
+              <View style={[styles.integrationIcon, { backgroundColor: '#F22F46' }]}>
+                <CreditCard size={24} color="#fff" />
+              </View>
+              <View style={styles.integrationInfo}>
+                <Text style={styles.integrationName}>Clover</Text>
+                <Text style={styles.integrationDesc}>Terminal #3 - Station 7</Text>
+              </View>
+              <View style={[styles.posStatusIndicator, styles.offlineIndicator]}>
+                <View style={[styles.statusDot, styles.offlineDot]} />
+                <Text style={[styles.statusDotText, styles.offlineText]}>Offline</Text>
+              </View>
+            </View>
+            <View style={styles.posTerminalDetails}>
+              <View style={styles.posDetailRow}>
+                <Text style={styles.posDetailLabel}>Device ID</Text>
+                <Text style={styles.posDetailValue}>CL-003-STAT7</Text>
+              </View>
+              <View style={styles.posDetailRow}>
+                <Text style={styles.posDetailLabel}>Last Transaction</Text>
+                <Text style={styles.posDetailValue}>$210.00 - 2 hours ago</Text>
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.sectionDivider} />
+
+        <Text style={styles.sectionTitle}>Recent Transactions</Text>
+        
+        {transactions.map((txn) => (
+          <View key={txn.id} style={styles.transactionItem}>
+            <View style={styles.transactionIcon}>
+              <Text style={styles.transactionTypeEmoji}>{txn.type === 'Refund' ? '↩️' : txn.type === 'Tip' ? '💰' : '💳'}</Text>
+            </View>
+            <View style={styles.transactionInfo}>
+              <Text style={styles.transactionCustomer}>{txn.items}</Text>
+              <Text style={styles.transactionDate}>{txn.paymentMethod} • {txn.date}</Text>
+            </View>
+            <View style={styles.transactionRight}>
+              <Text style={[styles.transactionAmount, txn.amount < 0 && styles.refundAmount]}>{txn.amount < 0 ? '-' : ''}${Math.abs(txn.amount).toFixed(2)}</Text>
+              <TouchableOpacity style={styles.refundButton}>
+                <Text style={styles.refundButtonText}>Receipt</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+    );
+  };
+
   const renderMarketing = () => {
     const campaigns = [
       { id: 1, name: 'Spring Hair Refresh', type: 'Email', status: 'Active', sent: 1247, openRate: 42, clicks: 234 },
@@ -2232,6 +2375,7 @@ export default function AdminDashboard() {
     { id: 'services', icon: CreditCard, label: 'Services', roles: ['admin', 'manager'] },
     { id: 'locations', icon: Building2, label: 'Locations', roles: ['admin'] },
     { id: 'marketing', icon: Mail, label: 'Marketing', roles: ['admin', 'manager'] },
+    { id: 'pos', icon: CreditCard, label: 'POS', roles: ['admin', 'manager'] },
     { id: 'analytics', icon: BarChart3, label: 'Analytics', roles: ['admin'] },
     { id: 'settings', icon: Settings, label: 'Settings', roles: ['admin'] },
   ].filter(item => item.roles.includes(userRole));
@@ -2320,6 +2464,7 @@ export default function AdminDashboard() {
         {activeTab === 'customers' && renderCustomers()}
         {activeTab === 'services' && renderServices()}
         {activeTab === 'locations' && renderLocations()}
+        {activeTab === 'pos' && renderPOS()}
         {activeTab === 'marketing' && renderMarketing()}
         {activeTab === 'analytics' && <View style={styles.tabContent}><Text style={styles.comingSoon}>Analytics - Coming Soon</Text></View>}
         {activeTab === 'settings' && renderSettings()}
@@ -2885,4 +3030,17 @@ const styles = StyleSheet.create({
   campaignStatLabel: { color: '#64748b', fontSize: 11, marginTop: 4 },
   connectedButton: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   connectedButtonText: { color: '#10b981', fontSize: 13, fontWeight: '600' },
+  posStatsRow: { flexDirection: 'row', gap: 12, marginBottom: 24 },
+  posStatusIndicator: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 4, backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: 20 },
+  statusDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#10b981' },
+  statusDotText: { color: '#10b981', fontSize: 12, fontWeight: '600' },
+  offlineIndicator: { backgroundColor: 'rgba(239, 68, 68, 0.1)' },
+  offlineDot: { backgroundColor: '#ef4444' },
+  offlineText: { color: '#ef4444' },
+  posTerminalDetails: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.05)' },
+  posDetailRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
+  posDetailLabel: { color: '#64748b', fontSize: 13 },
+  posDetailValue: { color: '#94a3b8', fontSize: 13 },
+  refundAmount: { color: '#ef4444' },
+  refundButtonText: { color: '#94a3b8', fontSize: 11 },
 });
