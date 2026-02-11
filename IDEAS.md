@@ -6,23 +6,23 @@
 
 ---
 
-## Notes
-- Use 12-hour AM/PM time format
-- Local Supabase at http://localhost:8000
-- Update supabase-schema.sql for DB changes
-- Remove old Expo references/files
-
-## 🎯 Core Vision
-
-Multi-location salon management platform with admin dashboard for franchise/chain management.
+## Notes:
 - Use 12 hour AM/PM time format.
 - Local supabase backend at http://locallhost:8000
 - Create backend tables, views, etc. and update supabase-schema.sql
 - Use "NoExpo" branch
-- Remove any old references and files pertaining to expo
+--
+
+## 🎯 Core Vision
+
+Multi-location salon management platform with admin dashboard for franchise/chain management.
+
 ---
 
 ## 🏢 Multi-Location Architecture
+
+### Source Clean-Up
+- [x] Remove any old references and files pertaining to expo
 
 ### Salon Management
 - [ ] Add/Edit/Delete Locations
