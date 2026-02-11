@@ -796,8 +796,8 @@ export default function Admin() {
         </div>
       )}
       
-      {/* Placeholder for other tabs */}
-      {activeTab !== 'overview' && activeTab !== 'locations' && activeTab !== 'providers' && (
+      {/* Placeholder for unimplemented tabs */}
+      {!['overview', 'locations', 'appointments', 'customers', 'providers', 'services', 'payments', 'loyalty'].includes(activeTab) && (
         <div className="card text-center py-12">
           <p className="text-gray-500">
             {tabs.find(t => t.id === activeTab)?.label} section - Coming soon
