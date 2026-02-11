@@ -184,10 +184,7 @@ Expand ServiceGenie from a single-salon booking app into a **multi-location salo
 
 ## 🚀 Future Roadmap (V2+)
 
-- [ ] **Loyalty/Rewards Program**
-  - Points per visit
-  - Tiered rewards
-  - Birthday bonuses
+- [x] **Loyalty/Rewards Program** ✅ **NEW** - Bronze/Silver/Gold tiers with points per dollar, birthday bonuses, and rewards redemption
 
 - [ ] **Gift Cards**
   - Purchase gift cards
