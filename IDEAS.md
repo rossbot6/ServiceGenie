@@ -58,13 +58,13 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 ## 👤 Customer Management
 
 ### Customer Profiles
-- [ ] Basic Info
+- [x] Basic Info
 - [ ] Communication Preferences
-- [ ] Visit History
-- [ ] Notes & Tags
+- [x] Visit History
+- [x] Notes & Tags
 
 ### Customer Actions
-- [ ] Search & Filter
+- [x] Search & Filter
 - [ ] Customer Export
 - [ ] Communications
 

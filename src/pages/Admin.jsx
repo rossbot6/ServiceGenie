@@ -4,7 +4,8 @@ import {
   TrendingUp, Clock, Check, X, Plus, Search,
   BarChart3, Mail, MessageSquare, CreditCard,
   MapPin, Edit, Trash2, Building2, Phone,
-  Star, Mail as MailIcon, Award, CalendarCheck
+  Star, Mail as MailIcon, Award, CalendarCheck,
+  User, Tag, Heart, MessageCircle
 } from 'lucide-react';
 
 // Sample locations data
@@ -21,12 +22,23 @@ const initialProviders = [
   { id: 4, name: 'Michael Chen', email: 'michael@servicegenie.com', phone: '(718) 555-0202', locationId: 2, specialty: 'Stylist', status: 'active', rating: 4.6, appointments: 112, revenue: 15600 },
 ];
 
+// Sample customers data
+const initialCustomers = [
+  { id: 1, name: 'John Smith', email: 'john@email.com', phone: '(212) 555-1001', visits: 12, totalSpent: 2450, tags: ['VIP', 'Regular'], notes: 'Prefers Emma for color', preferredProvider: 'Emma Wilson', lastVisit: '2026-02-08' },
+  { id: 2, name: 'Sarah Johnson', email: 'sarah@email.com', phone: '(212) 555-1002', visits: 8, totalSpent: 1890, tags: ['Regular'], notes: 'Allergic to sulfates', preferredProvider: 'James Brown', lastVisit: '2026-02-05' },
+  { id: 3, name: 'Michael Davis', email: 'michael@email.com', phone: '(718) 555-2001', visits: 5, totalSpent: 3200, tags: ['VIP'], notes: '', preferredProvider: 'Sofia Garcia', lastVisit: '2026-02-10' },
+  { id: 4, name: 'Emily Rodriguez', email: 'emily@email.com', phone: '(718) 555-2002', visits: 3, totalSpent: 520, tags: ['New'], notes: 'First time balayage', preferredProvider: 'Michael Chen', lastVisit: '2026-02-01' },
+  { id: 5, name: 'David Lee', email: 'david@email.com', phone: '(212) 555-1003', visits: 15, totalSpent: 4100, tags: ['VIP', 'Regular'], notes: 'Always requests afternoon slots', preferredProvider: 'Emma Wilson', lastVisit: '2026-02-09' },
+];
+
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('overview');
   const [locations, setLocations] = useState(initialLocations);
   const [providers, setProviders] = useState(initialProviders);
+  const [customers, setCustomers] = useState(initialCustomers);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showProviderModal, setShowProviderModal] = useState(false);
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [editingLocation, setEditingLocation] = useState(null);
   const [editingProvider, setEditingProvider] = useState(null);
   const [locationForm, setLocationForm] = useState({ name: '', address: '', phone: '', timezone: 'America/New_York', status: 'active' });
@@ -112,6 +124,48 @@ export default function Admin() {
       setProviders([...providers, { ...providerForm, id: Date.now(), rating: 0, appointments: 0, revenue: 0 }]);
     }
     setShowProviderModal(false);
+  };
+  
+  // Customer management functions
+  const [customerForm, setCustomerForm] = useState({ name: '', email: '', phone: '', tags: [], notes: '', preferredProvider: '' });
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  
+  const handleAddCustomer = () => {
+    setEditingCustomer(null);
+    setCustomerForm({ name: '', email: '', phone: '', tags: [], notes: '', preferredProvider: '' });
+    setShowCustomerModal(true);
+  };
+  
+  const handleEditCustomer = (customer) => {
+    setEditingCustomer(customer);
+    setCustomerForm(customer);
+    setShowCustomerModal(true);
+  };
+  
+  const handleDeleteCustomer = (id) => {
+    if (confirm('Are you sure you want to delete this customer?')) {
+      setCustomers(customers.filter(c => c.id !== id));
+    }
+  };
+  
+  const handleCustomerSubmit = (e) => {
+    e.preventDefault();
+    if (editingCustomer) {
+      setCustomers(customers.map(c => 
+        c.id === editingCustomer.id ? { ...customerForm, id: editingCustomer.id } : c
+      ));
+    } else {
+      setCustomers([...customers, { ...customerForm, id: Date.now(), visits: 0, totalSpent: 0, lastVisit: null }]);
+    }
+    setShowCustomerModal(false);
+  };
+  
+  const toggleCustomerTag = (tag) => {
+    if (customerForm.tags.includes(tag)) {
+      setCustomerForm({ ...customerForm, tags: customerForm.tags.filter(t => t !== tag) });
+    } else {
+      setCustomerForm({ ...customerForm, tags: [...customerForm.tags, tag] });
+    }
   };
   
   const recentAppointments = [
@@ -674,6 +728,274 @@ export default function Admin() {
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   {editingProvider ? 'Save Changes' : 'Add Provider'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      
+      {/* Customers Tab */}
+      {activeTab === 'customers' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Manage Customers</h2>
+              <p className="text-sm text-gray-500">View and manage customer profiles</p>
+            </div>
+            <button 
+              onClick={handleAddCustomer}
+              className="btn-primary flex items-center gap-2"
+            >
+              <Plus size={18} />
+              Add Customer
+            </button>
+          </div>
+          
+          {/* Customer Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="card">
+              <p className="text-sm text-gray-500">Total Customers</p>
+              <p className="text-2xl font-bold text-gray-900">{customers.length}</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">VIP Customers</p>
+              <p className="text-2xl font-bold text-amber-600">{customers.filter(c => c.tags.includes('VIP')).length}</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Total Visits</p>
+              <p className="text-2xl font-bold text-blue-600">{customers.reduce((acc, c) => acc + c.visits, 0)}</p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Total Revenue</p>
+              <p className="text-2xl font-bold text-green-600">
+                ${customers.reduce((acc, c) => acc + c.totalSpent, 0).toLocaleString()}
+              </p>
+            </div>
+          </div>
+          
+          {/* Search */}
+          <div className="relative">
+            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search customers by name, email, or phone..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          
+          {/* Customer Table */}
+          <div className="card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-sm text-gray-500 border-b border-gray-100">
+                    <th className="px-4 py-3 font-medium">Customer</th>
+                    <th className="px-4 py-3 font-medium">Contact</th>
+                    <th className="px-4 py-3 font-medium">Visits</th>
+                    <th className="px-4 py-3 font-medium">Total Spent</th>
+                    <th className="px-4 py-3 font-medium">Tags</th>
+                    <th className="px-4 py-3 font-medium">Preferred Provider</th>
+                    <th className="px-4 py-3 font-medium">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {customers.map((customer) => (
+                    <tr key={customer.id} className="text-sm">
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                            <User size={14} className="text-purple-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{customer.name}</p>
+                            <p className="text-xs text-gray-500">Last: {customer.lastVisit || 'N/A'}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">
+                        <p>{customer.email}</p>
+                        <p className="text-xs">{customer.phone}</p>
+                      </td>
+                      <td className="px-4 py-3 text-gray-900 font-medium">{customer.visits}</td>
+                      <td className="px-4 py-3 text-green-600 font-medium">${customer.totalSpent.toLocaleString()}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {customer.tags.map(tag => (
+                            <span key={tag} className={`badge ${
+                              tag === 'VIP' ? 'bg-amber-100 text-amber-700' :
+                              tag === 'Regular' ? 'bg-green-100 text-green-700' :
+                              'bg-blue-100 text-blue-700'
+                            }`}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-gray-600">{customer.preferredProvider}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-1">
+                          <button 
+                            onClick={() => handleEditCustomer(customer)}
+                            className="p-1.5 hover:bg-gray-100 rounded text-gray-600"
+                            title="Edit"
+                          >
+                            <Edit size={14} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteCustomer(customer.id)}
+                            className="p-1.5 hover:bg-red-50 rounded text-red-600"
+                            title="Delete"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          {customers.length === 0 && (
+            <div className="card text-center py-12">
+              <User size={48} className="mx-auto text-gray-300 mb-3" />
+              <p className="text-gray-500">No customers yet</p>
+              <button 
+                onClick={handleAddCustomer}
+                className="btn-primary mt-4"
+              >
+                Add Your First Customer
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Customer Modal */}
+      {showCustomerModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {editingCustomer ? 'Edit Customer' : 'Add New Customer'}
+              </h2>
+              <button 
+                onClick={() => setShowCustomerModal(false)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleCustomerSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  value={customerForm.name}
+                  onChange={(e) => setCustomerForm({ ...customerForm, name: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="e.g., John Smith"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={customerForm.email}
+                  onChange={(e) => setCustomerForm({ ...customerForm, email: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="john@email.com"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone Number
+                </label>
+                <input
+                  type="tel"
+                  value={customerForm.phone}
+                  onChange={(e) => setCustomerForm({ ...customerForm, phone: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="(212) 555-0100"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Preferred Provider
+                </label>
+                <select
+                  value={customerForm.preferredProvider}
+                  onChange={(e) => setCustomerForm({ ...customerForm, preferredProvider: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">None</option>
+                  {providers.map(p => (
+                    <option key={p.id} value={p.name}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Tags
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {['VIP', 'Regular', 'New'].map(tag => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => toggleCustomerTag(tag)}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                        customerForm.tags.includes(tag)
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Notes
+                </label>
+                <textarea
+                  value={customerForm.notes}
+                  onChange={(e) => setCustomerForm({ ...customerForm, notes: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                  placeholder="Any special notes about this customer..."
+                />
+              </div>
+              
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowCustomerModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  {editingCustomer ? 'Save Changes' : 'Add Customer'}
                 </button>
               </div>
             </form>
