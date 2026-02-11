@@ -72,6 +72,12 @@ export default function Layout() {
             headerShown: false,
           }} 
         />
+        <Stack.Screen 
+          name="loyalty" 
+          options={{ 
+            title: 'Loyalty Program',
+          }} 
+        />
       </Stack>
       <StatusBar style={highContrastEnabled ? 'dark' : 'light'} />
     </View>
