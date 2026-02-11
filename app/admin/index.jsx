@@ -86,6 +86,20 @@ export default function AdminDashboard() {
   const [customerSegment, setCustomerSegment] = useState('all');
   const [userRole, setUserRole] = useState('admin');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const languages = [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+    { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+    { code: 'zh', name: '中文', flag: '🇨🇳' },
+    { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    { code: 'ko', name: '한국어', flag: '🇰🇷' },
+    { code: 'pt', name: 'Português', flag: '🇧🇷' },
+    { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+    { code: 'ar', name: 'العربية', flag: '🇸🇦' }
+  ];
   
   const isMobile = Dimensions.get('window').width < 768;
 
@@ -1547,19 +1561,6 @@ export default function AdminDashboard() {
       autoDetect: false
     });
     
-    const languages = [
-      { code: 'en', name: 'English', flag: '🇺🇸' },
-      { code: 'es', name: 'Español', flag: '🇪🇸' },
-      { code: 'fr', name: 'Français', flag: '🇫🇷' },
-      { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-      { code: 'zh', name: '中文', flag: '🇨🇳' },
-      { code: 'ja', name: '日本語', flag: '🇯🇵' },
-      { code: 'ko', name: '한국어', flag: '🇰🇷' },
-      { code: 'pt', name: 'Português', flag: '🇧🇷' },
-      { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-      { code: 'ar', name: 'العربية', flag: '🇸🇦' }
-    ];
-
     return (
       <ScrollView style={styles.tabContent}>
         <View style={styles.sectionHeader}>
