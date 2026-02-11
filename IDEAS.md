@@ -65,7 +65,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ### Customer Actions
 - [x] Search & Filter
-- [ ] Customer Export
+- [x] Customer Export
 - [ ] Communications
 
 ### Reviews
