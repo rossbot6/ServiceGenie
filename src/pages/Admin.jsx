@@ -198,7 +198,6 @@ export default function Admin() {
   };
   
   // Service management functions
-  const [showServiceModal, setShowServiceModal] = useState(false);
   const [editingService, setEditingService] = useState(null);
   const [serviceForm, setServiceForm] = useState({ name: '', category: 'Cut', price: 0, duration: 30, description: '' });
   
