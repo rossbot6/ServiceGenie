@@ -35,7 +35,7 @@ const initialCustomers = [
 // Sample services data
 const initialServices = [
   { id: 1, name: "Women's Haircut", category: 'Cut', price: 85, duration: 60, description: 'Professional haircut styled to perfection' },
-  { id: 2, name: "Men's Haircut", category: 'Cut', price: 45, duration: 30, description: 'Clean and modern men's styling' },
+  { id: 2, name: "Men's Haircut", category: 'Cut', price: 45, duration: 30, description: "Clean and modern men's styling" },
   { id: 3, name: 'Full Balayage', category: 'Color', price: 180, duration: 180, description: 'Hand-painted highlights for natural look' },
   { id: 4, name: 'Partial Highlights', category: 'Color', price: 120, duration: 120, description: 'Partial head highlights and toning' },
   { id: 5, name: 'Keratin Treatment', category: 'Treatment', price: 250, duration: 120, description: 'Smoothing keratin blowout' },
@@ -44,17 +44,32 @@ const initialServices = [
   { id: 8, name: 'Scalp Treatment', category: 'Treatment', price: 75, duration: 45, description: 'Rejuvenating scalp massage and treatment' },
 ];
 
+// Sample appointments data
+const initialAppointments = [
+  { id: 1, customer: 'John Smith', service: 'Full Balayage', provider: 'Emma Wilson', date: '2026-02-11', time: '10:00 AM', status: 'confirmed', price: 180 },
+  { id: 2, customer: 'Sarah Johnson', service: "Women's Haircut", provider: 'James Brown', date: '2026-02-11', time: '11:00 AM', status: 'confirmed', price: 85 },
+  { id: 3, customer: 'Michael Davis', service: 'Keratin Treatment', provider: 'Sofia Garcia', date: '2026-02-11', time: '2:00 PM', status: 'completed', price: 250 },
+  { id: 4, customer: 'Emily Rodriguez', service: 'Blowout', provider: 'Michael Chen', date: '2026-02-11', time: '9:00 AM', status: 'confirmed', price: 55 },
+  { id: 5, customer: 'David Lee', service: 'Full Balayage', provider: 'Emma Wilson', date: '2026-02-12', time: '3:00 PM', status: 'pending', price: 180 },
+  { id: 6, customer: 'Lisa Wang', service: "Women's Haircut", provider: 'James Brown', date: '2026-02-12', time: '10:00 AM', status: 'confirmed', price: 85 },
+  { id: 7, customer: 'Robert Taylor', service: 'Scalp Treatment', provider: 'Sofia Garcia', date: '2026-02-12', time: '1:00 PM', status: 'pending', price: 75 },
+];
+
 export default function Admin() {
   const [activeTab, setActiveTab] = useState('overview');
   const [locations, setLocations] = useState(initialLocations);
   const [providers, setProviders] = useState(initialProviders);
   const [customers, setCustomers] = useState(initialCustomers);
   const [services, setServices] = useState(initialServices);
+  const [appointments, setAppointments] = useState(initialAppointments);
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showProviderModal, setShowProviderModal] = useState(false);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [showServiceModal, setShowServiceModal] = useState(false);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [editingLocation, setEditingLocation] = useState(null);
   const [editingProvider, setEditingProvider] = useState(null);
+  const [editingAppointment, setEditingAppointment] = useState(null);
   const [locationForm, setLocationForm] = useState({ name: '', address: '', phone: '', timezone: 'America/New_York', status: 'active' });
   const [providerForm, setProviderForm] = useState({ name: '', email: '', phone: '', locationId: 1, specialty: '', status: 'active' });
   
@@ -215,6 +230,55 @@ export default function Admin() {
       setServices([...services, { ...serviceForm, id: Date.now() }]);
     }
     setShowServiceModal(false);
+  };
+  
+  // Appointment management functions
+  const [appointmentForm, setAppointmentForm] = useState({ 
+    customer: '', service: '', provider: '', date: '', time: '', status: 'pending' 
+  });
+  
+  const handleAddAppointment = () => {
+    setEditingAppointment(null);
+    setAppointmentForm({ customer: '', service: '', provider: '', date: '', time: '', status: 'pending' });
+    setShowAppointmentModal(true);
+  };
+  
+  const handleEditAppointment = (appointment) => {
+    setEditingAppointment(appointment);
+    setAppointmentForm(appointment);
+    setShowAppointmentModal(true);
+  };
+  
+  const handleDeleteAppointment = (id) => {
+    if (confirm('Are you sure you want to delete this appointment?')) {
+      setAppointments(appointments.filter(a => a.id !== id));
+    }
+  };
+  
+  const handleAppointmentSubmit = (e) => {
+    e.preventDefault();
+    const service = services.find(s => s.name === appointmentForm.service);
+    const price = service?.price || 0;
+    if (editingAppointment) {
+      setAppointments(appointments.map(a => 
+        a.id === editingAppointment.id ? { ...appointmentForm, price, id: editingAppointment.id } : a
+      ));
+    } else {
+      setAppointments([...appointments, { ...appointmentForm, price, id: Date.now() }]);
+    }
+    setShowAppointmentModal(false);
+  };
+  
+  const handleConfirmAppointment = (id) => {
+    setAppointments(appointments.map(a => 
+      a.id === id ? { ...a, status: 'confirmed' } : a
+    ));
+  };
+  
+  const handleCompleteAppointment = (id) => {
+    setAppointments(appointments.map(a => 
+      a.id === id ? { ...a, status: 'completed' } : a
+    ));
   };
   
   const recentAppointments = [
@@ -410,6 +474,195 @@ export default function Admin() {
               </button>
             </div>
           )}
+        </div>
+      )}
+      
+      {/* Appointments Tab */}
+      {activeTab === 'appointments' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Appointments Dashboard</h2>
+              <p className="text-sm text-gray-500">Manage all appointments and scheduling</p>
+            </div>
+            <button 
+              onClick={handleAddAppointment}
+              className="btn-primary flex items-center gap-2"
+            >
+              <Plus size={18} />
+              New Appointment
+            </button>
+          </div>
+          
+          {/* Appointment Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="card">
+              <p className="text-sm text-gray-500">Today</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {appointments.filter(a => a.date === '2026-02-11').length}
+              </p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Confirmed</p>
+              <p className="text-2xl font-bold text-green-600">
+                {appointments.filter(a => a.status === 'confirmed').length}
+              </p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Pending</p>
+              <p className="text-2xl font-bold text-amber-600">
+                {appointments.filter(a => a.status === 'pending').length}
+              </p>
+            </div>
+            <div className="card">
+              <p className="text-sm text-gray-500">Completed</p>
+              <p className="text-2xl font-bold text-blue-600">
+                {appointments.filter(a => a.status === 'completed').length}
+              </p>
+            </div>
+          </div>
+          
+          {/* Calendar View */}
+          <div className="card">
+            <h3 className="font-semibold text-gray-900 mb-4">Calendar - February 2026</h3>
+            <div className="grid grid-cols-7 gap-2">
+              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+                  {day}
+                </div>
+              ))}
+              {/* Calendar days */}
+              {[...Array(28)].map((_, i) => {
+                const day = i + 1;
+                const dayAppointments = appointments.filter(a => {
+                  const aptDate = new Date(a.date);
+                  return aptDate.getDate() === day && aptDate.getMonth() === 1;
+                });
+                const isToday = day === 11;
+                return (
+                  <div 
+                    key={day}
+                    className={`min-h-20 p-2 border rounded-lg ${
+                      isToday ? 'border-blue-500 bg-blue-50' : 'border-gray-200'
+                    }`}
+                  >
+                    <div className={`text-sm font-medium ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                      {day}
+                    </div>
+                    <div className="mt-1 space-y-1">
+                      {dayAppointments.slice(0, 2).map(apt => (
+                        <div 
+                          key={apt.id}
+                          className={`text-xs p-1 rounded ${
+                            apt.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                            apt.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                            'bg-amber-100 text-amber-700'
+                          }`}
+                        >
+                          {apt.time} - {apt.customer.split(' ')[0]}
+                        </div>
+                      ))}
+                      {dayAppointments.length > 2 && (
+                        <div className="text-xs text-gray-500">
+                          +{dayAppointments.length - 2} more
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          
+          {/* All Appointments List */}
+          <div className="card overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
+              <h3 className="font-semibold text-gray-900">All Appointments</h3>
+              <div className="flex items-center gap-2">
+                <select className="px-3 py-1.5 border border-gray-200 rounded-lg text-sm">
+                  <option value="">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-sm text-gray-500 border-b border-gray-100">
+                    <th className="px-4 py-3 font-medium">Date</th>
+                    <th className="px-4 py-3 font-medium">Time</th>
+                    <th className="px-4 py-3 font-medium">Customer</th>
+                    <th className="px-4 py-3 font-medium">Service</th>
+                    <th className="px-4 py-3 font-medium">Provider</th>
+                    <th className="px-4 py-3 font-medium">Price</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
+                    <th className="px-4 py-3 font-medium">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {appointments.map((apt) => (
+                    <tr key={apt.id} className="text-sm">
+                      <td className="px-4 py-3 text-gray-900">{apt.date}</td>
+                      <td className="px-4 py-3 text-gray-600">{apt.time}</td>
+                      <td className="px-4 py-3 font-medium text-gray-900">{apt.customer}</td>
+                      <td className="px-4 py-3 text-gray-600">{apt.service}</td>
+                      <td className="px-4 py-3 text-gray-600">{apt.provider}</td>
+                      <td className="px-4 py-3 text-green-600 font-medium">${apt.price}</td>
+                      <td className="px-4 py-3">
+                        <span className={`badge ${
+                          apt.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+                          apt.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                          apt.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                          'bg-red-100 text-red-700'
+                        }`}>
+                          {apt.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex gap-1">
+                          {apt.status === 'pending' && (
+                            <button 
+                              onClick={() => handleConfirmAppointment(apt.id)}
+                              className="p-1.5 hover:bg-green-50 rounded text-green-600"
+                              title="Confirm"
+                            >
+                              <Check size={14} />
+                            </button>
+                          )}
+                          {apt.status !== 'completed' && apt.status !== 'cancelled' && (
+                            <button 
+                              onClick={() => handleCompleteAppointment(apt.id)}
+                              className="p-1.5 hover:bg-blue-50 rounded text-blue-600"
+                              title="Complete"
+                            >
+                              <CalendarCheck size={14} />
+                            </button>
+                          )}
+                          <button 
+                            onClick={() => handleEditAppointment(apt)}
+                            className="p-1.5 hover:bg-gray-100 rounded text-gray-600"
+                            title="Edit"
+                          >
+                            <Edit size={14} />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteAppointment(apt.id)}
+                            className="p-1.5 hover:bg-red-50 rounded text-red-600"
+                            title="Cancel"
+                          >
+                            <X size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       )}
       
@@ -1272,6 +1525,141 @@ export default function Admin() {
                   className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
                   {editingService ? 'Save Changes' : 'Add Service'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      
+      {/* Appointment Modal */}
+      {showAppointmentModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {editingAppointment ? 'Edit Appointment' : 'New Appointment'}
+              </h2>
+              <button 
+                onClick={() => setShowAppointmentModal(false)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <X size={20} className="text-gray-500" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleAppointmentSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Customer
+                </label>
+                <select
+                  value={appointmentForm.customer}
+                  onChange={(e) => setAppointmentForm({ ...appointmentForm, customer: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Select customer</option>
+                  {customers.map(c => (
+                    <option key={c.id} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Service
+                </label>
+                <select
+                  value={appointmentForm.service}
+                  onChange={(e) => setAppointmentForm({ ...appointmentForm, service: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Select service</option>
+                  {services.map(s => (
+                    <option key={s.id} value={s.name}>{s.name} - ${s.price}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Provider
+                </label>
+                <select
+                  value={appointmentForm.provider}
+                  onChange={(e) => setAppointmentForm({ ...appointmentForm, provider: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Select provider</option>
+                  {providers.map(p => (
+                    <option key={p.id} value={p.name}>{p.name} - {p.specialty}</option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    value={appointmentForm.date}
+                    onChange={(e) => setAppointmentForm({ ...appointmentForm, date: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Time
+                  </label>
+                  <select
+                    value={appointmentForm.time}
+                    onChange={(e) => setAppointmentForm({ ...appointmentForm, time: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  >
+                    <option value="">Select time</option>
+                    {['9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'].map(time => (
+                      <option key={time} value={time}>{time}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Status
+                </label>
+                <select
+                  value={appointmentForm.status}
+                  onChange={(e) => setAppointmentForm({ ...appointmentForm, status: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+              
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAppointmentModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  {editingAppointment ? 'Save Changes' : 'Create Appointment'}
                 </button>
               </div>
             </form>
