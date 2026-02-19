@@ -8,6 +8,7 @@ import GroupBooking from './pages/GroupBooking';
 import Payouts from './pages/Payouts';
 import StylistDashboard from './pages/StylistDashboard';
 import LocationSettings from './pages/LocationSettings';
+import AppointmentReminders from './pages/AppointmentReminders';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="stylist/dashboard" element={<StylistDashboard />} />
         <Route path="provider/schedule" element={<ProviderSchedule />} />
         <Route path="location-settings" element={<LocationSettings />} />
+        <Route path="appointment-reminders" element={<AppointmentReminders />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
