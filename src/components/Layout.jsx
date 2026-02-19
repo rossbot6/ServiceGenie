@@ -9,6 +9,7 @@ export default function Layout() {
   const navigation = [
   { name: 'Provider Schedule', to: '/provider/schedule', icon: 'Calendar' },
   { name: 'Location Settings', to: '/location-settings', icon: 'Settings' },
+  { name: 'Appointment Reminders', to: '/appointment-reminders', icon: 'Clock' },
     { name: 'Home', path: '/', icon: Home },
     { name: 'My Bookings', path: '/bookings', icon: Clock },
     { name: 'Book', path: '/book/service', icon: Calendar },

@@ -32,7 +32,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ### Salon Management
 - [x] Add/Edit/Delete Locations
-- [ ] Location Settings
+- [x] Location Settings
   - [x] Booking policies (cancellation, rescheduling, deposits)
   - [x] Buffer time between appointments
   - [x] Lead time for bookings
@@ -123,7 +123,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ## 🔔 Notifications & Reminders
 
-- [ ] Appointment Reminders
+- [x] Appointment Reminders
 - [ ] Confirmation Messages
 - [ ] SMS Templates
 - [ ] Email Templates
