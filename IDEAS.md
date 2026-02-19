@@ -11,7 +11,8 @@
 - Local supabase backend at http://locallhost:8000
 - Create backend tables, views, etc. and update supabase-schema.sql
 - Use "NoExpo" branch
---
+
+---
 
 ## 🎯 Core Vision
 
@@ -20,6 +21,11 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 ---
 
 ## 🏢 Multi-Location Architecture
+
+- [ ] Look at FEATURES.MD and convert to plain React with no Expo, when finished, use it along side this document.
+
+### Database
+- [ ] Read supabase-schema.sql 
 
 ### Source Clean-Up
 - [x] Remove any old references and files pertaining to expo
