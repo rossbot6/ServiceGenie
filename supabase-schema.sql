@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS locations (
   min_lead_hours INT DEFAULT 24,
   buffer_minutes INT DEFAULT 15,
   default_duration INT DEFAULT 60,
+  booking_policy JSONB DEFAULT '{}',
   cancellation_window_hours INT DEFAULT 24,
   cancellation_fee_percent INT DEFAULT 50,
   require_deposit BOOLEAN DEFAULT false,
