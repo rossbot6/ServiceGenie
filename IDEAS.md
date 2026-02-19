@@ -49,8 +49,8 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ### CRUD Operations
 - [x] Add Provider
-- [ ] Manage Provider Profile
-- [ ] Schedule Management
+- [x] Manage Provider Profile
+- [x] Schedule Management
 - [ ] Provider Status
 
 ### Advanced Provider Features
@@ -65,7 +65,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ### Customer Profiles
 - [x] Basic Info
-- [ ] Communication Preferences
+- [x] Communication Preferences
 - [x] Visit History
 - [x] Notes & Tags
 
