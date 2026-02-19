@@ -33,13 +33,13 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 ### Salon Management
 - [x] Add/Edit/Delete Locations
 - [ ] Location Settings
-  - [ ] Booking policies (cancellation, rescheduling, deposits)
-  - [ ] Buffer time between appointments
-  - [ ] Lead time for bookings
-  - [ ] Default appointment duration
+  - [x] Booking policies (cancellation, rescheduling, deposits)
+  - [x] Buffer time between appointments
+  - [x] Lead time for bookings
+  - [x] Default appointment duration
 
 ### Multi-Timezone Support
-- [ ] Display times in customer's local timezone
+- [x] Display times in customer's local timezone
 - [ ] Provider schedules in location timezone
 - [ ] Automated timezone conversions
 
