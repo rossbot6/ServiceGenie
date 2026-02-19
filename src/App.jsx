@@ -19,6 +19,7 @@ export default function App() {
         <Route path="group-booking" element={<GroupBooking />} />
         <Route path="payouts" element={<Payouts />} />
         <Route path="stylist/dashboard" element={<StylistDashboard />} />
+        <Route path="provider/schedule" element={<ProviderSchedule />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

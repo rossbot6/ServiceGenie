@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS customers (
   phone TEXT NOT NULL,
   notes TEXT,
   communication_preferences JSONB DEFAULT '{}',
+  timezone TEXT DEFAULT 'America/New_York',
   total_spent DECIMAL(10,2) DEFAULT 0,
   visit_count INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -70,6 +71,7 @@ CREATE TABLE IF NOT EXISTS locations (
   deposit_amount DECIMAL(10,2) DEFAULT 0,
   no_show_fee DECIMAL(10,2) DEFAULT 25.00,
   no_show_ban_threshold INT DEFAULT 3,
+  no_show_consequences BOOLEAN DEFAULT false,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 

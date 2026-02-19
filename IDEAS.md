@@ -51,7 +51,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 - [x] Add Provider
 - [x] Manage Provider Profile
 - [x] Schedule Management
-- [ ] Provider Status
+- [x] Provider Status
 
 ### Advanced Provider Features
 - [ ] Performance Metrics
@@ -89,8 +89,8 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 - [ ] Blocked Time Management
 
 ### Booking Policies
-- [ ] Cancellation Rules
-- [ ] Deposit System
+- [x] Cancellation Rules
+- [x] Deposit System
 - [ ] No-show consequences
 
 ---

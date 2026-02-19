@@ -7,6 +7,7 @@ export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const navigation = [
+  { name: 'Provider Schedule', to: '/provider/schedule', icon: 'Calendar' },
     { name: 'Home', path: '/', icon: Home },
     { name: 'My Bookings', path: '/bookings', icon: Clock },
     { name: 'Book', path: '/book/service', icon: Calendar },
