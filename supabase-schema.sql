@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS customers (
   email TEXT UNIQUE,
   phone TEXT NOT NULL,
   notes TEXT,
+  communication_preferences JSONB DEFAULT '{}',
   total_spent DECIMAL(10,2) DEFAULT 0,
   visit_count INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -33,7 +34,9 @@ CREATE TABLE IF NOT EXISTS providers (
   phone TEXT,
   specialty TEXT,
   bio TEXT,
+  profile JSONB DEFAULT '{}',  profile JSONB DEFAULT '{}',
   avatar_url TEXT,
+  timezone TEXT DEFAULT 'America/New_York',
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -68,6 +71,19 @@ CREATE TABLE IF NOT EXISTS locations (
   no_show_fee DECIMAL(10,2) DEFAULT 25.00,
   no_show_ban_threshold INT DEFAULT 3,
   created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Provider schedule management table
+CREATE TABLE IF NOT EXISTS provider_schedules (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  provider_id UUID REFERENCES providers(id) ON DELETE CASCADE,
+  location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
+  day_of_week INT CHECK (day_of_week >= 0 AND day_of_week <= 6),
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_locations_active ON locations(is_active);
