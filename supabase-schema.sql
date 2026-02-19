@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS providers (
   phone TEXT,
   specialty TEXT,
   bio TEXT,
-  profile JSONB DEFAULT '{}',  profile JSONB DEFAULT '{}',
+  profile JSONB DEFAULT '{}',
   avatar_url TEXT,
   timezone TEXT DEFAULT 'America/New_York',
   is_active BOOLEAN DEFAULT true,
@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS provider_schedules (
   day_of_week INT CHECK (day_of_week >= 0 AND day_of_week <= 6),
   start_time TIME NOT NULL,
   end_time TIME NOT NULL,
+  timezone TEXT DEFAULT 'America/New_York',
   is_active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -329,7 +330,7 @@ ON CONFLICT (template_type) DO NOTHING;
 -- SETTINGS TABLE
 -- ============================================
 CREATE TABLE IF NOT EXISTS settings (
-  id UUID PRIMARY KEY DEFAULT 1,
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   business_name TEXT DEFAULT 'ServiceGenie Salon',
   default_language TEXT DEFAULT 'en',
   supported_languages TEXT[] DEFAULT ARRAY['en', 'es', 'fr'],

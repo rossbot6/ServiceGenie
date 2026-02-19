@@ -7,6 +7,7 @@ import bookings from './pages/bookings';
 import GroupBooking from './pages/GroupBooking';
 import Payouts from './pages/Payouts';
 import StylistDashboard from './pages/StylistDashboard';
+import LocationSettings from './pages/LocationSettings';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="payouts" element={<Payouts />} />
         <Route path="stylist/dashboard" element={<StylistDashboard />} />
         <Route path="provider/schedule" element={<ProviderSchedule />} />
+        <Route path="location-settings" element={<LocationSettings />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

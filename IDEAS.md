@@ -22,7 +22,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ## 🏢 Multi-Location Architecture
 
-- [ ] Look at FEATURES.MD and convert to plain React with no Expo, when finished, use it along side this document.
+- [x] Look at FEATURES.MD and convert to plain React with no Expo, when finished, use it along side this document.
 
 ### Database
 - [ ] Read supabase-schema.sql 
@@ -40,8 +40,8 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ### Multi-Timezone Support
 - [x] Display times in customer's local timezone
-- [ ] Provider schedules in location timezone
-- [ ] Automated timezone conversions
+- [x] Provider schedules in location timezone
+- [x] Automated timezone conversions
 
 ---
 
@@ -91,7 +91,7 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 ### Booking Policies
 - [x] Cancellation Rules
 - [x] Deposit System
-- [ ] No-show consequences
+- [x] No-show consequences
 
 ---
 
