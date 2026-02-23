@@ -55,8 +55,8 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 
 ### Advanced Provider Features
 - [ ] Performance Metrics
-- [ ] Team Management
-- [ ] Team Lead Assignment
+- [x] Team Management
+- [x] Team Lead Assignment
 - [ ] Cross-training visibility
 
 ---
