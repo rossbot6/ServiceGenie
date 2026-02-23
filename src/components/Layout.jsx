@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, Calendar, Users, DollarSign, Gift, Briefcase, Menu, X, Clock } from 'lucide-react';
+import { Home, Calendar, Users, DollarSign, Gift, Briefcase, Menu, X, Clock, Settings } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Layout() {
@@ -7,9 +7,9 @@ export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const navigation = [
-  { name: 'Provider Schedule', to: '/provider/schedule', icon: 'Calendar' },
-  { name: 'Location Settings', to: '/location-settings', icon: 'Settings' },
-  { name: 'Appointment Reminders', to: '/appointment-reminders', icon: 'Clock' },
+  { name: 'Provider Schedule', path: '/provider/schedule', icon: Calendar },
+  { name: 'Location Settings', path: '/location-settings', icon: Settings },
+  { name: 'Appointment Reminders', path: '/appointment-reminders', icon: Clock },
     { name: 'Home', path: '/', icon: Home },
     { name: 'My Bookings', path: '/bookings', icon: Clock },
     { name: 'Book', path: '/book/service', icon: Calendar },
