@@ -124,9 +124,9 @@ Multi-location salon management platform with admin dashboard for franchise/chai
 ## 🔔 Notifications & Reminders
 
 - [x] Appointment Reminders
-- [ ] Confirmation Messages
-- [ ] SMS Templates
-- [ ] Email Templates
+- [x] Confirmation Messages
+- [x] SMS Templates
+- [x] Email Templates
 
 ---
 
