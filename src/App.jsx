@@ -7,9 +7,12 @@ import bookings from './pages/bookings';
 import GroupBooking from './pages/GroupBooking';
 import Payouts from './pages/Payouts';
 import StylistDashboard from './pages/StylistDashboard';
+import ProviderSchedule from './pages/ProviderSchedule';
 import LocationSettings from './pages/LocationSettings';
 import AppointmentReminders from './pages/AppointmentReminders';
 import NotificationMessages from './pages/NotificationMessages';
+import ConfirmationMessages from './pages/ConfirmationMessages';
+import Loyalty from './pages/Loyalty';
 
 export default function App() {
   return (
@@ -26,6 +29,8 @@ export default function App() {
         <Route path="location-settings" element={<LocationSettings />} />
         <Route path="appointment-reminders" element={<AppointmentReminders />} />
         <Route path="notification-messages" element={<NotificationMessages />} />
+        <Route path="confirmation-messages" element={<ConfirmationMessages />} />
+        <Route path="loyalty" element={<Loyalty />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
