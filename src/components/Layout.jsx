@@ -14,6 +14,7 @@ export default function Layout() {
     { name: 'My Bookings', path: '/bookings', icon: Clock },
     { name: 'Book', path: '/book/service', icon: Calendar },
     { name: 'Admin', path: '/admin', icon: Users },
+    { name: 'Team Management', path: '/team-management', icon: Users },
     { name: 'Payouts', path: '/payouts', icon: DollarSign },
     { name: 'Stylist', path: '/stylist/dashboard', icon: Briefcase },
   ];
