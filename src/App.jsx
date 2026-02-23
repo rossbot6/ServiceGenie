@@ -13,6 +13,7 @@ import AppointmentReminders from './pages/AppointmentReminders';
 import NotificationMessages from './pages/NotificationMessages';
 import ConfirmationMessages from './pages/ConfirmationMessages';
 import Loyalty from './pages/Loyalty';
+import TeamManagement from './pages/TeamManagement';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="notification-messages" element={<NotificationMessages />} />
         <Route path="confirmation-messages" element={<ConfirmationMessages />} />
         <Route path="loyalty" element={<Loyalty />} />
+        <Route path="team-management" element={<TeamManagement />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
