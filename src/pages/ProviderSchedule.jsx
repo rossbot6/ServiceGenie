@@ -11,7 +11,7 @@ export default function ProviderSchedule() {
         .from('provider_schedules')
         .select('*');
       if (error) {
-        console.error('Error loading schedules') error);
+        console.error('Error loading schedules', error);
         setSchedules([]);
       } else {
         setSchedules(data);
