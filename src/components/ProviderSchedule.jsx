@@ -665,9 +665,6 @@ export default function ProviderSchedule({ provider, onSave, onCancel }) {
             </button>
           </div>
         </div>
-      </div>
-          </div>
-        </div>
       )}
     </div>
   );

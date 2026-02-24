@@ -1,6 +1,6 @@
 {
   "provider-1-status": "busy",
-  "provider-1-status-notes": "Testing API integration",
-  "provider-1-schedule": "{\"monday\":[true,true,true,true,false,false,false,false],\"tuesday\":[true,true,true,true,true,false,false,false],\"wednesday\":[true,true,true,true,true,true,false,false],\"thursday\":[true,true,true,true,true,true,true,false],\"friday\":[true,true,true,true,true,true,true,true],\"saturday\":[false,false,false,false,false,false,false,false],\"sunday\":[false,false,false,false,false,false,false,false]}",
-  "location-1-settings": "{\"bookingPolicy\":{\"leadTime\":24,\"bufferTime\":15},\"businessHours\":{\"monday\":\"9:00 AM - 6:00 PM\"},\"noShowPolicy\":{\"banThreshold\":3}}"
+  "provider-1-status-notes": "Integration test",
+  "provider-1-schedule": "{\"monday\":[true,true,true,true,false,false,false,false],\"tuesday\":[true,true,true,false,false,false,false,false],\"wednesday\":[true,true,false,false,false,false,false,false],\"thursday\":[true,false,false,false,false,false,false,false],\"friday\":[true,true,true,true,true,true,true,true],\"saturday\":[false,false,false,false,false,false,false,false],\"sunday\":[false,false,false,false,false,false,false,false]}",
+  "location-1-settings": "{\"min_lead_hours\":48,\"buffer_minutes\":20,\"business_hours\":{\"monday\":\"9:00 AM - 7:00 PM\",\"tuesday\":\"9:00 AM - 7:00 PM\"}}"
 }
