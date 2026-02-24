@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Communications from './Communications';
+import LocationSettings from '../components/LocationSettings';
 import { 
   Users, Calendar, DollarSign, Settings, 
   TrendingUp, Clock, Check, X, Plus, Search,
@@ -73,6 +74,8 @@ export default function Admin() {
   const [editingAppointment, setEditingAppointment] = useState(null);
   const [locationForm, setLocationForm] = useState({ name: '', address: '', phone: '', timezone: 'America/New_York', status: 'active' });
   const [providerForm, setProviderForm] = useState({ name: '', email: '', phone: '', locationId: 1, specialty: '', status: 'active' });
+  const [showLocationSettings, setShowLocationSettings] = useState(false);
+  const [selectedLocationForSettings, setSelectedLocationForSettings] = useState(null);
   
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -123,6 +126,28 @@ export default function Admin() {
       setLocations([...locations, { ...locationForm, id: Date.now() }]);
     }
     setShowLocationModal(false);
+  };
+
+  // Location Settings Functions
+  const handleOpenLocationSettings = (location) => {
+    setSelectedLocationForSettings(location);
+    setShowLocationSettings(true);
+  };
+
+  const handleSaveLocationSettings = (settingsData) => {
+    // Update the location with the new settings
+    setLocations(locations.map(location => 
+      location.id === selectedLocationForSettings.id 
+        ? { ...location, ...settingsData }
+        : location
+    ));
+    setShowLocationSettings(false);
+    setSelectedLocationForSettings(null);
+  };
+
+  const handleCancelLocationSettings = () => {
+    setShowLocationSettings(false);
+    setSelectedLocationForSettings(null);
   };
   
   // Provider management functions
@@ -484,6 +509,15 @@ export default function Admin() {
                     <Clock size={14} />
                     {location.timezone}
                   </div>
+                </div>
+                <div className="mt-4 pt-3 border-t border-gray-100">
+                  <button
+                    onClick={() => handleOpenLocationSettings(location)}
+                    className="w-full btn btn-outline text-sm flex items-center justify-center gap-2"
+                  >
+                    <Settings size={14} />
+                    Configure Settings
+                  </button>
                 </div>
               </div>
             ))}
@@ -1897,6 +1931,21 @@ export default function Admin() {
       
       {/* Communications Tab */}
       {activeTab === 'communications' && <Communications />}
+      
+      {/* Location Settings Modal */}
+      {showLocationSettings && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <LocationSettings
+                location={selectedLocationForSettings}
+                onSave={handleSaveLocationSettings}
+                onCancel={handleCancelLocationSettings}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
