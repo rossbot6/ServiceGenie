@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Calendar, Clock, DollarSign, Users, ChevronLeft, ChevronRight, Settings, User, TrendingUp } from 'lucide-react';
+import { Calendar, Clock, DollarSign, Users, ChevronLeft, ChevronRight, Settings, User, TrendingUp, UserCheck } from 'lucide-react';
 import ProviderSchedule from '../components/ProviderSchedule';
+import ProviderStatus from '../components/ProviderStatus';
+import BlockedTimeManager from '../components/BlockedTimeManager';
 
 export default function StylistDashboard() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -83,6 +85,17 @@ export default function StylistDashboard() {
           >
             <Settings className="w-4 h-4 inline mr-2" />
             Schedule Settings
+          </button>
+          <button
+            onClick={() => setActiveTab('status')}
+            className={`pb-2 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'status'
+                ? 'border-primary-500 text-primary-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            <UserCheck className="w-4 h-4 inline mr-2" />
+            Status
           </button>
           <button
             onClick={() => setActiveTab('profile')}
@@ -200,6 +213,16 @@ export default function StylistDashboard() {
             </span>
           </div>
         </div>
+        
+        {/* Blocked Time Management */}
+        <div className="mt-6">
+          <BlockedTimeManager 
+            providerId={currentProvider.id}
+            onSave={(blockedTimes) => {
+              console.log('Blocked times updated:', blockedTimes);
+            }}
+          />
+        </div>
       </div>
         </div>
       )}
@@ -208,13 +231,17 @@ export default function StylistDashboard() {
       {activeTab === 'settings' && (
         <ProviderSchedule
           provider={currentProvider}
-          onSave={(scheduleData) => {
-            console.log('Saving schedule:', scheduleData);
-            // In a real app, this would save to the database
+          onSave={async (scheduleData) => {
+            console.log('Schedule saved via API:', scheduleData);
             setActiveTab('schedule');
           }}
           onCancel={() => setActiveTab('schedule')}
         />
+      )}
+
+      {/* Status Tab */}
+      {activeTab === 'status' && (
+        <ProviderStatus />
       )}
 
       {/* Profile Tab */}

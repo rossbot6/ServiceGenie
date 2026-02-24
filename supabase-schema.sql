@@ -311,7 +311,7 @@ ON CONFLICT (template_type) DO NOTHING;
 -- SETTINGS TABLE
 -- ============================================
 CREATE TABLE IF NOT EXISTS settings (
-  id UUID PRIMARY KEY DEFAULT 1,
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   business_name TEXT DEFAULT 'ServiceGenie Salon',
   default_language TEXT DEFAULT 'en',
   supported_languages TEXT[] DEFAULT ARRAY['en', 'es', 'fr'],

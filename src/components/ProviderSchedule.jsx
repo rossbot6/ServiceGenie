@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { 
   Clock, Calendar, Plus, X, ChevronLeft, ChevronRight,
   User, Settings, Trash2, Edit, Check, X as XIcon,
-  AlertCircle, Coffee, Sun, Moon, Timer, Zap
+  AlertCircle, Coffee, Sun, Moon, Timer, Zap, Save
 } from 'lucide-react';
+
+const API_BASE = 'http://localhost:3001';
 
 const DAYS_OF_WEEK = [
   'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
@@ -30,6 +32,95 @@ export default function ProviderSchedule({ provider, onSave, onCancel }) {
   
   const [blockedTimes, setBlockedTimes] = useState([]);
   const [specialDays, setSpecialDays] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+  const providerId = provider?.id || 1;
+
+  // API functions for data persistence
+  useEffect(() => {
+    loadScheduleData();
+  }, [providerId]);
+
+  async function loadScheduleData() {
+    setIsLoading(true);
+    try {
+      // Load schedule
+      const scheduleResponse = await fetch(`${API_BASE}/api/providers/${providerId}/schedule`);
+      if (scheduleResponse.ok) {
+        const scheduleData = await scheduleResponse.json();
+        setAvailability(prev => ({ ...prev, ...scheduleData }));
+      }
+
+      // Load blocked times
+      const blockedResponse = await fetch(`${API_BASE}/api/providers/${providerId}/blocked-times`);
+      if (blockedResponse.ok) {
+        const blockedData = await blockedResponse.json();
+        setBlockedTimes(blockedData);
+      }
+
+      setHasUnsavedChanges(false);
+    } catch (error) {
+      console.error('Failed to load schedule data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function saveScheduleData() {
+    setIsLoading(true);
+    try {
+      // Save schedule
+      const scheduleResponse = await fetch(`${API_BASE}/api/providers/${providerId}/schedule`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(availability)
+      });
+
+      // Save blocked times
+      const blockedResponse = await fetch(`${API_BASE}/api/providers/${providerId}/blocked-times`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(blockedTimes)
+      });
+
+      if (scheduleResponse.ok && blockedResponse.ok) {
+        setHasUnsavedChanges(false);
+        setLastSaved(new Date());
+        onSave && onSave({ availability, blockedTimes });
+        console.log('Schedule saved successfully');
+        return true;
+      } else {
+        console.error('Failed to save schedule');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error saving schedule:', error);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // Update availability and mark as changed
+  const updateAvailability = (day, slotIndex, value) => {
+    setAvailability(prev => ({
+      ...prev,
+      [day]: prev[day].map((isAvailable, index) => 
+        index === slotIndex ? value : isAvailable
+      )
+    }));
+    setHasUnsavedChanges(true);
+  };
+
+  // Bulk update availability
+  const updateBulkAvailability = (day, value) => {
+    setAvailability(prev => ({
+      ...prev,
+      [day]: prev[day].map(() => value)
+    }));
+    setHasUnsavedChanges(true);
+  };
   const [showDayDetail, setShowDayDetail] = useState('');
   const [newBlockTime, setNewBlockTime] = useState({
     start_date: '',
@@ -529,6 +620,52 @@ export default function ProviderSchedule({ provider, onSave, onCancel }) {
                 Add Block
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Button */}
+      <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {hasUnsavedChanges && (
+              <div className="flex items-center gap-2 text-orange-600">
+                <AlertCircle size={16} />
+                <span className="text-sm font-medium">Unsaved changes</span>
+              </div>
+            )}
+            {lastSaved && (
+              <div className="text-sm text-gray-500">
+                Last saved: {lastSaved.toLocaleTimeString()}
+              </div>
+            )}
+          </div>
+          
+          <div className="flex gap-3">
+            <button
+              onClick={onCancel}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={async () => {
+                const success = await saveScheduleData();
+                if (success && onSave) {
+                  onSave({ availability, blockedTimes });
+                  onCancel();
+                }
+              }}
+              disabled={isLoading}
+              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Save size={16} />
+              {isLoading ? 'Saving...' : 'Save Schedule'}
+            </button>
+          </div>
+        </div>
+      </div>
           </div>
         </div>
       )}

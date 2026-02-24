@@ -5,7 +5,13 @@ import {
   Shield, Bell, Zap, Target
 } from 'lucide-react';
 
+const API_BASE = 'http://localhost:3001';
+
 export default function LocationSettings({ location, onSave, onCancel }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+  const locationId = location?.id || 1;
+  
   const [formData, setFormData] = useState({
     // Basic Settings
     min_lead_hours: location?.min_lead_hours || 24,
@@ -471,6 +477,54 @@ export default function LocationSettings({ location, onSave, onCancel }) {
           </div>
         </div>
       </div>
+    </div>
+
+    {/* Save/Cancel Actions */}
+    <div className="mt-8 pt-6 border-t border-gray-200">
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={onCancel}
+          className="px-6 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={async () => {
+            setIsLoading(true);
+            try {
+              // Save to API
+              const response = await fetch(`${API_BASE}/api/locations/${locationId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+              });
+              
+              if (response.ok) {
+                setLastSaved(new Date());
+                onSave && onSave(formData);
+                console.log('Location settings saved successfully');
+              } else {
+                console.error('Failed to save location settings');
+              }
+            } catch (error) {
+              console.error('Error saving location settings:', error);
+            } finally {
+              setIsLoading(false);
+            }
+          }}
+          disabled={isLoading}
+          className="inline-flex items-center gap-2 px-6 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+        >
+          <Save size={16} />
+          {isLoading ? 'Saving...' : 'Save Settings'}
+        </button>
+      </div>
+      
+      {lastSaved && (
+        <p className="text-xs text-gray-500 mt-2 text-right">
+          Last saved: {lastSaved.toLocaleTimeString()}
+        </p>
+      )}
     </div>
   );
 }
