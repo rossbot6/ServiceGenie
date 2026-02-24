@@ -376,6 +376,49 @@ INSERT INTO integrations (provider, name) VALUES
 ON CONFLICT (provider) DO NOTHING;
 
 -- ============================================
+-- COMMUNICATIONS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS communications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  customer_id UUID REFERENCES customers(id) ON DELETE CASCADE,
+  customer_email TEXT NOT NULL,
+  customer_phone TEXT NOT NULL,
+  type TEXT NOT NULL CHECK (type IN ('sms', 'email', 'both')),
+  category TEXT NOT NULL DEFAULT 'general' CHECK (category IN ('confirmation', 'reminder', 'cancellation', 'marketing', 'follow_up', 'birthday', 'general')),
+  subject TEXT,
+  content TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'delivered', 'failed', 'bounced')),
+  sent_at TIMESTAMPTZ,
+  delivered_at TIMESTAMPTZ,
+  error_message TEXT,
+  template_id UUID REFERENCES notification_templates(id),
+  campaign_id UUID REFERENCES campaigns(id),
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ============================================
+-- MESSAGE LOGS TABLE (for detailed tracking)
+-- ============================================
+CREATE TABLE IF NOT EXISTS message_logs (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  communication_id UUID REFERENCES communications(id) ON DELETE CASCADE,
+  event_type TEXT NOT NULL CHECK (event_type IN ('sent', 'delivered', 'failed', 'bounced', 'clicked', 'replied')),
+  event_data JSONB DEFAULT '{}',
+  timestamp TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_communications_customer_id ON communications(customer_id);
+CREATE INDEX IF NOT EXISTS idx_communications_type ON communications(type);
+CREATE INDEX IF NOT EXISTS idx_communications_status ON communications(status);
+CREATE INDEX IF NOT EXISTS idx_communications_category ON communications(category);
+CREATE INDEX IF NOT EXISTS idx_communications_created_at ON communications(created_at);
+CREATE INDEX IF NOT EXISTS idx_message_logs_communication_id ON message_logs(communication_id);
+CREATE INDEX IF NOT EXISTS idx_message_logs_event_type ON message_logs(event_type);
+
+-- ============================================
 -- ROW LEVEL SECURITY (RLS)
 -- ============================================
 DO $$
@@ -457,6 +500,14 @@ BEGIN
   
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'integrations') THEN
     CREATE POLICY "Allow authenticated access" ON integrations FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'communications') THEN
+    CREATE POLICY "Allow authenticated access" ON communications FOR ALL TO authenticated USING (true);
+  END IF;
+  
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Allow authenticated access' AND tablename = 'message_logs') THEN
+    CREATE POLICY "Allow authenticated access" ON message_logs FOR ALL TO authenticated USING (true);
   END IF;
 END $$;
 
@@ -726,6 +777,29 @@ INSERT INTO integrations (provider, name, is_connected, config) VALUES
   ('quickbooks', 'QuickBooks Online', false, '{"last_sync": null}'),
   ('mailchimp', 'Mailchimp', true, '{"list_id": "abc123", "last_sync": "2026-02-10"}'),
   ('klaviyo', 'Klaviyo', false, '{"api_key": "hidden"}')
+ON CONFLICT DO NOTHING;
+
+-- Sample Communications
+INSERT INTO communications (customer_id, customer_email, customer_phone, type, category, subject, content, status, sent_at, delivered_at, metadata) VALUES
+  ((SELECT id FROM customers WHERE email = 'john.smith@email.com' LIMIT 1), 'john.smith@email.com', '(555) 300-0001', 'email', 'confirmation', 'Appointment Confirmed - Full Balayage', 'Dear John,\n\nYour appointment has been confirmed:\n\n📅 Date: February 23, 2026\n⏰ Time: 10:00 AM\n📍 Location: Downtown Salon\n💇 Service: Full Balayage\n\nThank you for choosing ServiceGenie!', 'delivered', CURRENT_TIMESTAMP - INTERVAL '2 hours', CURRENT_TIMESTAMP - INTERVAL '2 hours' + INTERVAL '30 seconds', '{"appointment_id": "apt-001"}'),
+  ((SELECT id FROM customers WHERE email = 'sarah.j@email.com' LIMIT 1), 'sarah.j@email.com', '(555) 300-0002', 'sms', 'reminder', NULL, 'Hi Sarah! Reminder: You have an appointment at Uptown Studio today at 11:00 AM. Reply CANCEL to cancel.', 'sent', CURRENT_TIMESTAMP - INTERVAL '1 hour', NULL, '{"appointment_id": "apt-002"}'),
+  ((SELECT id FROM customers WHERE email = 'm.davis@email.com' LIMIT 1), 'm.davis@email.com', '(555) 300-0003', 'both', 'marketing', 'Spring Color Event - 20% Off!', 'Get 20% off all color services this spring! Book by March 31st.', 'failed', CURRENT_TIMESTAMP - INTERVAL '3 hours', NULL, '{"error": "bounced_email", "bounced_email_address": "m.davis@email.com", "campaign_id": "spring-color"}'),
+  ((SELECT id FROM customers WHERE email = 'emily.r@email.com' LIMIT 1), 'emily.r@email.com', '(555) 300-0004', 'email', 'follow_up', 'How was your service?', 'Dear Emily,\n\nThank you for visiting us today! We would love to hear about your experience with Michael Chen.\n\nPlease take a moment to leave a review: [Review Link]\n\nBest regards,\nServiceGenie Team', 'delivered', CURRENT_TIMESTAMP - INTERVAL '1 day', CURRENT_TIMESTAMP - INTERVAL '1 day' + INTERVAL '10 seconds', '{"appointment_id": "apt-003"}'),
+  ((SELECT id FROM customers WHERE email = 'amanda.m@email.com' LIMIT 1), 'amanda.m@email.com', '(555) 300-0008', 'sms', 'birthday', NULL, 'Happy Birthday Amanda! 🎉 Enjoy 25% off any service this month as our Platinum member. Book now!', 'delivered', CURRENT_TIMESTAMP - INTERVAL '2 days', CURRENT_TIMESTAMP - INTERVAL '2 days' + INTERVAL '5 seconds', '{"birthday_bonus": true, "loyalty_tier": "platinum"}'),
+  ((SELECT id FROM customers WHERE email = 'jess.w@email.com' LIMIT 1), 'jess.w@email.com', '(555) 300-0006', 'email', 'cancellation', 'Appointment Cancelled', 'Dear Jessica,\n\nYour appointment on February 25, 2026 at 3:00 PM at Downtown Salon has been cancelled.\n\nIf you did not request this cancellation, please contact us immediately at (212) 555-0100.', 'delivered', CURRENT_TIMESTAMP - INTERVAL '4 hours', CURRENT_TIMESTAMP - INTERVAL '4 hours' + INTERVAL '15 seconds', '{"appointment_id": "apt-004", "cancellation_reason": "client_request"}')
+ON CONFLICT DO NOTHING;
+
+-- Sample Message Logs
+INSERT INTO message_logs (communication_id, event_type, event_data, timestamp) VALUES
+  ((SELECT id FROM communications WHERE customer_email = 'john.smith@email.com' AND type = 'email' LIMIT 1), 'sent', '{"provider": "sendgrid", "message_id": "sendgrid_001"}', CURRENT_TIMESTAMP - INTERVAL '2 hours'),
+  ((SELECT id FROM communications WHERE customer_email = 'john.smith@email.com' AND type = 'email' LIMIT 1), 'delivered', '{"delivered_at": "2026-02-23T19:30:30Z"}', CURRENT_TIMESTAMP - INTERVAL '2 hours' + INTERVAL '30 seconds'),
+  ((SELECT id FROM communications WHERE customer_email = 'sarah.j@email.com' AND category = 'reminder' LIMIT 1), 'sent', '{"provider": "twilio", "message_id": "twilio_001", "to": "+15553000002"}', CURRENT_TIMESTAMP - INTERVAL '1 hour'),
+  ((SELECT id FROM communications WHERE customer_email = 'm.davis@email.com' AND category = 'marketing' LIMIT 1), 'sent', '{"provider": "sendgrid", "message_id": "sendgrid_003"}', CURRENT_TIMESTAMP - INTERVAL '3 hours'),
+  ((SELECT id FROM communications WHERE customer_email = 'm.davis@email.com' AND category = 'marketing' LIMIT 1), 'bounced', '{"bounce_type": "hard", "reason": "User inbox full"}', CURRENT_TIMESTAMP - INTERVAL '3 hours' + INTERVAL '5 minutes'),
+  ((SELECT id FROM communications WHERE customer_email = 'emily.r@email.com' AND category = 'follow_up' LIMIT 1), 'sent', '{"provider": "sendgrid", "message_id": "sendgrid_002"}', CURRENT_TIMESTAMP - INTERVAL '1 day'),
+  ((SELECT id FROM communications WHERE customer_email = 'emily.r@email.com' AND category = 'follow_up' LIMIT 1), 'delivered', '{"delivered_at": "2026-02-22T16:00:10Z"}', CURRENT_TIMESTAMP - INTERVAL '1 day' + INTERVAL '10 seconds'),
+  ((SELECT id FROM communications WHERE customer_email = 'amanda.m@email.com' AND category = 'birthday' LIMIT 1), 'sent', '{"provider": "twilio", "message_id": "twilio_002", "to": "+15553000008"}', CURRENT_TIMESTAMP - INTERVAL '2 days'),
+  ((SELECT id FROM communications WHERE customer_email = 'amanda.m@email.com' AND category = 'birthday' LIMIT 1), 'delivered', '{"delivered_at": "2026-02-21T12:00:05Z"}', CURRENT_TIMESTAMP - INTERVAL '2 days' + INTERVAL '5 seconds')
 ON CONFLICT DO NOTHING;
 
 -- Done!

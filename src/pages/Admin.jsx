@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Communications from './Communications';
 import { 
   Users, Calendar, DollarSign, Settings, 
   TrendingUp, Clock, Check, X, Plus, Search,
@@ -1893,6 +1894,9 @@ export default function Admin() {
           </div>
         </div>
       )}
+      
+      {/* Communications Tab */}
+      {activeTab === 'communications' && <Communications />}
     </div>
   );
 }
