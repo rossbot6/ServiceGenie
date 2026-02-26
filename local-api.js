@@ -8,10 +8,10 @@ const port = 3001;
 
 // PostgreSQL connection
 const pool = new Pool({
-  user: 'postgres',
+  user: 'supabase_admin',
   host: 'localhost',
-  database: 'servicegenie',
-  password: 'postgres',
+  database: 'postgres',
+  password: '64a500a43a76c5570bc38d8813a4b89b',
   port: 5432,
 });
 

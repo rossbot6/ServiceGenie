@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Home, Calendar, Users, DollarSign, Gift, Briefcase, Menu, X, Clock } from 'lucide-react';
 import { useState } from 'react';
+import ThemeToggle from './ThemeToggle';
 
 export default function Layout() {
   const location = useLocation();
@@ -16,9 +17,9 @@ export default function Layout() {
   ];
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-50">
+      <header className="bg-white shadow-sm sticky top-0 z-50 dark:bg-gray-800 dark:border-b dark:border-gray-700 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -26,11 +27,11 @@ export default function Layout() {
               <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
-              <span className="font-semibold text-xl text-gray-900">ServiceGenie</span>
+              <span className="font-semibold text-xl text-gray-900 dark:text-white">ServiceGenie</span>
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-1">
+            <div className="hidden md:flex items-center gap-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path || 
@@ -41,8 +42,8 @@ export default function Layout() {
                     to={item.path}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
+                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
                     }`}
                   >
                     <Icon size={18} />
@@ -50,11 +51,14 @@ export default function Layout() {
                   </Link>
                 );
               })}
-            </nav>
+              
+              {/* Dark Mode Toggle */}
+              <ThemeToggle />
+            </div>
             
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -64,7 +68,7 @@ export default function Layout() {
         
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-100">
+          <div className="md:hidden border-t border-gray-100 dark:border-gray-700">
             <nav className="px-4 py-3 space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -77,8 +81,8 @@ export default function Layout() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium ${
                       isActive
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300'
+                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'
                     }`}
                   >
                     <Icon size={20} />
@@ -86,6 +90,12 @@ export default function Layout() {
                   </Link>
                 );
               })}
+              
+              {/* Mobile Dark Mode Toggle */}
+              <div className="flex items-center justify-between px-3 py-3">
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Theme</span>
+                <ThemeToggle />
+              </div>
             </nav>
           </div>
         )}
@@ -97,8 +107,8 @@ export default function Layout() {
       </main>
       
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-100 py-4 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
+      <footer className="bg-white border-t border-gray-100 py-4 mt-auto dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400">
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm">
           © 2026 ServiceGenie. Salon Management Made Simple.
         </div>
       </footer>

@@ -4,11 +4,11 @@ import { Pool } from 'pg';
 console.log('🐘 Testing Direct PostgreSQL Connection...');
 
 const pool = new Pool({
-  user: 'postgres',
+  user: 'supabase_admin',
   host: 'localhost',
   database: 'postgres',
-  password: 'postgres',
-  port: 54322, // Using the new port
+  password: '64a500a43a76c5570bc38d8813a4b89b',
+  port: 5432, // Using the correct Supabase DB port
 });
 
 async function testPostgres() {

@@ -1,1 +1,1 @@
-ServiceGenie App URL: http://localhost:5174
+ServiceGenie App URL: http://localhost:8081

@@ -802,4 +802,40 @@ INSERT INTO message_logs (communication_id, event_type, event_data, timestamp) V
   ((SELECT id FROM communications WHERE customer_email = 'amanda.m@email.com' AND category = 'birthday' LIMIT 1), 'delivered', '{"delivered_at": "2026-02-21T12:00:05Z"}', CURRENT_TIMESTAMP - INTERVAL '2 days' + INTERVAL '5 seconds')
 ON CONFLICT DO NOTHING;
 
+-- ============================================
+-- BOOKING POLICIES TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS booking_policies (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  location_id UUID NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
+  policy_type TEXT NOT NULL, -- 'cancellation', 'deposit', 'no_show', 'reschedule', 'late_policy', 'booking_window', 'emergency'
+  policy_config JSONB NOT NULL, -- Policy configuration as JSON
+  is_enabled BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(location_id, policy_type)
+);
+
+CREATE INDEX IF NOT EXISTS idx_booking_policies_location ON booking_policies(location_id);
+CREATE INDEX IF NOT EXISTS idx_booking_policies_type ON booking_policies(policy_type);
+
+-- ============================================
+-- LOCATION BOOKING SETTINGS TABLE  
+-- ============================================
+CREATE TABLE IF NOT EXISTS location_booking_settings (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  location_id UUID NOT NULL REFERENCES locations(id) ON DELETE CASCADE,
+  max_advance_days INT DEFAULT 60,
+  min_advance_days INT DEFAULT 0,
+  require_phone BOOLEAN DEFAULT true,
+  require_email BOOLEAN DEFAULT true,
+  max_daily_appointments INT DEFAULT 50,
+  buffer_time_minutes INT DEFAULT 15,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(location_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_location_booking_settings_location ON location_booking_settings(location_id);
+
 -- Done!

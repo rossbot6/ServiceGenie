@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Communications from './Communications';
 import LocationSettings from '../components/LocationSettings';
+import BookingPolicies from '../components/BookingPolicies';
 import { 
   Users, Calendar, DollarSign, Settings, 
   TrendingUp, Clock, Check, X, Plus, Search,
@@ -8,8 +9,9 @@ import {
   MapPin, Edit, Trash2, Building2, Phone,
   Star, Mail as MailIcon, Award, CalendarCheck,
   User, Tag, Heart, MessageCircle, Scissors,
-  Timer, Package, Download
+  Timer, Package, Download, Shield, Bell
 } from 'lucide-react';
+import NotificationSystem from '../components/NotificationSystem';
 
 // Sample locations data
 const initialLocations = [
@@ -84,9 +86,11 @@ export default function Admin() {
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'providers', label: 'Providers', icon: Users },
     { id: 'services', label: 'Services', icon: Plus },
+    { id: 'booking-policies', label: 'Booking Policies', icon: Shield },
     { id: 'payments', label: 'Payments', icon: DollarSign },
     { id: 'loyalty', label: 'Loyalty', icon: TrendingUp },
     { id: 'communications', label: 'Communications', icon: MessageSquare },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
   
@@ -1738,6 +1742,56 @@ export default function Admin() {
         </div>
       )}
       
+      {/* Booking Policies Tab */}
+      {activeTab === 'booking-policies' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Booking Policies</h2>
+              <p className="text-sm text-gray-500">Configure cancellation rules, deposits, and booking policies</p>
+            </div>
+          </div>
+          
+          {locations.length === 0 ? (
+            <div className="card text-center py-12">
+              <Shield size={48} className="mx-auto text-gray-300 mb-3" />
+              <p className="text-gray-500">Add a location first to configure booking policies</p>
+              <button 
+                onClick={handleAddLocation}
+                className="btn-primary mt-4"
+              >
+                Add Location
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {locations.map(location => (
+                <div key={location.id} className="card">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-indigo-50 rounded-lg">
+                        <Building2 size={20} className="text-indigo-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-900">{location.name}</h3>
+                        <p className="text-sm text-gray-500">{location.address}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <BookingPolicies
+                    locationId={location.id}
+                    onSave={(policies) => {
+                      // Save policies to the location's settings
+                      handleSaveLocationSettings({ bookingPolicies: policies });
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      
       {/* Payments Tab */}
       {activeTab === 'payments' && (
         <div className="space-y-6">
@@ -1931,6 +1985,18 @@ export default function Admin() {
       
       {/* Communications Tab */}
       {activeTab === 'communications' && <Communications />}
+      
+      {/* Notifications Tab */}
+      {activeTab === 'notifications' && (
+        <div className="space-y-6">
+          <NotificationSystem 
+            customerId={null}
+            providerId={null}
+            locationId={null}
+            className="w-full"
+          />
+        </div>
+      )}
       
       {/* Location Settings Modal */}
       {showLocationSettings && (
