@@ -5,6 +5,7 @@ import BookingPolicies from '../components/BookingPolicies';
 import DashboardWidgets from '../components/DashboardWidgets';
 import TeamManagement from '../components/TeamManagement';
 import TeamLeadAssignment from '../components/TeamLeadAssignment';
+import CrossTrainingVisibility from '../components/CrossTrainingVisibility';
 import { 
   Users, Calendar, DollarSign, Settings, 
   TrendingUp, Clock, Check, X, Plus, Search,
@@ -13,7 +14,7 @@ import {
   Star, Mail as MailIcon, Award, CalendarCheck,
   User, Tag, Heart, MessageCircle, Scissors,
   Timer, Package, Download, Shield, Bell,
-  Layout, UserGroup, Crown
+  Layout, UserGroup, Crown, Eye
 } from 'lucide-react';
 import NotificationSystem from '../components/NotificationSystem';
 
@@ -88,6 +89,7 @@ export default function Admin() {
     { id: 'dashboard-widgets', label: 'Dashboard Widgets', icon: Layout },
     { id: 'team-management', label: 'Team Management', icon: UserGroup },
     { id: 'team-lead', label: 'Team Lead Assignment', icon: Crown },
+    { id: 'cross-training', label: 'Cross-Training', icon: Eye },
     { id: 'locations', label: 'Locations', icon: Building2 },
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'customers', label: 'Customers', icon: Users },
@@ -471,6 +473,11 @@ export default function Admin() {
       {/* Team Lead Assignment Tab */}
       {activeTab === 'team-lead' && (
         <TeamLeadAssignment />
+      )}
+      
+      {/* Cross-Training Visibility Tab */}
+      {activeTab === 'cross-training' && (
+        <CrossTrainingVisibility />
       )}
       
       {/* Locations Tab */}
