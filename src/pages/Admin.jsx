@@ -8,6 +8,7 @@ import TeamLeadAssignment from '../components/TeamLeadAssignment';
 import CrossTrainingVisibility from '../components/CrossTrainingVisibility';
 import InAppPayments from '../components/InAppPayments';
 import CashTracking from '../components/CashTracking';
+import RefundManagement from '../components/RefundManagement';
 import { 
   Users, Calendar, DollarSign, Settings, 
   TrendingUp, Clock, Check, X, Plus, Search,
@@ -16,7 +17,7 @@ import {
   Star, Mail as MailIcon, Award, CalendarCheck,
   User, Tag, Heart, MessageCircle, Scissors,
   Timer, Package, Download, Shield, Bell,
-  Layout, UserGroup, Crown, Eye, ShoppingCart, DollarSign as CashIcon
+  Layout, UserGroup, Crown, Eye, ShoppingCart, DollarSign as CashIcon, RotateCcw
 } from 'lucide-react';
 import NotificationSystem from '../components/NotificationSystem';
 
@@ -94,6 +95,7 @@ export default function Admin() {
     { id: 'cross-training', label: 'Cross-Training', icon: Eye },
     { id: 'payments', label: 'In-App Payments', icon: ShoppingCart },
     { id: 'cash-tracking', label: 'Cash Tracking', icon: CashIcon },
+    { id: 'refunds', label: 'Refund Management', icon: RotateCcw },
     { id: 'locations', label: 'Locations', icon: Building2 },
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'customers', label: 'Customers', icon: Users },
@@ -492,6 +494,11 @@ export default function Admin() {
       {/* Cash Tracking Tab */}
       {activeTab === 'cash-tracking' && (
         <CashTracking />
+      )}
+      
+      {/* Refund Management Tab */}
+      {activeTab === 'refunds' && (
+        <RefundManagement />
       )}
       
       {/* Locations Tab */}
