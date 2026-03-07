@@ -4,6 +4,7 @@ import LocationSettings from '../components/LocationSettings';
 import BookingPolicies from '../components/BookingPolicies';
 import DashboardWidgets from '../components/DashboardWidgets';
 import TeamManagement from '../components/TeamManagement';
+import TeamLeadAssignment from '../components/TeamLeadAssignment';
 import { 
   Users, Calendar, DollarSign, Settings, 
   TrendingUp, Clock, Check, X, Plus, Search,
@@ -12,7 +13,7 @@ import {
   Star, Mail as MailIcon, Award, CalendarCheck,
   User, Tag, Heart, MessageCircle, Scissors,
   Timer, Package, Download, Shield, Bell,
-  Layout, UserGroup
+  Layout, UserGroup, Crown
 } from 'lucide-react';
 import NotificationSystem from '../components/NotificationSystem';
 
@@ -86,6 +87,7 @@ export default function Admin() {
     { id: 'overview', label: 'Overview', icon: BarChart3 },
     { id: 'dashboard-widgets', label: 'Dashboard Widgets', icon: Layout },
     { id: 'team-management', label: 'Team Management', icon: UserGroup },
+    { id: 'team-lead', label: 'Team Lead Assignment', icon: Crown },
     { id: 'locations', label: 'Locations', icon: Building2 },
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'customers', label: 'Customers', icon: Users },
@@ -464,6 +466,11 @@ export default function Admin() {
       {/* Team Management Tab */}
       {activeTab === 'team-management' && (
         <TeamManagement />
+      )}
+      
+      {/* Team Lead Assignment Tab */}
+      {activeTab === 'team-lead' && (
+        <TeamLeadAssignment />
       )}
       
       {/* Locations Tab */}
