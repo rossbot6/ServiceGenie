@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Communications from './Communications';
 import LocationSettings from '../components/LocationSettings';
 import BookingPolicies from '../components/BookingPolicies';
+import DashboardWidgets from '../components/DashboardWidgets';
 import { 
   Users, Calendar, DollarSign, Settings, 
   TrendingUp, Clock, Check, X, Plus, Search,
@@ -9,7 +10,8 @@ import {
   MapPin, Edit, Trash2, Building2, Phone,
   Star, Mail as MailIcon, Award, CalendarCheck,
   User, Tag, Heart, MessageCircle, Scissors,
-  Timer, Package, Download, Shield, Bell
+  Timer, Package, Download, Shield, Bell,
+  Layout
 } from 'lucide-react';
 import NotificationSystem from '../components/NotificationSystem';
 
@@ -81,6 +83,7 @@ export default function Admin() {
   
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'dashboard-widgets', label: 'Dashboard Widgets', icon: Layout },
     { id: 'locations', label: 'Locations', icon: Building2 },
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'customers', label: 'Customers', icon: Users },
@@ -449,6 +452,11 @@ export default function Admin() {
             </div>
           </div>
         </div>
+      )}
+      
+      {/* Dashboard Widgets Tab */}
+      {activeTab === 'dashboard-widgets' && (
+        <DashboardWidgets />
       )}
       
       {/* Locations Tab */}
