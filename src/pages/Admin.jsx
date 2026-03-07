@@ -9,6 +9,7 @@ import CrossTrainingVisibility from '../components/CrossTrainingVisibility';
 import InAppPayments from '../components/InAppPayments';
 import CashTracking from '../components/CashTracking';
 import RefundManagement from '../components/RefundManagement';
+import SalaryCommission from '../components/SalaryCommission';
 import { 
   Users, Calendar, DollarSign, Settings, 
   TrendingUp, Clock, Check, X, Plus, Search,
@@ -17,7 +18,7 @@ import {
   Star, Mail as MailIcon, Award, CalendarCheck,
   User, Tag, Heart, MessageCircle, Scissors,
   Timer, Package, Download, Shield, Bell,
-  Layout, UserGroup, Crown, Eye, ShoppingCart, DollarSign as CashIcon, RotateCcw
+  Layout, UserGroup, Crown, Eye, ShoppingCart, DollarSign as CashIcon, RotateCcw, Calculator
 } from 'lucide-react';
 import NotificationSystem from '../components/NotificationSystem';
 
@@ -96,6 +97,7 @@ export default function Admin() {
     { id: 'payments', label: 'In-App Payments', icon: ShoppingCart },
     { id: 'cash-tracking', label: 'Cash Tracking', icon: CashIcon },
     { id: 'refunds', label: 'Refund Management', icon: RotateCcw },
+    { id: 'salary-commission', label: 'Salary + Commission', icon: Calculator },
     { id: 'locations', label: 'Locations', icon: Building2 },
     { id: 'appointments', label: 'Appointments', icon: Calendar },
     { id: 'customers', label: 'Customers', icon: Users },
@@ -499,6 +501,11 @@ export default function Admin() {
       {/* Refund Management Tab */}
       {activeTab === 'refunds' && (
         <RefundManagement />
+      )}
+      
+      {/* Salary + Commission Tab */}
+      {activeTab === 'salary-commission' && (
+        <SalaryCommission />
       )}
       
       {/* Locations Tab */}
