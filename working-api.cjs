@@ -855,6 +855,394 @@ const server = http.createServer(async (req, res) => {
       }
     }
     
+    // ================================ 
+    // ENHANCED APPOINTMENT MANAGEMENT
+    // ================================
+    
+    // Check appointment conflicts
+    else if (pathname === '/api/appointments/check-conflicts' && req.method === 'POST') {
+      try {
+        const body = await new Promise((resolve, reject) => {
+          let data = '';
+          req.on('data', chunk => data += chunk);
+          req.on('end', () => resolve(JSON.parse(data)));
+          req.on('error', reject);
+        });
+        
+        const { provider_id, date, start_time, end_time } = body;
+        if (!provider_id || !date || !start_time || !end_time) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'provider_id, date, start_time, and end_time required' }));
+          return;
+        }
+        
+        // Load existing appointments for conflict checking
+        const appointments = loadLocalData('appointments') || [];
+        const conflicts = appointments.filter(apt => {
+          return apt.provider_id === provider_id && 
+                 apt.date === date &&
+                 timesOverlap(start_time, end_time, apt.start_time, apt.end_time);
+        });
+        
+        // Check provider schedule availability
+        const providerSchedule = loadLocalData(`provider-${provider_id}-schedule`) || {};
+        const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+        const daySchedule = providerSchedule[dayOfWeek] || [];
+        const slotAvailable = daySchedule.some(slot => 
+          isTimeWithinSlot(start_time, end_time, slot.time, slot.duration)
+        );
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          has_conflicts: conflicts.length > 0,
+          conflict_count: conflicts.length,
+          conflicts: conflicts.map(apt => ({
+            id: apt.id,
+            customer: apt.customer,
+            start_time: apt.start_time,
+            end_time: apt.end_time
+          })),
+          slot_available: slotAvailable,
+          can_schedule: conflicts.length === 0 && slotAvailable
+        }));
+        
+      } catch (error) {
+        console.error('❌ Error checking appointment conflicts:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: error.message }));
+      }
+    }
+    
+    // Auto-schedule appointments with smart algorithm
+    else if (pathname === '/api/appointments/auto-schedule' && req.method === 'POST') {
+      try {
+        const body = await new Promise((resolve, reject) => {
+          let data = '';
+          req.on('data', chunk => data += chunk);
+          req.on('end', () => resolve(JSON.parse(data)));
+          req.on('error', reject);
+        });
+        
+        const { customer_id, provider_id, service_id, preferred_date, preferred_time, duration } = body;
+        if (!customer_id || !provider_id || !service_id || !duration) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'customer_id, provider_id, service_id, and duration required' }));
+          return;
+        }
+        
+        // Find available time slots
+        const availableSlots = await findAvailableSlots(provider_id, preferred_date, duration);
+        
+        if (availableSlots.length === 0) {
+          // Add to waitlist if no slots available
+          const waitlistEntry = {
+            id: generateId(),
+            customer_id,
+            provider_id,
+            service_id,
+            requested_date: preferred_date,
+            requested_time: preferred_time,
+            duration,
+            priority: 'normal',
+            created_at: new Date().toISOString(),
+            status: 'waiting'
+          };
+          
+          const waitlist = loadLocalData('waitlist') || [];
+          waitlist.push(waitlistEntry);
+          await saveLocalData('waitlist', waitlist);
+          
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({
+            scheduled: false,
+            added_to_waitlist: true,
+            waitlist_id: waitlistEntry.id,
+            reason: 'No available slots found'
+          }));
+          return;
+        }
+        
+        // Auto-schedule with first available slot
+        const selectedSlot = availableSlots[0];
+        const newAppointment = {
+          id: generateId(),
+          customer_id,
+          provider_id,
+          service_id,
+          date: selectedSlot.date,
+          start_time: selectedSlot.start_time,
+          end_time: calculateEndTime(selectedSlot.start_time, duration),
+          duration,
+          status: 'confirmed',
+          auto_scheduled: true,
+          created_at: new Date().toISOString()
+        };
+        
+        // Save appointment
+        const appointments = loadLocalData('appointments') || [];
+        appointments.push(newAppointment);
+        await saveLocalData('appointments', appointments);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          scheduled: true,
+          appointment: newAppointment,
+          selected_slot: selectedSlot
+        }));
+        
+      } catch (error) {
+        console.error('❌ Error auto-scheduling appointment:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: error.message }));
+      }
+    }
+    
+    // Process waitlist automatically
+    else if (pathname === '/api/waitlist/auto-process' && req.method === 'POST') {
+      try {
+        const body = await new Promise((resolve, reject) => {
+          let data = '';
+          req.on('data', chunk => data += chunk);
+          req.on('end', () => resolve(JSON.parse(data)));
+          req.on('error', reject);
+        });
+        
+        const { provider_id, date, time_slot } = body;
+        if (!provider_id || !date || !time_slot) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'provider_id, date, and time_slot required' }));
+          return;
+        }
+        
+        const waitlist = loadLocalData('waitlist') || [];
+        const eligibleWaitlist = waitlist.filter(entry => 
+          entry.provider_id === provider_id &&
+          entry.status === 'waiting' &&
+          isDateFlexible(entry.requested_date, date)
+        ).sort((a, b) => {
+          // Priority sorting: urgent > high > normal
+          const priorityOrder = { urgent: 3, high: 2, normal: 1 };
+          return (priorityOrder[b.priority] || 1) - (priorityOrder[a.priority] || 1);
+        });
+        
+        const notifications = [];
+        const updatedWaitlist = [];
+        
+        for (const entry of eligibleWaitlist) {
+          if (hasNotificationExpired(entry)) continue;
+          
+          // Create auto-scheduled appointment
+          const appointment = {
+            id: generateId(),
+            customer_id: entry.customer_id,
+            provider_id: provider_id,
+            service_id: entry.service_id,
+            date: date,
+            start_time: time_slot,
+            end_time: calculateEndTime(time_slot, entry.duration),
+            duration: entry.duration,
+            status: 'confirmed',
+            from_waitlist: true,
+            waitlist_id: entry.id,
+            created_at: new Date().toISOString()
+          };
+          
+          // Save appointment
+          const appointments = loadLocalData('appointments') || [];
+          appointments.push(appointment);
+          await saveLocalData('appointments', appointments);
+          
+          // Update waitlist entry
+          entry.status = 'contacted';
+          entry.scheduled_appointment_id = appointment.id;
+          entry.contacted_at = new Date().toISOString();
+          updatedWaitlist.push(entry);
+          
+          // Create notification for customer
+          const notification = {
+            id: generateId(),
+            customer_id: entry.customer_id,
+            type: 'waitlist_opportunity',
+            method: 'sms',
+            content: `Good news! A slot just opened up for your requested ${entry.service_id} service. Please confirm within 15 minutes.`,
+            status: 'pending',
+            created_at: new Date().toISOString(),
+            expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString()
+          };
+          notifications.push(notification);
+        }
+        
+        // Save updates
+        await saveLocalData('waitlist', waitlist.map(w => updatedWaitlist.find(uw => uw.id === w.id) || w));
+        
+        const notificationHistory = loadLocalData('notifications') || [];
+        notificationHistory.push(...notifications);
+        await saveLocalData('notifications', notificationHistory);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          processed: updatedWaitlist.length,
+          appointments_created: updatedWaitlist.length,
+          notifications_sent: notifications.length,
+          waitlist_entries: updatedWaitlist
+        }));
+        
+      } catch (error) {
+        console.error('❌ Error processing waitlist:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: error.message }));
+      }
+    }
+    
+    // Create recurring appointments
+    else if (pathname === '/api/appointments/recurring' && req.method === 'POST') {
+      try {
+        const body = await new Promise((resolve, reject) => {
+          let data = '';
+          req.on('data', chunk => data += chunk);
+          req.on('end', () => resolve(JSON.parse(data)));
+          req.on('error', reject);
+        });
+        
+        const { 
+          customer_id, provider_id, service_id, date, start_time, 
+          duration, frequency, interval, occurrences, end_date 
+        } = body;
+        
+        if (!customer_id || !provider_id || !service_id || !date || !start_time || !frequency) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Missing required fields for recurring appointment' }));
+          return;
+        }
+        
+        const recurrences = generateRecurringDates(date, frequency, interval, occurrences, end_date);
+        const appointments = loadLocalData('appointments') || [];
+        const recurringAppointments = [];
+        const conflicts = [];
+        
+        for (const recurrence of recurrences) {
+          const end_time = calculateEndTime(start_time, duration);
+          const appointment = {
+            id: generateId(),
+            customer_id,
+            provider_id,
+            service_id,
+            date: recurrence.date,
+            start_time,
+            end_time,
+            duration,
+            status: 'confirmed',
+            recurring: true,
+            recurring_pattern_id: generateId(),
+            created_at: new Date().toISOString()
+          };
+          
+          // Check for conflicts before adding
+          const hasConflict = appointments.some(apt => 
+            apt.provider_id === provider_id &&
+            apt.date === recurrence.date &&
+            (start_time === apt.start_time || timesOverlap(start_time, end_time, apt.start_time, apt.end_time))
+          );
+          
+          if (hasConflict) {
+            conflicts.push(recurrence.date);
+          } else {
+            appointments.push(appointment);
+            recurringAppointments.push(appointment);
+          }
+        }
+        
+        await saveLocalData('appointments', appointments);
+        
+        // Save recurring pattern
+        const pattern = {
+          id: generateId(),
+          customer_id,
+          provider_id,
+          service_id,
+          start_date: date,
+          end_date: end_date || null,
+          frequency,
+          interval,
+          occurrences: recurringAppointments.length,
+          created_at: new Date().toISOString()
+        };
+        
+        const patterns = loadLocalData('recurring-patterns') || [];
+        patterns.push(pattern);
+        await saveLocalData('recurring-patterns', patterns);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          created: recurringAppointments.length,
+          conflicts: conflicts.length,
+          conflicted_dates: conflicts,
+          pattern_id: pattern.id,
+          appointments: recurringAppointments
+        }));
+        
+      } catch (error) {
+        console.error('❌ Error creating recurring appointments:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: error.message }));
+      }
+    }
+    
+    // Get recurring appointment patterns
+    else if (pathname === '/api/appointments/patterns' && req.method === 'GET') {
+      const customerId = url.searchParams.get('customer_id');
+      const providerId = url.searchParams.get('provider_id');
+      
+      const patterns = loadLocalData('recurring-patterns') || [];
+      let filteredPatterns = patterns;
+      
+      if (customerId) {
+        filteredPatterns = filteredPatterns.filter(p => p.customer_id === customerId);
+      }
+      if (providerId) {
+        filteredPatterns = filteredPatterns.filter(p => p.provider_id === providerId);
+      }
+      
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(filteredPatterns));
+    }
+    
+    // Update recurring appointment pattern
+    else if (pathname.startsWith('/api/appointments/recurring/') && req.method === 'PUT') {
+      try {
+        const patternId = pathname.split('/').pop();
+        const body = await new Promise((resolve, reject) => {
+          let data = '';
+          req.on('data', chunk => data += chunk);
+          req.on('end', () => resolve(JSON.parse(data)));
+          req.on('error', reject);
+        });
+        
+        const patterns = loadLocalData('recurring-patterns') || [];
+        const patternIndex = patterns.findIndex(p => p.id === patternId);
+        
+        if (patternIndex === -1) {
+          res.writeHead(404, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Recurring pattern not found' }));
+          return;
+        }
+        
+        patterns[patternIndex] = { ...patterns[patternIndex], ...body };
+        await saveLocalData('recurring-patterns', patterns);
+        
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ 
+          success: true, 
+          pattern: patterns[patternIndex] 
+        }));
+        
+      } catch (error) {
+        console.error('❌ Error updating recurring pattern:', error);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: error.message }));
+      }
+    }
+    
     else if (pathname === '/health' && req.method === 'GET') {
       const dbOk = await testDatabase();
       res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -875,6 +1263,138 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify({ error: error.message }));
   }
 });
+
+// ========================================
+// ENHANCED APPOINTMENT HELPER FUNCTIONS
+// ========================================
+
+function timesOverlap(start1, end1, start2, end2) {
+  const toMinutes = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+  
+  const s1 = toMinutes(start1);
+  const e1 = toMinutes(end1);
+  const s2 = toMinutes(start2);
+  const e2 = toMinutes(end2);
+  
+  return s1 < e2 && s2 < e1;
+}
+
+function calculateEndTime(startTime, duration) {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes + duration;
+  const endHours = Math.floor(totalMinutes / 60);
+  const endMinutes = totalMinutes % 60;
+  return `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`;
+}
+
+function isTimeWithinSlot(appointmentStart, appointmentEnd, slotStart, slotDuration) {
+  const appointmentStartMins = timeToMinutes(appointmentStart);
+  const appointmentEndMins = timeToMinutes(appointmentEnd);
+  const slotStartMins = timeToMinutes(slotStart);
+  const slotEndMins = slotStartMins + slotDuration;
+  
+  return appointmentStart >= slotStartMins && appointmentEnd <= slotEndMins;
+}
+
+function timeToMinutes(time) {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+async function findAvailableSlots(providerId, date, duration) {
+  const appointments = loadLocalData('appointments') || [];
+  const providerSchedule = loadLocalData(`provider-${providerId}-schedule`) || {};
+  
+  const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+  const daySchedule = providerSchedule[dayOfWeek] || [];
+  
+  const availableSlots = [];
+  
+  for (const slot of daySchedule) {
+    if (slot.available) {
+      const slotStartMins = timeToMinutes(slot.time);
+      const slotEndMins = slotStartMins + slot.duration;
+      const appointmentEndMins = slotStartMins + duration;
+      
+      // Check if appointment fits in slot
+      if (appointmentEndMins <= slotEndMins) {
+        // Check for conflicts
+        const hasConflict = appointments.some(apt => 
+          apt.provider_id === providerId &&
+          apt.date === date &&
+          timesOverlap(
+            slot.time,
+            `${Math.floor(appointmentEndMins / 60).toString().padStart(2, '0')}:${(appointmentEndMins % 60).toString().padStart(2, '0')}`,
+            apt.start_time,
+            apt.end_time
+          )
+        );
+        
+        if (!hasConflict) {
+          availableSlots.push({
+            date,
+            start_time: slot.time,
+            duration: slot.duration,
+            available_minutes: slot.duration - duration
+          });
+        }
+      }
+    }
+  }
+  
+  return availableSlots;
+}
+
+function isDateFlexible(requestedDate, availableDate) {
+  const requested = new Date(requestedDate);
+  const available = new Date(availableDate);
+  const daysDiff = Math.abs(available - requested) / (1000 * 60 * 60 * 24);
+  return daysDiff <= 7; // Within 7 days
+}
+
+function hasNotificationExpired(waitlistEntry) {
+  if (!waitlistEntry.created_at) return false;
+  const created = new Date(waitlistEntry.created_at);
+  const now = new Date();
+  const hoursDiff = (now - created) / (1000 * 60 * 60);
+  return hoursDiff > 168; // Expire after 7 days
+}
+
+function generateRecurringDates(startDate, frequency, interval, occurrences, endDate) {
+  const dates = [];
+  let currentDate = new Date(startDate);
+  const targetDate = endDate ? new Date(endDate) : null;
+  
+  for (let i = 0; i < occurrences; i++) {
+    if (targetDate && currentDate > targetDate) break;
+    
+    dates.push({ date: currentDate.toISOString().split('T')[0] });
+    
+    // Calculate next date based on frequency
+    switch (frequency) {
+      case 'daily':
+        currentDate.setDate(currentDate.getDate() + (interval || 1));
+        break;
+      case 'weekly':
+        currentDate.setDate(currentDate.getDate() + 7 * (interval || 1));
+        break;
+      case 'biweekly':
+        currentDate.setDate(currentDate.getDate() + 14 * (interval || 1));
+        break;
+      case 'monthly':
+        currentDate.setMonth(currentDate.getMonth() + (interval || 1));
+        break;
+      case 'yearly':
+        currentDate.setFullYear(currentDate.getFullYear() + (interval || 1));
+        break;
+    }
+  }
+  
+  return dates;
+}
 
 // Start server
 server.listen(PORT, () => {
